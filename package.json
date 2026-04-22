@@ -1,13 +1,20 @@
 {
-  "name": "Acadify-Monorepo",
+  "name": "Acadify",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "Acadify is a platform for managing and tracking students' academic progress through reports, tests, and analytics.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm -r run dev",
+    "build": "pnpm -r run build",
+    "start": "pnpm -r run start",
+    "lint": "pnpm -r run lint"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.33.0"
+  "keywords": [
+    "education",
+    "analytics",
+    "monorepo",
+    "nestjs",
+    "react"
+  ],
+  "packageManager": "pnpm@9.0.0"
 }
