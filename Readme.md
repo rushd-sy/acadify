@@ -1,5 +1,9 @@
 # Acadify
 
+## Vision
+
+Acadify aims to modernize academic management by providing a centralized, data-driven platform that improves visibility, efficiency, and communication in schools.
+
 ## Overview
 
 Acadify is a digital platform designed to help schools manage and track students’ academic progress through reports, tests, and performance analytics.
@@ -61,7 +65,3 @@ pnpm --filter frontend dev
 ```
 
 ---
-
-## Vision
-
-Acadify aims to modernize academic management by providing a centralized, data-driven platform that improves visibility, efficiency, and communication in schools.
