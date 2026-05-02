@@ -4,7 +4,7 @@
   "private": true,
   "description": "Acadify is a platform for managing and tracking students' academic progress through reports, tests, and analytics.",
   "scripts": {
-    "dev": "pnpm -r run dev",
+    "dev": "pnpm -r run start:dev",
     "build": "pnpm -r run build",
     "start": "pnpm -r run start",
     "lint": "pnpm -r run lint"

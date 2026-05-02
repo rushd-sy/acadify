@@ -52,6 +52,12 @@ Install dependencies:
 pnpm install
 ```
 
+Run the backend with the frontend in development mode:
+
+```bash
+pnpm run start:dev
+```
+
 Run backend:
 
 ```bash
@@ -61,7 +67,7 @@ pnpm --filter backend start:dev
 Run frontend:
 
 ```bash
-pnpm --filter frontend dev
+pnpm --filter frontend start:dev
 ```
 
 ---
