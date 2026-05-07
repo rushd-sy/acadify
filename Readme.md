@@ -70,4 +70,24 @@ Run frontend:
 pnpm --filter frontend start:dev
 ```
 
+Available Scripts
+
+```
+pnpm prepare
+```
+
+Initializes Git hooks using Husky.
+
+```
+pnpm lint
+```
+
+Runs ESLint across all packages in the monorepo.
+
+```
+pnpm format
+```
+
+Formats the entire codebase using Prettier.
+
 ---
