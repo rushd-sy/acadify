@@ -55,7 +55,7 @@ pnpm install
 Run the backend with the frontend in development mode:
 
 ```bash
-pnpm run start:dev
+pnpm run start
 ```
 
 Run backend:
@@ -69,5 +69,25 @@ Run frontend:
 ```bash
 pnpm --filter frontend start:dev
 ```
+
+Available Scripts
+
+```
+pnpm prepare
+```
+
+Initializes Git hooks using Husky.
+
+```
+pnpm lint
+```
+
+Runs ESLint across all packages in the monorepo.
+
+```
+pnpm format
+```
+
+Formats the entire codebase using Prettier.
 
 ---
