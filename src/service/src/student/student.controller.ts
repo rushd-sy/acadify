@@ -5,7 +5,7 @@ import { StudentService } from './student.service';
 export class StudentController {
   constructor(private studentService: StudentService) {}
   @Get()
-  getStudents() : string []{
-    return ["Yehya","Adel","Mohammad","Moaaz"];
+  getStudents(): string[] {
+    return ['Yehya', 'Adel', 'Mohammad', 'Moaaz'];
   }
 }

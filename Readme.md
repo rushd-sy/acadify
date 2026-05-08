@@ -55,7 +55,7 @@ pnpm install
 Run the backend with the frontend in development mode:
 
 ```bash
-pnpm run start
+pnpm run start:dev
 ```
 
 Run backend:
