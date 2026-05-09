@@ -4,7 +4,7 @@ import { Student } from '@prisma/client';
 @Injectable()
 export class StudentService {
   constructor(private prisma: PrismaService) {}
-  getStudents() : Promise<Student[]> {
-    return this.prisma.student.findMany();
+  async getStudents(): Promise<Student[]> {
+    return await this.prisma.student.findMany();
   }
 }
