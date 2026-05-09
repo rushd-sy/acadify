@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
-
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Student } from '@prisma/client';
 @Injectable()
 export class StudentService {
-  private readonly studentsArray: { name: string; age: number }[] = [
-    { name: 'Yehya', age: 22 },
-    { name: 'Adel', age: 21 },
-    { name: 'Mohammad', age: 23 },
-    { name: 'Moaaz', age: 20 },
-  ];
-
-  getStudents(): { name: string; age: number }[] {
-    return this.studentsArray;
+  constructor(private prisma: PrismaService) {}
+  getStudents() : Promise<Student[]> {
+    return this.prisma.student.findMany();
   }
 }
