@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Student } from '@prisma/client';
 
@@ -12,7 +12,7 @@ export class StudentController {
   }
 
   @Get(':id')
-  getStudentById(id: number): Promise<Student> {
-    return this.studentService.getStudentById(id);
+  getStudentById(@Param(':id') id: number): Promise<Student> {
+    return this.studentService.getStudentById(parseInt(id.toString()));
   }
 }
