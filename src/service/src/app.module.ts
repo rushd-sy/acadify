@@ -6,6 +6,6 @@ import { StudentController } from './student/student.controller';
 @Module({
   imports: [],
   controllers: [HealthCheckController, StudentController],
-  providers: [PrismaService, StudentService, PrismaService],
+  providers: [StudentService, PrismaService],
 })
 export class AppModule {}
