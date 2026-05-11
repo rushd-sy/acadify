@@ -7,4 +7,14 @@ export class StudentService {
   async getStudents(): Promise<Student[]> {
     return await this.prisma.student.findMany();
   }
+
+  async getStudentById(id: number): Promise<Student> {
+    const student = await this.prisma.student.findUnique({
+      where: { id },
+    });
+    if (!student) {
+      throw new Error(`Student with id ${id} not found`);
+    }
+    return student;
+  }
 }
