@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Student } from '@prisma/client';
-import { CreateStudentDTO } from './Student.dto/create-student.dto';
+import { StudentDto } from './Student.dto/create-student.dto';
 
 @Controller('/api/student')
 export class StudentController {
@@ -18,7 +18,7 @@ export class StudentController {
   }
 
   @Post()
-  createStudent(@Body() newStudent: CreateStudentDTO): Promise<Student> {
+  createStudent(@Body() newStudent: StudentDto): Promise<Student> {
     return this.studentService.createStudent(newStudent);
   }
 }
