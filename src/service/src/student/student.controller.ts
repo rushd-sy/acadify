@@ -13,12 +13,16 @@ export class StudentController {
   }
 
   @Get(':id')
-  getStudentById(@Param(':id') id: number): Promise<Student> {
+  getStudentById(@Param('id') id: number): Promise<Student> {
     return this.studentService.getStudentById(parseInt(id.toString()));
   }
 
   @Post()
   createStudent(@Body() newStudent: CreateStudentDto): Promise<Student> {
     return this.studentService.createStudent(newStudent);
+  }
+  @Get('delete/:id')
+  deleteStudent(@Param('id') id: number): Promise<void> {
+    return this.studentService.deleteStudent(parseInt(id.toString()));
   }
 }

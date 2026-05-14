@@ -24,4 +24,9 @@ export class StudentService {
       data,
     });
   }
+  async deleteStudent(id: number): Promise<void> {
+    await this.prisma.student.delete({
+      where: { id },
+    });
+  }
 }
