@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Student } from '@prisma/client';
 import { CreateStudentDto } from './Student.dto/create-student.dto';
@@ -21,7 +21,7 @@ export class StudentController {
   createStudent(@Body() newStudent: CreateStudentDto): Promise<Student> {
     return this.studentService.createStudent(newStudent);
   }
-  @Get('delete/:id')
+  @Delete(':id')
   deleteStudent(@Param('id') id: number): Promise<void> {
     return this.studentService.deleteStudent(parseInt(id.toString()));
   }
