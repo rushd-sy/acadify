@@ -26,6 +26,13 @@ The backend is built using **NestJS**, a scalable Node.js framework.
 pnpm --filter backend start:dev
 ```
 
+## Technologies Used
+ -Seeds: faker library.
+
+```bash
+ pnpm prisma db seed
+```
+
 ---
 
 ## Notes
