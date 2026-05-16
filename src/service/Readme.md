@@ -29,6 +29,8 @@ pnpm --filter backend start:dev
 ## Technologies Used
  -Seeds: faker library.
 
+Clear and seed dataBase:
+
 ```bash
  pnpm prisma db seed
 ```
