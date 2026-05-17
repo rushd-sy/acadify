@@ -26,6 +26,27 @@ The backend is built using **NestJS**, a scalable Node.js framework.
 pnpm --filter backend start:dev
 ```
 
+## Technologies Used
+
+-Seeds: faker library.
+
+ seed dataBase:
+
+```bash
+ pnpm db:seed
+```
+ clear dataBase:
+
+ ```bash
+ pnpm db:clear
+```
+
+Clear and seed dataBase:
+
+```bash
+ pnpm db:reset
+```
+
 ---
 
 ## Notes
