@@ -1,29 +1,54 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
-const main = async () => {
+const seed = async () => {
   const prisma = new PrismaClient();
 
+  for (let i = 0; i < 10; i++) {
+    await prisma.student.create({
+      data: {
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        phoneNumber: faker.phone.number(),
+        email: faker.internet.email(),
+      },
+    });
+  }
+
+  console.log('Database seeded');
+};
+
+const clear = async () => {
+  const prisma = new PrismaClient();
+  await prisma.$executeRawUnsafe(
+    `TRUNCATE TABLE "Student" RESTART IDENTITY CASCADE;`,
+  );
+
+  console.log('Database cleared');
+};
+
+const main = async () => {
+  const prisma = new PrismaClient();
+  const action = process.argv[2];
+
   try {
-    await prisma.$executeRawUnsafe(
-      `TRUNCATE TABLE "Student" RESTART IDENTITY;`,
-    );
+    switch (action) {
+      case 'seed':
+        await seed();
+        break;
 
-    for (let i = 0; i < 10; i++) {
-      await prisma.student.create({
-        data: {
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          phoneNumber: faker.phone.number(),
-          email: faker.internet.email(),
-        },
-      });
+      case 'clear':
+        await clear();
+        break;
+
+      case 'reset':
+        await clear();
+        await seed();
+        break;
+
+      default:
+        console.log('Invalid command');
     }
-
-    console.log('Seed completed');
-  } catch (e) {
-    console.error(e);
-    process.exit(1);
   } finally {
     await prisma.$disconnect();
   }

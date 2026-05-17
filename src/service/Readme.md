@@ -27,12 +27,24 @@ pnpm --filter backend start:dev
 ```
 
 ## Technologies Used
- -Seeds: faker library.
+
+-Seeds: faker library.
+
+ seed dataBase:
+
+```bash
+ pnpm db:seed
+```
+ clear dataBase:
+
+ ```bash
+ pnpm db:clear
+```
 
 Clear and seed dataBase:
 
 ```bash
- pnpm prisma db seed
+ pnpm db:reset
 ```
 
 ---
