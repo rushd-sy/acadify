@@ -10,7 +10,8 @@
     "lint": "pnpm -r run lint",
     "format": "prettier --write .",
     "prepare": "husky",
-    "test": "echo \"No tests yet\" && exit 0"
+    "test": "echo \"No tests yet\" && exit 0",
+    "preinstall": "npx only-allowed pnpm"
   },
   "keywords": [
     "education",
@@ -19,7 +20,10 @@
     "nestjs",
     "react"
   ],
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "pnpm" : ">=9.15.0"
+  },
   "devDependencies": {
     "eslint": "^9.18.0",
     "husky": "^9.1.7",
