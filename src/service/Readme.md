@@ -30,15 +30,16 @@ pnpm --filter backend start:dev
 
 -Seeds: faker library.
 
- seed dataBase:
+seed dataBase:
 
 ```bash
  pnpm db:seed
 ```
- clear dataBase:
 
- ```bash
- pnpm db:clear
+clear dataBase:
+
+```bash
+pnpm db:clear
 ```
 
 Clear and seed dataBase:

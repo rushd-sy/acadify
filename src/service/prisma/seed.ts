@@ -1,12 +1,26 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import { Command } from 'commander';
 
+const program = new Command();
 const seed = async () => {
   const prisma = new PrismaClient();
 
   for (let i = 0; i < 10; i++) {
-    await prisma.student.create({
-      data: {
+    await prisma.student.upsert({
+      where: {
+        id: i + 1,
+      },
+
+      update: {
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        phoneNumber: faker.phone.number(),
+        email: faker.internet.email(),
+      },
+
+      create: {
+        id: i + 1,
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         phoneNumber: faker.phone.number(),
@@ -14,44 +28,37 @@ const seed = async () => {
       },
     });
   }
-
-  console.log('Database seeded');
+  console.log('Database seeded!');
 };
 
 const clear = async () => {
   const prisma = new PrismaClient();
-  await prisma.$executeRawUnsafe(
-    `TRUNCATE TABLE "Student" RESTART IDENTITY CASCADE;`,
-  );
 
-  console.log('Database cleared');
+  await prisma.student.deleteMany();
+
+  console.log('Database cleared!');
 };
 
-const main = async () => {
-  const prisma = new PrismaClient();
-  const action = process.argv[2];
+program
+  .command('seed')
+  .description('Seed the database with fake data')
+  .action(async () => {
+    await seed();
+  });
 
-  try {
-    switch (action) {
-      case 'seed':
-        await seed();
-        break;
+program
+  .command('clear')
+  .description('Clear the database')
+  .action(async () => {
+    await clear();
+  });
 
-      case 'clear':
-        await clear();
-        break;
+program
+  .command('reset')
+  .description('Reset the database')
+  .action(async () => {
+    await clear();
+    await seed();
+  });
 
-      case 'reset':
-        await clear();
-        await seed();
-        break;
-
-      default:
-        console.log('Invalid command');
-    }
-  } finally {
-    await prisma.$disconnect();
-  }
-};
-
-void main();
+program.parse();
