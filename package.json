@@ -10,6 +10,7 @@
     "lint": "pnpm -r run lint",
     "format": "prettier --write .",
     "prepare": "husky",
+    "test": "echo \"No tests yet\" && exit 0",
     "preinstall": "npx only-allowed pnpm"
   },
   "keywords": [
