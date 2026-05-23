@@ -7,7 +7,6 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   {
     ignores: ['eslint.config.mjs'],
-    
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -34,10 +33,9 @@ export default tseslint.config(
     },
   },
   {
-    "files": ["**/*.dto.ts"],
-    "rules": {
-      "@typescript-eslint/no-unsafe-call": "off"
-    }
-  }
-
+    files: ['**/*.dto.ts'],
+    rules: {
+      '@typescript-eslint/no-unsafe-call': 'off',
+    },
+  },
 );

@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "prepare": "husky",
     "test": "echo \"No tests yet\" && exit 0",
-    "preinstall": "npx only-allowed pnpm"
+    "preinstall": "npx only-allow pnpm"
   },
   "keywords": [
     "education",
@@ -22,7 +22,7 @@
   ],
   "packageManager": "pnpm@9.15.0",
   "engines": {
-    "pnpm" : ">=9.15.0"
+    "pnpm": ">=9.15.0"
   },
   "devDependencies": {
     "eslint": "^9.18.0",
