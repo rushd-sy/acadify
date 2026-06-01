@@ -18,6 +18,11 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
-    ignores: ['src/components/ui/button.tsx'],
+  },
+  {
+    files: ['src/components/ui/button.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   },
 ]);
