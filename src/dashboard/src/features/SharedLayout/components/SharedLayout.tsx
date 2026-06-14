@@ -1,7 +1,7 @@
 import Title from './Title';
 import '../../../style.css';
-import  UpperNav  from './UpperNav';
-import  LeftNav  from './LeftNav';
+import UpperNav from './UpperNav';
+import LeftNav from './LeftNav';
 export default function SharedLayout() {
   console.log('fdasadfsafds');
   return (
@@ -17,11 +17,11 @@ export default function SharedLayout() {
       >
         <Title />
       </div>
-      <div className=" flex justify-end" style={{backgroundColor:"blue", }}>
-        <UpperNav/>
+      <div className=" flex justify-end" style={{ backgroundColor: 'blue' }}>
+        <UpperNav />
       </div>
       <div className="SharedSection" style={{ backgroundColor: 'black' }}>
-        <LeftNav/>
+        <LeftNav />
       </div>
       <div className="SharedSection" style={{ backgroundColor: 'green' }}></div>
     </div>

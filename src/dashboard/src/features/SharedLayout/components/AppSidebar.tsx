@@ -8,7 +8,6 @@ import {
 export default function AppSidebar() {
   return (
     <Sidebar style={{ background: 'red' }}>
-   
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup />

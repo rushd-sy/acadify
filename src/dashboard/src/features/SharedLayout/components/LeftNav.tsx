@@ -1,4 +1,3 @@
-export default function LeftNav(){
-  return (<>
-  </>);
-} 
+export default function LeftNav() {
+  return <></>;
+}
