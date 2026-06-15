@@ -15,9 +15,9 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    ignores: ['src/components/ui/button.tsx'],
     languageOptions: {
       globals: globals.browser,
     },
-    ignores: ['src/components/ui/button.tsx'],
   },
 ]);
