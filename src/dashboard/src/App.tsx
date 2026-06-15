@@ -2,10 +2,9 @@ import SharedLayout from './featuers/SharedLayout/components/SharedLayout';
 
 function App() {
   return (
-      <div >
-        <SharedLayout />
-      </div>
-    
+    <div>
+      <SharedLayout />
+    </div>
   );
 }
 

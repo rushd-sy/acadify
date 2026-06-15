@@ -15,13 +15,13 @@ export default function SharedLayout() {
       >
         <Title />
       </div>
-      <div  style={{ backgroundColor: 'black' }}>
-      Upper Nav Bar :Will be add later
+      <div style={{ backgroundColor: 'black' }}>
+        Upper Nav Bar :Will be add later
       </div>
-      <div  style={{ width:"100%", backgroundColor: 'black' }}>
+      <div style={{ width: '100%', backgroundColor: 'black' }}>
         <LeftNav />
       </div>
-      <div style={{ backgroundColor:'rgb(203, 203, 203)' }}></div>
+      <div style={{ backgroundColor: 'rgb(203, 203, 203)' }}></div>
     </div>
   );
 }
