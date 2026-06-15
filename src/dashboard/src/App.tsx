@@ -1,10 +1,11 @@
-import { Button } from '@/components/ui/button';
+import SharedLayout from './featuers/SharedLayout/components/SharedLayout';
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
+      <div >
+        <SharedLayout />
+      </div>
+    
   );
 }
 
