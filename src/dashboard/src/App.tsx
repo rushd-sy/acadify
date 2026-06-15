@@ -2,7 +2,7 @@ import SharedLayout from './featuers/SharedLayout/components/SharedLayout';
 
 function App() {
   return (
-    <div>
+    <div style={{ backgroundColor: 'white' }}>
       <SharedLayout />
     </div>
   );
