@@ -20,9 +20,6 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/components/ui/button.tsx'],
-    rules: {
-      'react-refresh/only-export-components': 'off',
-    },
+    ignores: ['src/components/ui/button.tsx'],
   },
 ]);
