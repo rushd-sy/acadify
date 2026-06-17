@@ -1,4 +1,4 @@
-.title{
+.title {
   border: 2px solid black;
   align-content: center;
   display: flex;
@@ -6,7 +6,7 @@
   align-items: center;
   font-size: 25px;
 }
-.shared-layout{
+.shared-layout {
   display: grid;
   flex-direction: column;
   height: 100vh;

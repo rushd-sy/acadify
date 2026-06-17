@@ -3,7 +3,7 @@ import LeftNavbar from './LeftNavbar';
 export default function SharedLayout() {
   return (
     <div className="shared-layout">
-      <div  className="title">
+      <div className="title">
         <h1>A C A D Y F I</h1>
       </div>
       <div style={{ backgroundColor: 'black' }}>
