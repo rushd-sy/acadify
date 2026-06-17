@@ -1,5 +1,3 @@
 export default function LeftNavbar() {
-  return <div style={{color:"white"}}>
-    Student
-  </div>;
+  return <div style={{ color: 'white' }}>Student</div>;
 }
