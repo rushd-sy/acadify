@@ -1,4 +1,4 @@
-import SharedLayout from './featuers/SharedLayout/components/SharedLayout';
+import SharedLayout from './features/sharedLayout/components/SharedLayout';
 
 function App() {
   return (
