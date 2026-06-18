@@ -9,7 +9,7 @@ export default function SharedLayout() {
       <div style={{ backgroundColor: 'black' }}>
         Upper Nav Bar :Will be add later
       </div>
-      <div style={{ width: '100%', backgroundColor: 'black' }}>
+      <div className="h-full min-h-0">
         <LeftNavbar />
       </div>
       <div style={{ backgroundColor: 'rgb(203, 203, 203)' }}></div>
