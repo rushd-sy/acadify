@@ -1,4 +1,4 @@
-import './StyleSharedLayout.css';
+import './SharedLayout.css';
 import LeftNavbar from './LeftNavbar';
 export default function SharedLayout() {
   return (

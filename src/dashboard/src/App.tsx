@@ -1,4 +1,4 @@
-import SharedLayout from './component/SharedLayout/SharedLayout';
+import SharedLayout from './layout/SharedLayout';
 function App() {
   return (
     <div style={{ backgroundColor: 'black' }}>
