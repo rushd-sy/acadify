@@ -1,0 +1,18 @@
+.title {
+  border: 2px solid black;
+  align-content: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+}
+.shared-layout {
+  display: grid;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background-color: rgb(245, 10, 10);
+  grid-template-columns: 1fr 7fr;
+  grid-template-rows: 1fr 7fr;
+  background-color: rgb(203, 203, 203);
+}
