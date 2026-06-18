@@ -24,10 +24,7 @@ function Button({
   ...props
 }: React.ComponentProps<'button'> & VariantProps<typeof buttonVariants>) {
   return (
-    <button
-      className={cn(buttonVariants({ variant, className }))}
-      {...props}
-    />
+    <button className={cn(buttonVariants({ variant, className }))} {...props} />
   );
 }
 
