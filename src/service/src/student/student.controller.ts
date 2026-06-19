@@ -1,8 +1,7 @@
 import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Student } from '@prisma/client';
-import { CreateStudentDto } from './Student.dto/create-student.dto';
-
+import type { CreateStudentDto } from 'dtos';
 @Controller('/api/student')
 export class StudentController {
   constructor(private studentService: StudentService) {}

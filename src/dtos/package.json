@@ -1,10 +1,14 @@
 {
   "name": "dtos",
   "version": "1.0.0",
-  "description": "Shared DTOs for the Acadify monorepo",
-  "main": "index.js",
   "private": true,
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1"
   }
 }
