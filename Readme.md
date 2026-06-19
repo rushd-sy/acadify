@@ -67,7 +67,7 @@ pnpm --filter backend start:dev
 Run frontend:
 
 ```bash
-pnpm --filter frontend start:dev
+pnpm --filter dashboard run dev
 ```
 
 Available Scripts

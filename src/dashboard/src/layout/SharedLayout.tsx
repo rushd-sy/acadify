@@ -8,7 +8,7 @@ export default function SharedLayout() {
         <h1>A C A D Y F I</h1>
       </div>
       <div className="bg-white ">
-        <UpperNavbar/> 
+        <UpperNavbar />
       </div>
       <div className="h-full min-h-0">
         <LeftNavbar />
