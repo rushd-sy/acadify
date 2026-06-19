@@ -4,7 +4,6 @@ import { StudentDto, CreateStudentDto } from 'dtos';
 
 @Injectable()
 export class StudentMapper {
-
   toDTO(student: Student): StudentDto {
     return {
       id: student.id,
