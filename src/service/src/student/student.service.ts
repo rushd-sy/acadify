@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StudentMapper } from './student.mapper';
-import type { CreateStudentDto, StudentDto } from 'dtos';
+import type { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
 @Injectable()
 export class StudentService {
   constructor(
@@ -10,17 +10,17 @@ export class StudentService {
   ) {}
   async getStudents(): Promise<StudentDto[]> {
     const students = await this.prisma.student.findMany();
-    return this.mapper.toDTOs(students);
+    return this.mapper.toStudentDTOs(students);
   }
 
-  async getStudentById(id: number): Promise<StudentDto> {
+  async getStudentById(id: number): Promise<StudentDetailsDto> {
     const student = await this.prisma.student.findUnique({
       where: { id },
     });
     if (!student) {
       throw new Error(`Student with id ${id} not found`);
     }
-    return this.mapper.toDTO(student);
+    return this.mapper.toStudentDetailsDTO(student);
   }
 
   async createStudent(data: CreateStudentDto): Promise<StudentDto> {
@@ -28,7 +28,7 @@ export class StudentService {
     const student = await this.prisma.student.create({
       data: persistenceData,
     });
-    return this.mapper.toDTO(student);
+    return this.mapper.toStudentDTO(student);
   }
   async deleteStudent(id: number): Promise<void> {
     await this.prisma.student.delete({
