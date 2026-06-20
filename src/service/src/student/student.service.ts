@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { StudentMapper } from './student.mapper';
 import type { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
+import { Student } from '@prisma/client';
 @Injectable()
 export class StudentService {
   constructor(
