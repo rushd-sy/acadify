@@ -51,6 +51,9 @@ jobs:
       - name: Check formatting
         run: pnpm prettier --check .
 
+      - name: Build DTOs
+        run: pnpm --filter dtos build
+
       - name: Lint service
         run: pnpm --filter service lint
 
