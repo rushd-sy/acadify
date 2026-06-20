@@ -1,23 +1,22 @@
 import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
 import { StudentService } from './student.service';
-import { Student } from '@prisma/client';
-import type { CreateStudentDto } from 'dtos';
+import type { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
 @Controller('/api/student')
 export class StudentController {
   constructor(private studentService: StudentService) {}
 
   @Get()
-  getStudents(): Promise<Student[]> {
+  getStudents(): Promise<StudentDto[]> {
     return this.studentService.getStudents();
   }
 
   @Get(':id')
-  getStudentById(@Param('id') id: number): Promise<Student> {
+  getStudentById(@Param('id') id: number): Promise<StudentDetailsDto> {
     return this.studentService.getStudentById(parseInt(id.toString()));
   }
 
   @Post()
-  createStudent(@Body() newStudent: CreateStudentDto): Promise<Student> {
+  createStudent(@Body() newStudent: CreateStudentDto): Promise<StudentDto> {
     return this.studentService.createStudent(newStudent);
   }
   @Delete(':id')
