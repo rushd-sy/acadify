@@ -1,4 +1,5 @@
 import './SharedLayout.css';
+import { Outlet } from 'react-router-dom';
 import LeftNavbar from './LeftNavbar';
 import UpperNavbar from './UpperNavbar';
 export default function SharedLayout() {
@@ -13,7 +14,9 @@ export default function SharedLayout() {
       <div className="h-full min-h-0">
         <LeftNavbar />
       </div>
-      <div style={{ backgroundColor: 'rgb(203, 203, 203)' }}></div>
+      <div style={{ backgroundColor: 'rgb(203, 203, 203)' }}>
+        <Outlet />
+      </div>
     </div>
   );
 }
