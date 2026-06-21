@@ -1,6 +1,7 @@
 import './SharedLayout.css';
 import { Outlet, Link } from 'react-router-dom';
 import LeftNavbar from './LeftNavbar';
+import UpperNavbar from './UpperNavbar';
 export default function SharedLayout() {
   return (
     <div className="shared-layout">
@@ -9,8 +10,8 @@ export default function SharedLayout() {
           <h1>A C A D Y F I</h1>
         </Link>
       </div>
-      <div style={{ backgroundColor: 'black' }}>
-        Upper Nav Bar :Will be add later
+      <div className="bg-white ">
+        <UpperNavbar />
       </div>
       <div className="h-full min-h-0">
         <LeftNavbar />
