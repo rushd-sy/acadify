@@ -1,6 +1,6 @@
 import './SharedLayout.css';
-import LeftNavbar from './LeftNavbar';
 import { Outlet } from 'react-router-dom';
+import LeftNavbar from './LeftNavbar';
 export default function SharedLayout() {
   return (
     <div className="shared-layout">

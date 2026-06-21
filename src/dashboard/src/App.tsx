@@ -1,7 +1,7 @@
+import { Routes, Route } from 'react-router-dom';
 import StudentsPage from '@/pages/students-page';
 import StudentsDetailsPage from '@/pages/students-details-page';
 import ErrorPage from './pages/error-page';
-import { Routes, Route } from 'react-router-dom';
 import SharedLayout from './layout/SharedLayout';
 function App() {
   return (
