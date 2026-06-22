@@ -1,5 +1,5 @@
 import './SharedLayout.css';
-import { Outlet, Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import LeftNavbar from './LeftNavbar';
 import UpperNavbar from './UpperNavbar';
 export default function SharedLayout() {
