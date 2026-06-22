@@ -1,12 +1,14 @@
 import './SharedLayout.css';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import LeftNavbar from './LeftNavbar';
 import UpperNavbar from './UpperNavbar';
 export default function SharedLayout() {
   return (
     <div className="shared-layout">
       <div className="title">
-        <h1>A C A D Y F I</h1>
+        <Link to="">
+          <h1>A C A D Y F I</h1>
+        </Link>
       </div>
       <div className="bg-white ">
         <UpperNavbar />
