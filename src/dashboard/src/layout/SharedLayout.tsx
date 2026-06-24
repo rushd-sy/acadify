@@ -10,7 +10,7 @@ export default function SharedLayout() {
           <h1>A C A D Y F I</h1>
         </Link>
       </div>
-      <div className="bg-white ">
+      <div className="bg-white">
         <UpperNavbar />
       </div>
       <div className="h-full min-h-0">
