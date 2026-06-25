@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { Link } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -41,14 +42,19 @@ export default function StudentsPage() {
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody className="text-xl">
           {array.map((e) => {
             return (
               <TableRow key={e.id} className="bg-gray-50 hover:bg-gray-100">
-                <TableCell className="py-6">{e.name}</TableCell>
+                <TableCell className="py-6">
+                  <Link to={`/students/${e.id}`}>{e.name}</Link>
+                </TableCell>
+
                 <TableCell className="py-6">{e.secondName}</TableCell>
                 <TableCell className="py-6">{e.number}</TableCell>
                 <TableCell className="py-6">{e.email}</TableCell>
+
                 <TableCell className="py-6">
                   <ButtonGroup>
                     <Button className="text-lg p-4">Edit</Button>
