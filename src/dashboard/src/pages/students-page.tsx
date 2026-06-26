@@ -30,15 +30,17 @@ const array = [
   },
 ];
 
-
-async function handleConfirmDelete(studentId: string | null, closeModal: () => void) {
-  if(!studentId) return;
+async function handleConfirmDelete(
+  studentId: string | null,
+  closeModal: () => void,
+) {
+  if (!studentId) return;
 
   closeModal();
 }
 
 export default function StudentsPage() {
-const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
 
   return (
     <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
@@ -85,11 +87,10 @@ const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
 
       <DeleteStudentModal
         open={!!studentToDelete}
-        studentName={
-          array.find((st) => st.id === studentToDelete)?.name || ''
-
+        studentName={array.find((st) => st.id === studentToDelete)?.name || ''}
+        onYes={() =>
+          handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))
         }
-        onYes={() => handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))}
         onNo={() => setStudentToDelete(null)}
       />
     </div>
