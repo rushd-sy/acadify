@@ -71,7 +71,7 @@ const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
                     <Button className="text-lg p-4">Edit</Button>
                     <Button
                       className="text-lg p-4"
-                      onClick={() => setStudentToDelete(e)}
+                      onClick={() => setStudentToDelete(e.id)}
                     >
                       Delete
                     </Button>
@@ -86,7 +86,8 @@ const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
       <DeleteStudentModal
         open={!!studentToDelete}
         studentName={
-          array.find((st) => st.id === studentToDelete?.id)?.name || ''
+          array.find((st) => st.id === studentToDelete)?.name || ''
+
         }
         onYes={() => handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))}
         onNo={() => setStudentToDelete(null)}
