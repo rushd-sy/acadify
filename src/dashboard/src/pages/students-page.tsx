@@ -10,6 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useState } from 'react';
+import DeleteStudentModal from '@/components/ui/delete-student-modal';
 
 const array = [
   {
@@ -28,7 +30,18 @@ const array = [
   },
 ];
 
+async function handleConfirmDelete(
+  studentId: string | null,
+  closeModal: () => void,
+) {
+  if (!studentId) return;
+
+  closeModal();
+}
+
 export default function StudentsPage() {
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+
   return (
     <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
       <Table>
@@ -58,7 +71,12 @@ export default function StudentsPage() {
                 <TableCell className="py-6">
                   <ButtonGroup>
                     <Button className="text-lg p-4">Edit</Button>
-                    <Button className="text-lg p-4">Delete</Button>
+                    <Button
+                      className="text-lg p-4"
+                      onClick={() => setStudentToDelete(e.id)}
+                    >
+                      Delete
+                    </Button>
                   </ButtonGroup>
                 </TableCell>
               </TableRow>
@@ -66,6 +84,15 @@ export default function StudentsPage() {
           })}
         </TableBody>
       </Table>
+
+      <DeleteStudentModal
+        open={!!studentToDelete}
+        studentName={array.find((st) => st.id === studentToDelete)?.name || ''}
+        onYes={() =>
+          handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))
+        }
+        onNo={() => setStudentToDelete(null)}
+      />
     </div>
   );
 }
