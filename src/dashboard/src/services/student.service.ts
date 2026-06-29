@@ -1,29 +1,33 @@
-export async function getAllStudents() {
-  const response = await fetch('http://localhost:3000/api/student');
+class StudentServic {
+  private readonly baseUrl = `${import.meta.env.VITE_API_URL}/api/student`;
+  async getAllStudents() {
+    const response = await fetch(this.baseUrl);
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch students');
+    if (!response.ok) {
+      throw new Error('Failed to fetch students');
+    }
+
+    return response.json();
   }
 
-  return response.json();
-}
+  async getStudentById(id: number) {
+    const response = await fetch(`${this.baseUrl}/${id}`);
 
-export async function getStudentById(id: number) {
-  const response = await fetch(`http://localhost:3000/api/student/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch student');
+    }
 
-  if (!response.ok) {
-    throw new Error('Failed to fetch student');
+    return response.json();
   }
 
-  return response.json();
-}
+  async deleteStudentById(id: number) {
+    const response = await fetch(`${this.baseUrl}/${id}`, {
+      method: 'DELETE',
+    });
 
-export async function deleteStudentById(id: number) {
-  const response = await fetch(`http://localhost:3000/api/student/${id}`, {
-    method: 'DELETE',
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to delete student');
+    if (!response.ok) {
+      throw new Error('Failed to delete student');
+    }
   }
 }
+export const studentService = new StudentServic();
