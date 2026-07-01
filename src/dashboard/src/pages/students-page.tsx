@@ -10,6 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useState } from 'react';
+import DeleteStudentModal from '@/components/ui/delete-student-modal';
+
 type Student = {
   id: string;
   name: string;
@@ -33,10 +36,22 @@ const fakeArray: Student[] = [
     email: 'adel@gmail.com',
   },
 ];
+
+async function handleConfirmDelete(
+  studentId: string | null,
+  closeModal: () => void,
+) {
+  if (!studentId) return;
+
+  closeModal();
+}
+
 export default function StudentsPage() {
-  const navigate = useNavigate();
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+   const navigate = useNavigate();
+
   return (
-    <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
+      <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
       <Table>
         <TableCaption className="text-2xl">
           Double Click to View Student Information
@@ -68,19 +83,10 @@ export default function StudentsPage() {
                 <TableCell className="py-6">{e.email}</TableCell>
                 <TableCell className="py-6">
                   <ButtonGroup>
+                    <Button className="text-lg p-4">Edit</Button>
                     <Button
                       className="text-lg p-4"
-                      onDoubleClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onDoubleClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                      className="text-lg p-4"
+                      onClick={() => setStudentToDelete(e.id)}
                     >
                       Delete
                     </Button>
@@ -91,6 +97,15 @@ export default function StudentsPage() {
           })}
         </TableBody>
       </Table>
+
+      <DeleteStudentModal
+        open={!!studentToDelete}
+        studentName={fakeArray.find((st) => st.id === studentToDelete)?.name || ''}
+        onYes={() =>
+          handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))
+        }
+        onNo={() => setStudentToDelete(null)}
+      />
     </div>
   );
 }
