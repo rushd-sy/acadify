@@ -3,26 +3,40 @@ import { useLocation } from 'react-router-dom';
 
 export default function StudentsDetailsPage() {
   const student = useLocation().state.student;
-  console.log(student.name);
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <Card className="mt-32  w-[90%] h-[700px] max-w-full shadow-xl bg-white  ">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-3xl text-black mb-32 ml-4 mt-4">
+    <Card className="mt-20 mx-auto w-[90%] max-w-4xl rounded-3xl shadow-2xl border border-gray-200 bg-white">
+      <CardHeader className="pb-8">
+        <CardTitle className="text-4xl font-bold text-center text-gray-800">
+          Student Details
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="space-y-8 px-10 pb-10">
+        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+          <span className="text-lg font-semibold text-gray-500">
+            Student Name
+          </span>
+
+          <span className="text-2xl font-bold text-gray-900">
             {student.name} {student.secondName}
-          </CardTitle>
-        </CardHeader>
+          </span>
+        </div>
 
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-3 text-2xl mb-8 ml-16">
-            <span>{student.email}</span>
-          </div>
+        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+          <span className="text-lg font-semibold text-gray-500">Email</span>
 
-          <div className="flex items-center gap-3 text-2xl ml-16">
-            <span>{student.number}</span>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          <span className="text-xl text-gray-800">{student.email}</span>
+        </div>
+
+        <div className="flex justify-between items-center">
+          <span className="text-lg font-semibold text-gray-500">
+            Phone Number
+          </span>
+
+          <span className="text-xl text-gray-800">{student.number}</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

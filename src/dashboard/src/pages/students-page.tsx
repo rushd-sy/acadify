@@ -48,10 +48,10 @@ async function handleConfirmDelete(
 
 export default function StudentsPage() {
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
-      <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
+    <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
       <Table>
         <TableCaption className="text-2xl">
           Double Click to View Student Information
@@ -100,7 +100,9 @@ export default function StudentsPage() {
 
       <DeleteStudentModal
         open={!!studentToDelete}
-        studentName={fakeArray.find((st) => st.id === studentToDelete)?.name || ''}
+        studentName={
+          fakeArray.find((st) => st.id === studentToDelete)?.name || ''
+        }
         onYes={() =>
           handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))
         }
