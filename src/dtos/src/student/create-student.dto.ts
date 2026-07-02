@@ -18,5 +18,5 @@ export class CreateStudentDto {
 
   @IsString()
   @IsNotEmpty()
-  password!: string;
+  hashedPassword!: string;
 }

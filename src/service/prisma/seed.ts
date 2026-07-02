@@ -17,7 +17,7 @@ const seed = async () => {
         lastName: faker.person.lastName(),
         phoneNumber: faker.phone.number(),
         email: faker.internet.email(),
-        password: faker.internet.password(),
+        hashedPassword: faker.internet.password(),
       },
 
       create: {
@@ -26,7 +26,7 @@ const seed = async () => {
         lastName: faker.person.lastName(),
         phoneNumber: faker.phone.number(),
         email: faker.internet.email(),
-        password: faker.internet.password(),
+        hashedPassword: faker.internet.password(),
       },
     });
   }
