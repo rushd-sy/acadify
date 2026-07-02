@@ -13,4 +13,5 @@ model Student {
   lastName String 
   phoneNumber String @unique
   email String @unique
+  hashedPassword    String
 }

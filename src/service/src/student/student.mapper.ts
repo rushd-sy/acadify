@@ -32,6 +32,7 @@ export class StudentMapper {
       lastName: createStudentDto.lastName,
       email: createStudentDto.email,
       phoneNumber: createStudentDto.phoneNumber,
+      hashedPassword: createStudentDto.hashedPassword,
     };
   }
 }

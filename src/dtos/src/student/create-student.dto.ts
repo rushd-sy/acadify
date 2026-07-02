@@ -15,4 +15,8 @@ export class CreateStudentDto {
   @IsString()
   @IsNotEmpty()
   phoneNumber!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  hashedPassword!: string;
 }
