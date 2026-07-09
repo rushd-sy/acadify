@@ -15,3 +15,10 @@ model Student {
   email String @unique
   hashedPassword    String
 }
+
+model User {
+  id Int @id @default(autoincrement())
+  fullName String
+  email String @unique
+  hashedPassword String
+}
