@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Student } from '@prisma/client';
-import { StudentDto, CreateStudentDto, StudentDetailsDto } from 'dtos';
-import type { NewStudentDomain, StudentDomain } from '../domain/student.domain';
+import { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
 
 @Injectable()
 export class StudentMapper {
@@ -27,28 +26,7 @@ export class StudentMapper {
     };
   }
 
-  toDomain(student: Student): StudentDomain {
-    return {
-      id: student.id,
-      firstName: student.firstName,
-      lastName: student.lastName,
-      email: student.email,
-      phoneNumber: student.phoneNumber,
-      hashedPassword: student.hashedPassword,
-    };
-  }
-
-  toNewStudentDomain(createStudentDto: CreateStudentDto): NewStudentDomain {
-    return {
-      firstName: createStudentDto.firstName,
-      lastName: createStudentDto.lastName,
-      email: createStudentDto.email,
-      phoneNumber: createStudentDto.phoneNumber,
-      hashedPassword: createStudentDto.hashedPassword,
-    };
-  }
-
-  toPresistence(student: NewStudentDomain): Omit<Student, 'id'> {
+  toPersistence(student: CreateStudentDto): Omit<Student, 'id'> {
     return {
       firstName: student.firstName,
       lastName: student.lastName,
