@@ -13,7 +13,7 @@ export class UserMapper {
     };
   }
 
-  toUserDtos(users: User[]): UserDto[] {
+  toUserDtoList(users: User[]): UserDto[] {
     return users.map((user) => this.toUserDto(user));
   }
 
@@ -26,7 +26,7 @@ export class UserMapper {
     });
   }
 
-  toNewUserDomain(createUserDto: CreateUserDto): UserDomain {
+  toDomainFromCreateDto(createUserDto: CreateUserDto): UserDomain {
     return UserDomain.create({
       fullName: createUserDto.fullName,
       email: createUserDto.email,
