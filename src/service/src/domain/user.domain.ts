@@ -1,3 +1,5 @@
+import { StringUtils } from '../utils/string.util';
+
 export class UserDomain {
   id?: number;
   fullName: string;
@@ -11,9 +13,12 @@ export class UserDomain {
     hashedPassword: string;
   }) {
     this.id = input.id;
-    this.fullName = normalizeRequiredText(input.fullName, 'Full name');
-    this.email = normalizeEmail(input.email);
-    this.hashedPassword = normalizeRequiredText(
+    this.fullName = StringUtils.normalizeRequiredText(
+      input.fullName,
+      'Full name',
+    );
+    this.email = StringUtils.normalizeEmail(input.email);
+    this.hashedPassword = StringUtils.normalizeRequiredText(
       input.hashedPassword,
       'Password',
     );
@@ -35,24 +40,4 @@ export class UserDomain {
   }): UserDomain {
     return new UserDomain(input);
   }
-}
-
-function normalizeRequiredText(value: string, fieldName: string): string {
-  const trimmedValue = value.trim();
-
-  if (!trimmedValue) {
-    throw new Error(`${fieldName} cannot be empty or whitespace.`);
-  }
-
-  return trimmedValue;
-}
-
-function normalizeEmail(email: string): string {
-  const normalizedEmail = normalizeRequiredText(email, 'Email').toLowerCase();
-
-  if (!normalizedEmail.includes('@')) {
-    throw new Error('Email must be valid (contain an "@" symbol).');
-  }
-
-  return normalizedEmail;
 }
