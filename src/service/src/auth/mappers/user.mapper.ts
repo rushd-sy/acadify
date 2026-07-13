@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { CreateUserDto, UserDto } from 'dtos';
 import { UserDomain } from '../domain/user.domain';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserMapper {

@@ -1,4 +1,4 @@
-import { StringUtils } from '../utils/string.util';
+import { StringUtils } from '../../utils/string.util';
 
 export class UserDomain {
   id?: number;
