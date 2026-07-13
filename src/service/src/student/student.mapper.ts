@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Student } from '@prisma/client';
-import { StudentDto, CreateStudentDto, StudentDetailsDto } from 'dtos';
+import { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
 
 @Injectable()
 export class StudentMapper {
@@ -26,13 +26,13 @@ export class StudentMapper {
     };
   }
 
-  toPersistence(createStudentDto: CreateStudentDto): Omit<Student, 'id'> {
+  toPersistence(student: CreateStudentDto): Omit<Student, 'id'> {
     return {
-      firstName: createStudentDto.firstName,
-      lastName: createStudentDto.lastName,
-      email: createStudentDto.email,
-      phoneNumber: createStudentDto.phoneNumber,
-      hashedPassword: createStudentDto.hashedPassword,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      email: student.email,
+      phoneNumber: student.phoneNumber,
+      hashedPassword: student.hashedPassword,
     };
   }
 }
