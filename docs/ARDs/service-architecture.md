@@ -1,0 +1,7 @@
+- Agree to follow DDD
+- Having each domain inside it's own folder and inside it we have different layers like:
+  - api
+  - domain
+  - mappers
+  - services
+  - module.ts
