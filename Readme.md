@@ -70,7 +70,8 @@ Run frontend:
 pnpm --filter dashboard run dev
 ```
 
-Build the dtos : 
+Build the dtos :
+
 ```
 pnpm --filter dtos build
 ```
