@@ -61,13 +61,18 @@ pnpm run start:dev
 Run backend:
 
 ```bash
-pnpm --filter backend start:dev
+pnpm --filter service start:dev
 ```
 
 Run frontend:
 
 ```bash
 pnpm --filter dashboard run dev
+```
+
+Build the dtos : 
+```
+pnpm --filter dtos build
 ```
 
 Available Scripts
