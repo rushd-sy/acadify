@@ -5,16 +5,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async GetUser(email: string): Promise<User | null> {
+  async getUser(email: string): Promise<User | null> {
     if (!email) {
       return null;
-    } else {
-      const user = await this.prisma.user.findUnique({
-        where: {
-          email: email,
-        },
-      });
-      return user;
     }
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return user;
   }
 }
