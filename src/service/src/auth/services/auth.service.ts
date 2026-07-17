@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { LoginDto } from 'dtos';
 import { UserRepository } from '../data/user.repository';
 import { User } from '@prisma/client';
+import { UserNotFoundError } from '../domain/errors';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +12,7 @@ export class AuthService {
     const user = await this.userRepository.getUser(loginDto.email);
 
     if (!user) {
-      throw new Error('Invalid email or password');
+      throw new UserNotFoundError();
     }
 
     return user;
