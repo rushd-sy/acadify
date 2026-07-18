@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from 'dtos';
+import { LoginDto, LoginResultDto } from 'dtos';
 import { UserRepository } from '../data/user.repository';
 import { UserNotFoundError } from '../domain/errors';
 import { JwtService } from '@nestjs/jwt';
@@ -11,7 +11,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<LoginResultDto> {
     const user = await this.userRepository.getUser(loginDto.email);
 
     if (!user) {
@@ -25,6 +25,10 @@ export class AuthService {
     const payload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
 
-    return { accessToken };
+    return {
+      id: user.id,
+      email: user.email,
+      accessToken: accessToken,
+    };
   }
 }
