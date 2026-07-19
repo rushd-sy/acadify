@@ -17,7 +17,7 @@ export class AuthService {
     if (!user) {
       throw new UserNotFoundError();
     }
-
+    // TODO: Replace with proper hash comparison (e.g., bcrypt.compare)
     if (loginDto.password !== user.hashedPassword) {
       throw new UnauthorizedException('Invalid credentials');
     }
