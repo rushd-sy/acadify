@@ -1,20 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { LoginDto } from 'dtos';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { LoginDto, LoginResultDto } from 'dtos';
 import { UserRepository } from '../data/user.repository';
-import { User } from '@prisma/client';
 import { UserNotFoundError } from '../domain/errors';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private jwtService: JwtService,
+  ) {}
 
-  async login(loginDto: LoginDto): Promise<User> {
+  async login(loginDto: LoginDto): Promise<LoginResultDto> {
     const user = await this.userRepository.getUser(loginDto.email);
 
     if (!user) {
       throw new UserNotFoundError();
     }
+    // TODO: Replace with proper hash comparison (e.g., bcrypt.compare)
+    if (loginDto.password !== user.hashedPassword) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
-    return user;
+    const payload = { sub: user.id, email: user.email };
+    const accessToken = this.jwtService.sign(payload);
+
+    return {
+      id: user.id,
+      email: user.email,
+      accessToken: accessToken,
+    };
   }
 }
