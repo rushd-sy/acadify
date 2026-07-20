@@ -3,6 +3,7 @@ import { LoginDto, LoginResultDto } from 'dtos';
 import { UserRepository } from '../data/user.repository';
 import { UserNotFoundError } from '../domain/errors';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -17,8 +18,12 @@ export class AuthService {
     if (!user) {
       throw new UserNotFoundError();
     }
-    // TODO: Replace with proper hash comparison (e.g., bcrypt.compare)
-    if (loginDto.password !== user.hashedPassword) {
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.hashedPassword,
+    );
+
+    if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
