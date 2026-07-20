@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from '@prisma/client';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../services/auth.service';
+import { UserMapper } from '../mappers/user.mapper';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -11,6 +11,7 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
+        UserMapper,
         {
           provide: AuthService,
           useValue: {
@@ -21,19 +22,28 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    authService = module.get<jest.Mocked<AuthService>>(AuthService);
+    authService = module.get(AuthService);
   });
 
-  it('should call authService.login', async () => {
+  it('should return a user dto', async () => {
     const loginDto = {
       email: 'test@test.com',
       password: '123456',
     };
+
     const user = {
+      id: 1,
+      fullName: 'Test User',
       email: 'test@test.com',
-    } as User;
-    const spy = jest.spyOn(authService, 'login').mockResolvedValue(user);
-    await controller.login(loginDto);
-    expect(spy).toHaveBeenCalledWith(loginDto);
+      hashedPassword: 'hashed-password',
+    };
+
+    authService.login.mockResolvedValue(user);
+    const result = await controller.login(loginDto);
+    expect(result).toEqual({
+      id: 1,
+      fullName: 'Test User',
+      email: 'test@test.com',
+    });
   });
 });
