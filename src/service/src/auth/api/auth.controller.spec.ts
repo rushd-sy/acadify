@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from '../services/auth.service';
-import { UserMapper } from '../mappers/user.mapper';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -11,7 +10,6 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
-        UserMapper,
         {
           provide: AuthService,
           useValue: {
@@ -25,25 +23,22 @@ describe('AuthController', () => {
     authService = module.get(AuthService);
   });
 
-  it('should return a user dto', async () => {
+  it('should return login result', async () => {
     const loginDto = {
       email: 'test@test.com',
       password: '123456',
     };
 
-    const user = {
+    const loginResult = {
       id: 1,
-      fullName: 'Test User',
       email: 'test@test.com',
-      hashedPassword: 'hashed-password',
+      accessToken: 'jwt-token',
     };
 
-    authService.login.mockResolvedValue(user);
+    authService.login.mockResolvedValue(loginResult);
+
     const result = await controller.login(loginDto);
-    expect(result).toEqual({
-      id: 1,
-      fullName: 'Test User',
-      email: 'test@test.com',
-    });
+
+    expect(result).toEqual(loginResult);
   });
 });
