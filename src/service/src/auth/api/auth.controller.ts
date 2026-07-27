@@ -15,8 +15,6 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('mock')
   mock() {
-    return {
-      message: 'Hello',
-    };
+    return { status: 'ok' };
   }
 }
