@@ -11,6 +11,7 @@ function App() {
           <Route path="students" element={<StudentsPage />} />
           <Route path="students/:id" element={<StudentsDetailsPage />} />
           <Route path="*" element={<ErrorPage />} />
+          <Route path="login" element={<LoginPage />} />"
         </Route>
       </Routes>
     </div>
