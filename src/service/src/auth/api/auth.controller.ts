@@ -13,8 +13,8 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('mock')
-  mock() {
+  @Get('test')
+  test() {
     return { status: 'ok' };
   }
 }
