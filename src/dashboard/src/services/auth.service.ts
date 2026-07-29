@@ -1,9 +1,8 @@
 export const authService = {
   // TODO: Placeholder for login implementation
 
-  login: async (credentials: Record<string, unknown>) => {
+  login: async () => {
     // TODO: Implement API call for login endpoint
-    console.log('Login method called', credentials);
     return Promise.resolve(null);
   },
 
