@@ -4,23 +4,22 @@ import StudentsDetailsPage from '@/pages/students-details-page';
 import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
 import LoginPage from './pages/login-page';
+import AuthLayout from './layout/AuthLayout';
 
 function App() {
   return (
     <Routes>
-      {/* Public Route */}
-      <Route path="/login" element={<LoginPage />} />
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+      </Route>
 
-      {/* Redirect root to students */}
       <Route path="/" element={<Navigate to="/students" replace />} />
 
-      {/* Layout Routes */}
       <Route element={<SharedLayout />}>
         <Route path="/students" element={<StudentsPage />} />
         <Route path="/students/:id" element={<StudentsDetailsPage />} />
       </Route>
 
-      {/* 404 */}
       <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
