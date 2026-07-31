@@ -5,21 +5,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    console.log({
-      email,
-      password,
-    });
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="flex w-full max-w-sm flex-col gap-4 rounded-lg border p-6"
-      >
+      <form className="flex w-full max-w-sm flex-col gap-4 rounded-lg border p-6">
         <h1 className="text-center text-2xl font-bold">Login</h1>
 
         <div className="flex flex-col gap-1">
