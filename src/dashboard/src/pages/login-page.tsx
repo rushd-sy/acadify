@@ -15,7 +15,7 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    
+
     if (!email.trim() || !password.trim()) {
       setError('Please enter Email and Password');
       return;
@@ -30,7 +30,11 @@ export default function LoginPage() {
 
       navigate('/students');
     } catch (err) {
-      setError(err.message || 'Can not login, check your credentials');
+      if(err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Can not login, check your credentials');
+      }
     } finally {
       setIsLoading(false);
     }

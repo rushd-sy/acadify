@@ -1,4 +1,4 @@
-import { LoginDto, LoginResultDto } from 'dtos'; 
+import { LoginDto, LoginResultDto } from 'dtos';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
