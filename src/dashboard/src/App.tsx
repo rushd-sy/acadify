@@ -13,6 +13,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
       </Route>
 
+      <Route path="" element={<SharedLayout />}></Route>
+
       <Route path="/" element={<Navigate to="/students" replace />} />
 
       <Route element={<SharedLayout />}>
