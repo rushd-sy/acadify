@@ -30,7 +30,7 @@ export default function LoginPage() {
 
       navigate('/students');
     } catch (err) {
-      if(err instanceof Error) {
+      if (err instanceof Error) {
         setError(err.message);
       } else {
         setError('Can not login, check your credentials');
