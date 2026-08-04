@@ -1,14 +1,15 @@
-import { LoginDto, LoginResultDto } from 'dtos';
+import type { LoginDto } from 'dtos';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const authService = {
-  login: async (credentials: LoginDto): Promise<LoginResultDto> => {
+  login: async (credentials: LoginDto): Promise<{ message: string}> => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(credentials),
     });
 

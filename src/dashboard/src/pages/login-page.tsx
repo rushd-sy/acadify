@@ -23,11 +23,8 @@ export default function LoginPage() {
 
     try {
       setIsLoading(true);
-
-      const response = await authService.login({ email, password });
-
-      localStorage.setItem('accessToken', response.accessToken);
-
+      await authService.login({ email, password });
+      // TODO: Redirect the user to the home page whenever it is implemented
       navigate('/students');
     } catch (err) {
       if (err instanceof Error) {
