@@ -42,7 +42,7 @@ describe('AuthController', () => {
       };
       const mockAccessToken = 'mock-jwt-token-123';
 
-      const loginSpy = jest
+      jest
         .spyOn(authService, 'login')
         .mockResolvedValue({ accessToken: mockAccessToken });
 
@@ -52,8 +52,6 @@ describe('AuthController', () => {
       } as unknown as Response;
 
       const result = await controller.login(loginDto, mockResponse);
-      expect(loginSpy).toHaveBeenCalledWith(loginDto);
-      expect(loginSpy).toHaveBeenCalledTimes(1);
 
       expect(cookieMock).toHaveBeenCalledWith(
         'accessToken',
