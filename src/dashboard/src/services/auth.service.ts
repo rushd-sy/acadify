@@ -1,4 +1,5 @@
 import type { LoginDto } from 'dtos';
+import { authSessionService } from './auth-session.service';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -23,8 +24,9 @@ export const authService = {
       }
       throw new Error(errorMessage);
     }
-
-    return await response.json();
+    const data = await response.json();
+    authSessionService.storeToken(data.accessToken);
+    return data;
   },
 
   // TODO: Placeholder for logout implementation
