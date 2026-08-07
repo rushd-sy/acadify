@@ -1,20 +1,21 @@
-const TOKEN_KEY = 'accessToken';
+import { authService } from './auth.service';
 
+let authenticated = false;
 export const authSessionService = {
-  storeToken: (accessToken: string) => {
-    localStorage.setItem(TOKEN_KEY, accessToken);
+  clearSession: () => {
+    authenticated = false;
   },
 
-  getToken: () => {
-    return localStorage.getItem(TOKEN_KEY);
+  restoreSession: async () => {
+    const sessionIsValid = await authService.checkSession();
+    authSessionService.setAuthenticated(sessionIsValid);
   },
 
-  clearToken: () => {
-    localStorage.removeItem(TOKEN_KEY);
+  setAuthenticated: (value: boolean) => {
+    authenticated = value;
   },
 
   isAuthenticated: () => {
-    const token = localStorage.getItem(TOKEN_KEY);
-    return !!token;
+    return authenticated;
   },
 };

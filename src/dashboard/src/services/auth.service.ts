@@ -25,8 +25,20 @@ export const authService = {
       throw new Error(errorMessage);
     }
     const data = await response.json();
-    authSessionService.storeToken(data.accessToken);
+    authSessionService.setAuthenticated(true);
     return data;
+  },
+
+  checkSession: async (): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/test`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
   },
 
   // TODO: Placeholder for logout implementation
