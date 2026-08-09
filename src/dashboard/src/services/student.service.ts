@@ -1,7 +1,8 @@
+import { apiClient } from '../lib/api-client';
 class StudentServic {
-  private readonly baseUrl = `${import.meta.env.VITE_API_URL}/api/student`;
+  private readonly baseUrl = '/api/student';
   async getAllStudents() {
-    const response = await fetch(this.baseUrl);
+    const response = await apiClient(this.baseUrl);
 
     if (!response.ok) {
       throw new Error('Failed to fetch students');
@@ -11,7 +12,7 @@ class StudentServic {
   }
 
   async getStudentById(id: number) {
-    const response = await fetch(`${this.baseUrl}/${id}`);
+    const response = await apiClient(`${this.baseUrl}/${id}`);
 
     if (!response.ok) {
       throw new Error('Failed to fetch student');
@@ -21,7 +22,7 @@ class StudentServic {
   }
 
   async deleteStudentById(id: number) {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
+    const response = await apiClient(`${this.baseUrl}/${id}`, {
       method: 'DELETE',
     });
 

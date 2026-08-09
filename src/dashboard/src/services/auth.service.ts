@@ -1,15 +1,10 @@
 import type { LoginDto } from 'dtos';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { apiClient } from '../lib/api-client';
 
 export const authService = {
   login: async (credentials: LoginDto): Promise<{ message: string }> => {
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await apiClient('/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
       body: JSON.stringify(credentials),
     });
 
@@ -29,9 +24,8 @@ export const authService = {
 
   checkSession: async (): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_URL}/auth/test`, {
+      const response = await apiClient('/auth/test', {
         method: 'GET',
-        credentials: 'include',
       });
       return response.ok;
     } catch {
