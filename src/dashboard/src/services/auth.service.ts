@@ -1,5 +1,4 @@
 import type { LoginDto } from 'dtos';
-import { authSessionService } from './auth-session.service';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,9 +23,8 @@ export const authService = {
       }
       throw new Error(errorMessage);
     }
-    const data = await response.json();
-    authSessionService.setAuthenticated(true);
-    return data;
+
+    return await response.json();
   },
 
   checkSession: async (): Promise<boolean> => {
