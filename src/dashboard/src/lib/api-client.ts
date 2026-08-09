@@ -1,20 +1,16 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import axios from 'axios';
 
-export const apiClient = async (endpoint: string, options: RequestInit = {}) => {
-    const defaultOptions: RequestInit = {
-        ...options,
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
-        },
-    };
+export const api = axios.create({
+    baseURL: import.meta.env.VIT_API_URL,
+    withCredentials: true,
+}); 
 
-    const response = await fetch(`${API_URL}${endpoint}`, defaultOptions);
-
-    if (response.status === 401) {
-        window.location.href = '/login';
-        throw new Error('Unautherized');
-    }
+api.interceptors.request.use((response) => {
     return response;
-}
+},
+(error) => {
+    if (error.response && error.response.status === 401) {
+        window.location.href = '/login';
+    }
+    return Promise.reject(error);
+});

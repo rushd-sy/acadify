@@ -1,33 +1,27 @@
 import type { LoginDto } from 'dtos';
-import { apiClient } from '../lib/api-client';
+import { api } from '../lib/api-client';
+import { AxiosError } from 'axios';
 
 export const authService = {
   login: async (credentials: LoginDto): Promise<{ message: string }> => {
-    const response = await apiClient('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      let errorMessage = 'Can not login in.';
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch (e) {
-        console.log(e);
+    try {
+      const response = await api.post('/auth/login', credentials);
+      return response.data;
+    } catch (error) {
+      let errorMessage = 'An error occurred during login.';
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
-      throw new Error(errorMessage);
+      throw new Error(errorMessage, { cause: error });
     }
-
-    return await response.json();
   },
 
   checkSession: async (): Promise<boolean> => {
     try {
-      const response = await apiClient('/auth/test', {
-        method: 'GET',
-      });
-      return response.ok;
+      const response = await api.get('/auth/test');
+      return response.status === 200;
     } catch {
       return false;
     }
