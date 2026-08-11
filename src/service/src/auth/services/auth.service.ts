@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto, LoginResultDto } from 'dtos';
+import { LoginDto, LoginResultDto, UserDto } from 'dtos';
 import { UserRepository } from '../data/user.repository';
 import { UserNotFoundError } from '../domain/errors';
 import { JwtService } from '@nestjs/jwt';
@@ -34,6 +34,20 @@ export class AuthService {
       id: user.id,
       email: user.email,
       accessToken: accessToken,
+    };
+  }
+
+  async getCurrentUser(user: { id: number; email: string }): Promise<UserDto> {
+    const currentUser = await this.userRepository.getUserById(user.id);
+
+    if (!currentUser) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return {
+      id: currentUser.id,
+      fullName: currentUser.fullName,
+      email: currentUser.email,
     };
   }
 }
