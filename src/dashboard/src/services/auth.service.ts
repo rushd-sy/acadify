@@ -3,6 +3,22 @@ import type { LoginDto } from 'dtos';
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const authService = {
+  getCurrentUser: async () => {
+    const response = await fetch(`${API_URL}/auth/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    if (!response) {
+      throw new Error('Unauthorized');
+    }
+
+    return response.json();
+  },
+
   login: async (credentials: LoginDto): Promise<{ message: string }> => {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',

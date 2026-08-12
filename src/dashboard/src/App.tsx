@@ -5,25 +5,28 @@ import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
 import LoginPage from './pages/login-page';
 import AuthLayout from './layout/AuthLayout';
+import { AuthProvider } from './providers/auth-provider';
 
 function App() {
   return (
-    <Routes>
-      <Route element={<AuthLayout />}>
-        <Route path="/login" element={<LoginPage />} />
-      </Route>
+    <AuthProvider>
+      <Routes>
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
 
-      <Route path="" element={<SharedLayout />}></Route>
+        <Route path="" element={<SharedLayout />}></Route>
 
-      <Route path="/" element={<Navigate to="/students" replace />} />
+        <Route path="/" element={<Navigate to="/students" replace />} />
 
-      <Route element={<SharedLayout />}>
-        <Route path="/students" element={<StudentsPage />} />
-        <Route path="/students/:id" element={<StudentsDetailsPage />} />
-      </Route>
+        <Route element={<SharedLayout />}>
+          <Route path="/students" element={<StudentsPage />} />
+          <Route path="/students/:id" element={<StudentsDetailsPage />} />
+        </Route>
 
-      <Route path="*" element={<ErrorPage />} />
-    </Routes>
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </AuthProvider>
   );
 }
 
