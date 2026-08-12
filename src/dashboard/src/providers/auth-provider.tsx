@@ -9,15 +9,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const refreshUser = async (showLoad: boolean = true) => {
-    if (showLoad) {
+  const syncAuthState = async ({
+    showLoader = true,
+  }: { showLoader?: boolean } = {}) => {
+    if (showLoader) {
       setLoading(true);
     }
 
-    try {
-      const currentUser = await authService.getCurrentUser();
-      setUser(currentUser);
+    const updateAuthState = (user: UserDto | null) => {
+      setUser(user);
       setIsAuthenticated(true);
+    };
+
+    try {
+      updateAuthState(await authService.getCurrentUser());
     } catch {
       setUser(null);
       setIsAuthenticated(false);
@@ -27,15 +32,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    const initAuth = async () => {
-      await refreshUser(false);
+    const inittializeAuth = async () => {
+      await syncAuthState({ showLoader: false });
     };
-    initAuth();
+    inittializeAuth();
   }, []);
 
   const login = async (credentials: LoginDto) => {
     await authService.login(credentials);
-    await refreshUser(false);
+    await syncAuthState({ showLoader: false });
   };
 
   const logout = async () => {
@@ -46,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, loading, login, logout, refreshUser }}
+      value={{ user, isAuthenticated, loading, login, logout, syncAuthState }}
     >
       {children}
     </AuthContext.Provider>

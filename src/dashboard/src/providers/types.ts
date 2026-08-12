@@ -6,5 +6,5 @@ export interface AuthContextType {
   loading: boolean;
   login: (credentials: LoginDto) => Promise<void>;
   logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
+  syncAuthState: (options?: { showLoader?: boolean }) => Promise<void>;
 }
