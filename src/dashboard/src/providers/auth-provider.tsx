@@ -24,10 +24,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       (error) => {
         if (error.response && error.response.status === 401) {
           resetAuthState();
-          navigate('/login', { replace: true});
+          navigate('/login', { replace: true });
         }
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
