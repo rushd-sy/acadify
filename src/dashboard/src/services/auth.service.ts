@@ -12,10 +12,8 @@ export const authService = {
     return response.data;
   },
 
-  // TODO: Placeholder for logout implementation
-
   logout: async () => {
-    // TODO: Implement logout logic(clear tokens)
-    return Promise.resolve();
+    const response = await api.post('/auth/logout');
+    return response.data;
   },
 };
