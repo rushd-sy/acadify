@@ -1,46 +1,15 @@
 import type { LoginDto } from 'dtos';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { api } from '../lib/api-client';
 
 export const authService = {
   getCurrentUser: async () => {
-    const response = await fetch(`${API_URL}/auth/me`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-
-    if (!response) {
-      throw new Error('Unauthorized');
-    }
-
-    return response.json();
+    const response = await api.get('/auth/me');
+    return response.data;
   },
 
-  login: async (credentials: LoginDto): Promise<{ message: string }> => {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      let errorMessage = 'Can not login in.';
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch (e) {
-        console.log(e);
-      }
-      throw new Error(errorMessage);
-    }
-
-    return await response.json();
+  login: async (credentials: LoginDto) => {
+    const response = await api.post('/auth/login', credentials);
+    return response.data;
   },
 
   // TODO: Placeholder for logout implementation

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { authService } from '../services/auth.service';
+import { useAuth } from '../providers/auth.context';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -23,7 +24,7 @@ export default function LoginPage() {
 
     try {
       setIsLoading(true);
-      await authService.login({ email, password });
+      await login({ email, password });
       // TODO: Redirect the user to the home page whenever it is implemented
       navigate('/students');
     } catch (err) {
