@@ -1,40 +1,34 @@
-import './SharedLayout.css';
-import { Link, Outlet, Navigate } from 'react-router-dom';
-import LeftNavbar from './LeftNavbar';
-import UpperNavbar from './UpperNavbar';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../components/ui/button';
+import { ButtonGroup } from '../components/ui/button-group';
 import { useAuth } from '../providers/auth.context';
 
-export default function SharedLayout() {
-  const { isAuthenticated, loading } = useAuth();
+export default function UpperNav() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <h2 className="text-xl font-bold">Loading...</h2>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   return (
-    <div className="shared-layout">
-      <div className="title">
-        <Link to="">
-          <h1>A C A D Y F I</h1>
-        </Link>
-      </div>
-      <div className="bg-white">
-        <UpperNavbar />
-      </div>
-      <div className="h-full min-h-0">
-        <LeftNavbar />
-      </div>
-      <div style={{ backgroundColor: 'rgb(203, 203, 203)' }}>
-        <Outlet />
-      </div>
-    </div>
+    <>
+      <ButtonGroup className="p-4 ml-10 mt-7">
+        <ButtonGroup>
+          <Button className="text-3xl p-5">First Name</Button>
+          <Button className="text-3xl p-5">Second Name</Button>
+        </ButtonGroup>
+
+        <ButtonGroup>
+          <Button className="text-3xl p-5">Number</Button>
+          <Button className="text-3xl p-5">Email</Button>
+        </ButtonGroup>
+
+        <Button className="text-3xl p-5" onClick={handleLogout}>
+          Logout
+        </Button>
+      </ButtonGroup>
+    </>
   );
 }
