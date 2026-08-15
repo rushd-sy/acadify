@@ -12,7 +12,12 @@ export class StudentService {
 
   async getStudents(): Promise<StudentDto[]> {
     const students = await this.prisma.student.findMany();
-    return this.mapper.toStudentDTOs(students);
+
+    const studentDomains = students.map((student) =>
+      this.mapper.toDomain(student),
+    );
+
+    return this.mapper.toStudentDTOs(studentDomains);
   }
 
   async getStudentById(id: number): Promise<StudentDetailsDto> {
@@ -24,15 +29,23 @@ export class StudentService {
       throw new Error(`Student with id ${id} not found`);
     }
 
-    return this.mapper.toStudentDetailsDTO(student);
+    const studentDomain = this.mapper.toDomain(student);
+
+    return this.mapper.toStudentDetailsDTO(studentDomain);
   }
 
   async createStudent(data: CreateStudentDto): Promise<StudentDto> {
-    const persistenceData = this.mapper.toPersistence(data);
+    const studentDomain = this.mapper.toDomainFromCreateDto(data);
+
+    const persistenceData = this.mapper.toPersistence(studentDomain);
+
     const student = await this.prisma.student.create({
       data: persistenceData,
     });
-    return this.mapper.toStudentDTO(student);
+
+    const savedStudentDomain = this.mapper.toDomain(student);
+
+    return this.mapper.toStudentDTO(savedStudentDomain);
   }
 
   async deleteStudent(id: number): Promise<void> {
