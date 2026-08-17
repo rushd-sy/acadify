@@ -9,8 +9,8 @@ datasource db {
 
 model Student {
   id Int @id @default(autoincrement())
-  User User @relation(fields: [UserId], references: [id])
-  UserId Int @unique
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
 }
 
 model User {
@@ -22,5 +22,5 @@ model User {
   hashedPassword String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  students Student?
+  student Student?
 }
