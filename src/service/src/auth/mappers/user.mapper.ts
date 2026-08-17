@@ -10,6 +10,7 @@ export class UserMapper {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
+      phoneNumber: user.phoneNumber,
       email: user.email,
     };
   }
@@ -24,6 +25,7 @@ export class UserMapper {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      phoneNumber: user.phoneNumber,
       hashedPassword: user.hashedPassword,
     });
   }
@@ -33,15 +35,19 @@ export class UserMapper {
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: createUserDto.email,
+      phoneNumber: createUserDto.phoneNumber,
       hashedPassword: createUserDto.hashedPassword,
     });
   }
 
-  toPersistence(user: UserDomain): Omit<UserDomain, 'id'> {
+  toPersistence(
+    user: UserDomain,
+  ): Omit<User, 'id' | 'createdAt' | 'updatedAt'> {
     return {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      phoneNumber: user.phoneNumber,
       hashedPassword: user.hashedPassword,
     };
   }

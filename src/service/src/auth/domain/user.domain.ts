@@ -5,6 +5,7 @@ export class UserDomain {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber: string;
   hashedPassword: string;
 
   private constructor(input: {
@@ -12,6 +13,7 @@ export class UserDomain {
     firstName: string;
     lastName: string;
     email: string;
+    phoneNumber: string;
     hashedPassword: string;
   }) {
     this.id = input.id;
@@ -22,6 +24,10 @@ export class UserDomain {
     this.lastName = StringUtils.normalizeRequiredText(
       input.lastName,
       'Last name',
+    );
+    this.phoneNumber = StringUtils.normalizeRequiredText(
+      input.phoneNumber,
+      'Phone number',
     );
     this.email = StringUtils.normalizeEmail(input.email);
     this.hashedPassword = StringUtils.normalizeRequiredText(
@@ -34,6 +40,7 @@ export class UserDomain {
     firstName: string;
     lastName: string;
     email: string;
+    phoneNumber: string;
     hashedPassword: string;
   }): UserDomain {
     return new UserDomain(input);
@@ -44,6 +51,7 @@ export class UserDomain {
     firstName: string;
     lastName: string;
     email: string;
+    phoneNumber: string;
     hashedPassword: string;
   }): UserDomain {
     return new UserDomain(input);
