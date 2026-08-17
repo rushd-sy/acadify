@@ -8,7 +8,8 @@ export class UserMapper {
   toUserDto(user: User): UserDto {
     return {
       id: user.id,
-      fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
     };
   }
@@ -20,7 +21,8 @@ export class UserMapper {
   toDomain(user: User): UserDomain {
     return UserDomain.fromPersistence({
       id: user.id,
-      fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       hashedPassword: user.hashedPassword,
     });
@@ -28,15 +30,17 @@ export class UserMapper {
 
   toDomainFromCreateDto(createUserDto: CreateUserDto): UserDomain {
     return UserDomain.create({
-      fullName: createUserDto.fullName,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
       email: createUserDto.email,
       hashedPassword: createUserDto.hashedPassword,
     });
   }
 
-  toPersistence(user: UserDomain): Omit<User, 'id'> {
+  toPersistence(user: UserDomain): Omit<UserDomain, 'id'> {
     return {
-      fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       hashedPassword: user.hashedPassword,
     };

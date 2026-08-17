@@ -2,20 +2,26 @@ import { StringUtils } from '../../utils/string.util';
 
 export class UserDomain {
   id?: number;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   hashedPassword: string;
 
   private constructor(input: {
     id?: number;
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     hashedPassword: string;
   }) {
     this.id = input.id;
-    this.fullName = StringUtils.normalizeRequiredText(
-      input.fullName,
-      'Full name',
+    this.firstName = StringUtils.normalizeRequiredText(
+      input.firstName,
+      'First name',
+    );
+    this.lastName = StringUtils.normalizeRequiredText(
+      input.lastName,
+      'Last name',
     );
     this.email = StringUtils.normalizeEmail(input.email);
     this.hashedPassword = StringUtils.normalizeRequiredText(
@@ -25,7 +31,8 @@ export class UserDomain {
   }
 
   static create(input: {
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     hashedPassword: string;
   }): UserDomain {
@@ -34,7 +41,8 @@ export class UserDomain {
 
   static fromPersistence(input: {
     id: number;
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string;
     hashedPassword: string;
   }): UserDomain {
