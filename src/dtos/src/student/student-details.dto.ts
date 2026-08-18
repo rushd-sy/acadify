@@ -1,7 +1,5 @@
-export class StudentDetailsDto {
-  id!: number;
-  firstName!: string;
-  lastName!: string;
-  email!: string;
+import { StudentDto } from './student.dto';
+
+export class StudentDetailsDto extends StudentDto {
   phoneNumber!: string;
 }

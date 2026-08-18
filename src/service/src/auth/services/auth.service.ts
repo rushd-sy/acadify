@@ -49,6 +49,7 @@ export class AuthService {
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
       email: currentUser.email,
+      phoneNumber: currentUser.phoneNumber,
     };
   }
 }
