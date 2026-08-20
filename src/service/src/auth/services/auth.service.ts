@@ -46,8 +46,10 @@ export class AuthService {
 
     return {
       id: currentUser.id,
-      fullName: currentUser.fullName,
+      firstName: currentUser.firstName,
+      lastName: currentUser.lastName,
       email: currentUser.email,
+      phoneNumber: currentUser.phoneNumber,
     };
   }
 }

@@ -1,5 +1,7 @@
 export class UserDto {
   id!: number;
-  fullName!: string;
+  firstName!: string;
+  lastName!: string;
   email!: string;
+  phoneNumber!: string;
 }
