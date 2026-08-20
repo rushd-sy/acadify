@@ -1,4 +1,5 @@
-import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty, IsEnum } from 'class-validator';
+import { Role } from './role.enum';
 
 export class LoginResultDto {
   @IsNotEmpty()
@@ -11,4 +12,8 @@ export class LoginResultDto {
   @IsString()
   @IsNotEmpty()
   accessToken!: string;
+
+  @IsEnum(Role)
+  @IsNotEmpty()
+  role!: Role;
 }
