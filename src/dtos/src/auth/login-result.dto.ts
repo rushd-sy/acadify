@@ -14,5 +14,5 @@ export class LoginResultDto {
   accessToken!: string;
 
   @IsEnum(Role)
-  role?: Role;
+  role!: Role;
 }

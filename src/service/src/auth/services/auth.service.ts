@@ -4,6 +4,8 @@ import { UserRepository } from '../data/user.repository';
 import { UserNotFoundError } from '../domain/errors';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'dtos';
+import { JwtPayload } from '../api/types/jwt-payload.type';
 
 @Injectable()
 export class AuthService {
@@ -27,13 +29,23 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const isStudent = !!user.student;
+
+    if (!isStudent) {
+      throw new UnauthorizedException(
+        'Access denied: Only students are allowed to log in at this time.',
+      );
+    }
+
+    const role = Role.STUDENT;
+    const payload: JwtPayload = { sub: user.id, email: user.email, role };
     const accessToken = this.jwtService.sign(payload);
 
     return {
       id: user.id,
       email: user.email,
       accessToken: accessToken,
+      role,
     };
   }
 
@@ -44,12 +56,15 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
+    const role = Role.STUDENT;
+
     return {
       id: currentUser.id,
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
       email: currentUser.email,
       phoneNumber: currentUser.phoneNumber,
+      role: role,
     };
   }
 }
