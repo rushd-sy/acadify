@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
+
+import { CreateStudentDto, Role, StudentDetailsDto, StudentDto } from 'dtos';
+
 import { StudentDomain } from '../domain/student.domain';
+
 import { UserDomain } from '../../auth/domain/user.domain';
+
 import { StudentWithUser } from '../types/student-user.type';
 
 @Injectable()
@@ -13,6 +17,7 @@ export class StudentMapper {
       firstName: student.user.firstName,
       lastName: student.user.lastName,
       email: student.user.email,
+      role: Role.STUDENT,
     };
   }
 
@@ -28,6 +33,7 @@ export class StudentMapper {
       lastName: student.user.lastName,
       email: student.user.email,
       phoneNumber: student.user.phoneNumber,
+      role: Role.STUDENT,
     };
   }
 
@@ -39,6 +45,7 @@ export class StudentMapper {
       phoneNumber: createStudentDto.phoneNumber,
       hashedPassword: createStudentDto.hashedPassword,
     });
+
     return StudentDomain.create(userDomain);
   }
 }
