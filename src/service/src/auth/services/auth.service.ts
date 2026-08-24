@@ -31,14 +31,12 @@ export class AuthService {
 
     const isStudent = !!user.student;
 
-    if (!isStudent) {
-      throw new UnauthorizedException(
-        'Access denied: Only students are allowed to log in at this time.',
-      );
-    }
-
-    const role = Role.STUDENT;
-    const payload: JwtPayload = { sub: user.id, email: user.email, role };
+    const role = isStudent ? Role.STUDENT : Role.USER;
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role,
+    };
     const accessToken = this.jwtService.sign(payload);
 
     return {
