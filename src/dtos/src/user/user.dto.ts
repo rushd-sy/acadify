@@ -6,5 +6,5 @@ export class UserDto {
   lastName!: string;
   email!: string;
   phoneNumber!: string;
-  role?: Role;
+  role!: Role;
 }
