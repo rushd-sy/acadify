@@ -5,13 +5,16 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getUser(email: string): Promise<User | null> {
+  async getUser(email: string) {
     if (!email) {
       return null;
     }
     const user = await this.prisma.user.findUnique({
       where: {
         email: email,
+      },
+      include: {
+        student: true,
       },
     });
     return user;
@@ -20,6 +23,9 @@ export class UserRepository {
     return this.prisma.user.findUnique({
       where: {
         id,
+      },
+      include: {
+        student: true,
       },
     });
   }
