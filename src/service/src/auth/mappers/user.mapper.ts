@@ -1,17 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, UserDto } from 'dtos';
+import { CreateUserDto, UserDto, Role } from 'dtos';
 import { UserDomain } from '../domain/user.domain';
 import { User } from '@prisma/client';
 
 @Injectable()
 export class UserMapper {
-  toUserDto(user: User): UserDto {
+  toUserDto(user: User & { student?; teacher?; admin? }): UserDto {
+    let role: Role = Role.STUDENT;
+
+    if (user.teacher) {
+      role = Role.TEACHER;
+    } else if (user.admin) {
+      role = Role.ADMIN;
+    }
     return {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
       email: user.email,
+      role: role,
     };
   }
 
