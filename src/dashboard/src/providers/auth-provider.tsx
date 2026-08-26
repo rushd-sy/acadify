@@ -64,8 +64,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (credentials: LoginDto) => {
-    await authService.login(credentials);
+    const data = await authService.login(credentials);
     await syncAuthState({ showLoader: false });
+    return data;
+    
   };
 
   const logout = async () => {

@@ -24,8 +24,8 @@ export class AuthController {
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ message: string }> {
-    const { accessToken } = await this.authService.login(loginDto);
+  ) {
+    const accessToken = await this.authService.login(loginDto);
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -33,7 +33,7 @@ export class AuthController {
       maxAge: ONE_DAY_MS,
     });
 
-    return { message: 'Login successful' };
+    return { message: 'Login successful', role: accessToken.role };
   }
 
   @UseGuards(AuthGuard('jwt'))

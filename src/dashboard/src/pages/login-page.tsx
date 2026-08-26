@@ -24,9 +24,14 @@ export default function LoginPage() {
 
     try {
       setIsLoading(true);
-      await login({ email, password });
-      // TODO: Redirect the user to the home page whenever it is implemented
-      navigate('/students');
+      const userData = await login({ email, password });
+      console.log("User Data: ", userData);
+
+      if (userData?.role === 'STUDENT') {
+        navigate('/students');
+      } else if (userData?.role === 'USER') {
+        navigate('/');
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
