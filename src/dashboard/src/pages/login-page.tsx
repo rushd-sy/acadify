@@ -25,7 +25,7 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       const userData = await login({ email, password });
-      console.log("User Data: ", userData);
+      console.log('User Data: ', userData);
 
       if (userData?.role === 'STUDENT') {
         navigate('/students');
