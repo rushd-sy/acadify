@@ -25,15 +25,15 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const accessToken = await this.authService.login(loginDto);
-    res.cookie('accessToken', accessToken, {
+    const result = await this.authService.login(loginDto);
+    res.cookie('accessToken', result.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: ONE_DAY_MS,
     });
 
-    return { message: 'Login successful', role: accessToken.role };
+    return { message: 'Login successful', role: result.role };
   }
 
   @UseGuards(AuthGuard('jwt'))
