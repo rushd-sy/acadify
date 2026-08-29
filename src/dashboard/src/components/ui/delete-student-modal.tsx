@@ -3,6 +3,7 @@ type DeleteStudentModalProps = {
   studentName: string;
   onYes: () => void;
   onNo: () => void;
+  isLoading: boolean;
 };
 
 function DeleteStudentModal({
@@ -10,6 +11,7 @@ function DeleteStudentModal({
   studentName,
   onYes,
   onNo,
+  isLoading,
 }: DeleteStudentModalProps) {
   if (!open) return null;
 
@@ -37,7 +39,7 @@ function DeleteStudentModal({
             onClick={onYes}
             className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-600"
           >
-            Yes
+            {isLoading ? 'Deleting...' : 'Yes'}
           </button>
         </div>
       </div>
