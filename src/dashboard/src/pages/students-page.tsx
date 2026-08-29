@@ -41,18 +41,19 @@ export default function StudentsPage() {
       return;
     }
 
-    try { 
+    try {
       setIsDeleting(true);
       await studentService.deleteStudentById(studentToDelete);
-      setStudents((prevStudents) => 
-      prevStudents.filter((student) => student.id !== studentToDelete));
+      setStudents((prevStudents) =>
+        prevStudents.filter((student) => student.id !== studentToDelete),
+      );
     } catch (error) {
       console.log(`Failed to delete student: ${error}`);
     } finally {
       setIsDeleting(false);
       setStudentToDelete(null);
     }
-  }
+  };
 
   return (
     <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
@@ -99,7 +100,9 @@ export default function StudentsPage() {
 
       <DeleteStudentModal
         open={!!studentToDelete}
-        studentName={students.find((st) => st.id === studentToDelete)?.name || ''}
+        studentName={
+          students.find((st) => st.id === studentToDelete)?.name || ''
+        }
         onYes={handleConfirmDelete}
         onNo={() => setStudentToDelete(null)}
         isLoading={isDeleting}

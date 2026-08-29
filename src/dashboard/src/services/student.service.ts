@@ -14,7 +14,7 @@ class StudentServic {
 
   async deleteStudentById(id: number | string) {
     const response = await api.delete(`${this.baseUrl}/${id}`);
-    return response.data; 
+    return response.data;
   }
 }
 export const studentService = new StudentServic();
