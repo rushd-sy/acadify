@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { StudentDomain } from '../domain/student.domain';
 import { StudentWithUser } from '../types/student-user.type';
 import * as bcrypt from 'bcrypt';
+import { UpdateStudentDto } from 'dtos';
 
 @Injectable()
 export class StudentRepository {
@@ -67,5 +68,28 @@ export class StudentRepository {
         });
       }
     });
+  }
+
+  async updateStudentData(
+    id: number,
+    updateData: UpdateStudentDto,
+  ): Promise<StudentWithUser | null> {
+    const student = await this.findById(id);
+
+    if (!student) {
+      return null;
+    }
+
+    await this.prisma.user.update({
+      where: { id: student.userId },
+      data: {
+        firstName: updateData.firstName ?? student.user.firstName,
+        lastName: updateData.lastName ?? student.user.lastName,
+        email: updateData.email ?? student.user.email,
+        phoneNumber: updateData.phoneNumber ?? student.user.phoneNumber,
+      },
+    });
+
+    return this.findById(id);
   }
 }
