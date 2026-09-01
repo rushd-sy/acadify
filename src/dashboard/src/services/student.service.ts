@@ -1,33 +1,20 @@
+import { api } from '../lib/api-client';
+
 class StudentServic {
-  private readonly baseUrl = `${import.meta.env.VITE_API_URL}/api/student`;
+  private readonly baseUrl = 'api/student';
   async getAllStudents() {
-    const response = await fetch(this.baseUrl);
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch students');
-    }
-
-    return response.json();
+    const response = await api.get(this.baseUrl);
+    return response.data;
   }
 
   async getStudentById(id: number) {
-    const response = await fetch(`${this.baseUrl}/${id}`);
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch student');
-    }
-
-    return response.json();
+    const response = await api.get(`${this.baseUrl}/${id}`);
+    return response.data;
   }
 
-  async deleteStudentById(id: number) {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete student');
-    }
+  async deleteStudentById(id: number | string) {
+    const response = await api.delete(`${this.baseUrl}/${id}`);
+    return response.data;
   }
 }
 export const studentService = new StudentServic();

@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { useState } from 'react';
 import DeleteStudentModal from '@/components/ui/delete-student-modal';
+import { studentService } from '@/services/student.service';
 
 const array = [
   {
@@ -30,17 +31,29 @@ const array = [
   },
 ];
 
-async function handleConfirmDelete(
-  studentId: string | null,
-  closeModal: () => void,
-) {
-  if (!studentId) return;
-
-  closeModal();
-}
-
 export default function StudentsPage() {
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+  const [students, setStudents] = useState(array);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleConfirmDelete = async () => {
+    if (!studentToDelete) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      await studentService.deleteStudentById(studentToDelete);
+      setStudents((prevStudents) =>
+        prevStudents.filter((student) => student.id !== studentToDelete),
+      );
+    } catch (error) {
+      console.log(`Failed to delete student: ${error}`);
+    } finally {
+      setIsDeleting(false);
+      setStudentToDelete(null);
+    }
+  };
 
   return (
     <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
@@ -57,7 +70,7 @@ export default function StudentsPage() {
         </TableHeader>
 
         <TableBody className="text-xl">
-          {array.map((e) => {
+          {students.map((e) => {
             return (
               <TableRow key={e.id} className="bg-gray-50 hover:bg-gray-100">
                 <TableCell className="py-6">
@@ -87,11 +100,12 @@ export default function StudentsPage() {
 
       <DeleteStudentModal
         open={!!studentToDelete}
-        studentName={array.find((st) => st.id === studentToDelete)?.name || ''}
-        onYes={() =>
-          handleConfirmDelete(studentToDelete, () => setStudentToDelete(null))
+        studentName={
+          students.find((st) => st.id === studentToDelete)?.name || ''
         }
+        onYes={handleConfirmDelete}
         onNo={() => setStudentToDelete(null)}
+        isLoading={isDeleting}
       />
     </div>
   );
