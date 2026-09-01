@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateStudentDto, Role, StudentDetailsDto, StudentDto } from 'dtos';
+import {
+  CreateStudentDto,
+  Role,
+  StudentDetailsDto,
+  StudentDto,
+  UpdateStudentDto,
+} from 'dtos';
 
 import { StudentDomain } from '../domain/student.domain';
 
@@ -47,5 +53,14 @@ export class StudentMapper {
     });
 
     return StudentDomain.create(userDomain);
+  }
+
+  toUpdateUserData(updateStudentDto: UpdateStudentDto): UpdateStudentDto {
+    return {
+      firstName: updateStudentDto.firstName,
+      lastName: updateStudentDto.lastName,
+      email: updateStudentDto.email,
+      phoneNumber: updateStudentDto.phoneNumber,
+    };
   }
 }
