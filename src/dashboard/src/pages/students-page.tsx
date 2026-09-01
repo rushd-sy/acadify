@@ -35,6 +35,7 @@ export default function StudentsPage() {
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
   const [students, setStudents] = useState(array);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleConfirmDelete = async () => {
     if (!studentToDelete) {
@@ -43,16 +44,24 @@ export default function StudentsPage() {
 
     try {
       setIsDeleting(true);
+      setDeleteError(null);
       await studentService.deleteStudentById(studentToDelete);
       setStudents((prevStudents) =>
         prevStudents.filter((student) => student.id !== studentToDelete),
       );
+      setStudentToDelete(null);
     } catch (error) {
       console.log(`Failed to delete student: ${error}`);
+      setDeleteError('Failed to delete the student. Please try again later.');
     } finally {
       setIsDeleting(false);
       setStudentToDelete(null);
     }
+  };
+
+  const handleCloseMoadal = () => {
+    setStudentToDelete(null);
+    setDeleteError(null);
   };
 
   return (
@@ -104,8 +113,9 @@ export default function StudentsPage() {
           students.find((st) => st.id === studentToDelete)?.name || ''
         }
         onYes={handleConfirmDelete}
-        onNo={() => setStudentToDelete(null)}
+        onNo={handleCloseMoadal}
         isLoading={isDeleting}
+        error={deleteError}
       />
     </div>
   );
