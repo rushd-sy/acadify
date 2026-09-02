@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { useState } from 'react';
+import UpdateStudentModal from '@/components/ui/update-student-modal';
 
 const array = [
   {
@@ -21,6 +23,8 @@ const array = [
 
 export default function StudentsDetailsPage() {
   const { id } = useParams();
+
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   const student = array.find((e) => e.id === id);
 
@@ -51,9 +55,14 @@ export default function StudentsDetailsPage() {
       </div>
 
       <ButtonGroup className="mt-8">
-        <Button>Edit</Button>
+        <Button onClick={() => setIsUpdateOpen(true)}>Edit</Button>
         <Button>Delete</Button>
       </ButtonGroup>
+
+      <UpdateStudentModal
+        open={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
+      />
     </div>
   );
 }

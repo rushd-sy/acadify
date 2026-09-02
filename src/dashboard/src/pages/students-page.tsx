@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 import DeleteStudentModal from '@/components/ui/delete-student-modal';
 import { studentService } from '@/services/student.service';
+import UpdateStudentModal from '@/components/ui/update-student-modal';
 
 const array = [
   {
@@ -35,6 +36,7 @@ export default function StudentsPage() {
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
   const [students, setStudents] = useState(array);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [studentToUpdate, setStudentToUpdate] = useState<string | null>(null);
 
   const handleConfirmDelete = async () => {
     if (!studentToDelete) {
@@ -83,7 +85,12 @@ export default function StudentsPage() {
 
                 <TableCell className="py-6">
                   <ButtonGroup>
-                    <Button className="text-lg p-4">Edit</Button>
+                    <Button
+                      className="text-lg p-4"
+                      onClick={() => setStudentToUpdate(e.id)}
+                    >
+                      Edit
+                    </Button>
                     <Button
                       className="text-lg p-4"
                       onClick={() => setStudentToDelete(e.id)}
@@ -106,6 +113,11 @@ export default function StudentsPage() {
         onYes={handleConfirmDelete}
         onNo={() => setStudentToDelete(null)}
         isLoading={isDeleting}
+      />
+
+      <UpdateStudentModal
+        open={!!studentToUpdate}
+        onClose={() => setStudentToUpdate(null)}
       />
     </div>
   );
