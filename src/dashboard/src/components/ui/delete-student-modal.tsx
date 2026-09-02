@@ -6,6 +6,7 @@ type DeleteStudentModalProps = {
   onYes: () => void;
   onNo: () => void;
   isLoading: boolean;
+  error?: string | null;
 };
 
 function DeleteStudentModal({
@@ -14,6 +15,7 @@ function DeleteStudentModal({
   onYes,
   onNo,
   isLoading,
+  error,
 }: DeleteStudentModalProps) {
   if (!open) return null;
 
@@ -27,11 +29,18 @@ function DeleteStudentModal({
           <span className="font-semibold">{studentName}</span>?
         </p>
 
+        {error && (
+          <div className="mb-6 rounded-md bg-red-50 p-3 text-sm text red-600 border border-red-200">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-end gap-3">
           <button
             type="button"
             onClick={onNo}
             className="rounded-lg bg-gray-200 px-4 py-2 hover:bg-gray-300"
+            disabled={isLoading}
           >
             No
           </button>
