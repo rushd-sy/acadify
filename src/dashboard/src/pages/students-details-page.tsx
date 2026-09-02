@@ -1,6 +1,9 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import DeleteStudentModal from '@/components/ui/delete-student-modal';
+import { studentService } from '@/services/student.service';
 
 const array = [
   {
@@ -21,8 +24,31 @@ const array = [
 
 export default function StudentsDetailsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const student = array.find((e) => e.id === id);
+
+  const handleConfirmDelete = async () => {
+    if (!id) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+
+      await studentService.deleteStudentById(id);
+
+      navigate('/students');
+    } catch (error) {
+      console.log(`Failed to delete student: ${error}`);
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteModalOpen(false);
+    }
+  };
 
   if (!student) {
     return <div className="mt-20 text-center text-2xl">Student Not Found</div>;
@@ -52,8 +78,17 @@ export default function StudentsDetailsPage() {
 
       <ButtonGroup className="mt-8">
         <Button>Edit</Button>
-        <Button>Delete</Button>
+
+        <Button onClick={() => setIsDeleteModalOpen(true)}>Delete</Button>
       </ButtonGroup>
+
+      <DeleteStudentModal
+        open={isDeleteModalOpen}
+        studentName={student.name}
+        onYes={handleConfirmDelete}
+        onNo={() => setIsDeleteModalOpen(false)}
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
