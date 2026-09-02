@@ -6,9 +6,15 @@ import {
   Body,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
-import type { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
+import type {
+  CreateStudentDto,
+  StudentDetailsDto,
+  StudentDto,
+  UpdateStudentDto,
+} from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -33,5 +39,15 @@ export class StudentController {
   @Delete(':id')
   deleteStudent(@Param('id') id: number): Promise<void> {
     return this.studentService.deleteStudent(parseInt(id.toString()));
+  }
+  @Put(':id')
+  updateStudent(
+    @Param('id') id: number,
+    @Body() updatedStudent: UpdateStudentDto,
+  ): Promise<StudentDetailsDto> {
+    return this.studentService.updateStudent(
+      parseInt(id.toString()),
+      updatedStudent,
+    );
   }
 }

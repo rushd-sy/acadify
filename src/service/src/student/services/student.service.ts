@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { StudentMapper } from '../mappers/student.mapper';
-import type { CreateStudentDto, StudentDetailsDto, StudentDto } from 'dtos';
+import type {
+  CreateStudentDto,
+  StudentDetailsDto,
+  StudentDto,
+  UpdateStudentDto,
+} from 'dtos';
 import { StudentRepository } from '../data/student.repository';
 
 @Injectable()
@@ -32,5 +37,19 @@ export class StudentService {
 
   async deleteStudent(id: number): Promise<void> {
     await this.repository.deleteById(id);
+  }
+
+  async updateStudent(
+    id: number,
+    updateData: UpdateStudentDto,
+  ): Promise<StudentDetailsDto> {
+    const updatedStudent = await this.repository.updateStudentData(
+      id,
+      updateData,
+    );
+    if (!updatedStudent) {
+      throw new NotFoundException(`Student with id ${id} not found`);
+    }
+    return this.mapper.toStudentDetailsDto(updatedStudent);
   }
 }
