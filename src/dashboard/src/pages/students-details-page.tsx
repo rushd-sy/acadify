@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import UpdateStudentModal from '@/components/ui/update-student-modal';
 import DeleteStudentModal from '@/components/ui/delete-student-modal';
 import { studentService } from '@/services/student.service';
 
@@ -28,6 +29,8 @@ export default function StudentsDetailsPage() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   const student = array.find((e) => e.id === id);
 
@@ -77,8 +80,7 @@ export default function StudentsDetailsPage() {
       </div>
 
       <ButtonGroup className="mt-8">
-        <Button>Edit</Button>
-
+        <Button onClick={() => setIsUpdateOpen(true)}>Edit</Button>
         <Button onClick={() => setIsDeleteModalOpen(true)}>Delete</Button>
       </ButtonGroup>
 
@@ -88,6 +90,11 @@ export default function StudentsDetailsPage() {
         onYes={handleConfirmDelete}
         onNo={() => setIsDeleteModalOpen(false)}
         isLoading={isDeleting}
+      />
+
+      <UpdateStudentModal
+        open={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
       />
     </div>
   );
