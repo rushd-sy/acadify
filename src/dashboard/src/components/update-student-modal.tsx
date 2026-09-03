@@ -1,4 +1,4 @@
-import { StudentUpdateForm } from '../StudentUpdateForm';
+import { StudentUpdateForm } from './StudentUpdateForm';
 
 type UpdateStudentModalProps = {
   open: boolean;
