@@ -1,4 +1,5 @@
 import { api } from '../lib/api-client';
+import type { UpdateStudentDto } from 'dtos';
 
 class StudentServic {
   private readonly baseUrl = 'api/student';
@@ -14,6 +15,14 @@ class StudentServic {
 
   async deleteStudentById(id: number | string) {
     const response = await api.delete(`${this.baseUrl}/${id}`);
+    return response.data;
+  }
+
+  async updateStudentById(
+    id: number | string,
+    updatedStudent: UpdateStudentDto,
+  ) {
+    const response = await api.put(`${this.baseUrl}/${id}`, updatedStudent);
     return response.data;
   }
 }

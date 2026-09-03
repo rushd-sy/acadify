@@ -127,6 +127,7 @@ export default function StudentsPage() {
 
       <UpdateStudentModal
         open={!!studentToUpdate}
+        studentId={studentToUpdate}
         onClose={() => setStudentToUpdate(null)}
       />
     </div>
