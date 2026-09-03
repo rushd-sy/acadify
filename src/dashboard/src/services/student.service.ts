@@ -18,7 +18,10 @@ class StudentServic {
     return response.data;
   }
 
-  async updateStudentById(id: number | string , updatedStudent: UpdateStudentDto) {
+  async updateStudentById(
+    id: number | string,
+    updatedStudent: UpdateStudentDto,
+  ) {
     const response = await api.put(`${this.baseUrl}/${id}`, updatedStudent);
     return response.data;
   }

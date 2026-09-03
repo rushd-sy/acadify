@@ -14,10 +14,10 @@ export function StudentUpdateForm({
   studentId,
 }: StudentUpdateFormProps) {
   const [studentData, setStudentData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
   });
 
   return (
