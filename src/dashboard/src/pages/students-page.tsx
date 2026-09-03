@@ -13,7 +13,7 @@ import {
 import { useState } from 'react';
 import DeleteStudentModal from '@/components/delete-student-modal';
 import { studentService } from '@/services/student.service';
-import UpdateStudentModal from '@/components/ui/update-student-modal';
+import UpdateStudentModal from '@/components/update-student-modal';
 
 const array = [
   {
