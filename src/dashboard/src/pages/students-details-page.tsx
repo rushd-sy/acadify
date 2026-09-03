@@ -2,8 +2,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
-import UpdateStudentModal from '@/components/ui/update-student-modal';
-import DeleteStudentModal from '@/components/ui/delete-student-modal';
+import UpdateStudentModal from '@/components/update-student-modal';
+import DeleteStudentModal from '@/components/delete-student-modal';
 import { studentService } from '@/services/student.service';
 
 const array = [
