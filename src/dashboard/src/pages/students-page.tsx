@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ButtonGroup } from '@/components/ui/button-group';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -38,6 +37,7 @@ export default function StudentsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [studentToUpdate, setStudentToUpdate] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleConfirmDelete = async () => {
     if (!studentToDelete) {
@@ -57,79 +57,91 @@ export default function StudentsPage() {
       setDeleteError('Failed to delete the student. Please try again later.');
     } finally {
       setIsDeleting(false);
-      setStudentToDelete(null);
     }
   };
 
-  const handleCloseMoadal = () => {
+  const handleCloseModal = () => {
     setStudentToDelete(null);
     setDeleteError(null);
   };
 
-  return (
-    <div className="h-[500px] overflow-y-auto mt-20 bg-white w-[70%] p-20 mx-auto">
-      <Table>
-        <TableCaption className="text-2xl">Students Informaition</TableCaption>
-        <TableHeader>
-          <TableRow className="text-2xl p-5">
-            <TableHead>Name</TableHead>
-            <TableHead>Second Name</TableHead>
-            <TableHead>Number</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
+ return (
+   <div className="container mx-auto mt-20 max-w-5xl px-4">
+     <div className="rounded-md border bg-white shadow-sm overflow-x-auto">
+       <Table>
+         <TableCaption className="pb-4">
+           A list of registered students.
+         </TableCaption>
+         <TableHeader>
+           <TableRow>
+             <TableHead>Name</TableHead>
+             <TableHead>Number</TableHead>
+             <TableHead>Email</TableHead>
+             <TableHead className="text-right">Actions</TableHead>
+           </TableRow>
+         </TableHeader>
 
-        <TableBody className="text-xl">
-          {students.map((e) => {
-            return (
-              <TableRow key={e.id} className="bg-gray-50 hover:bg-gray-100">
-                <TableCell className="py-6">
-                  <Link to={`/students/${e.id}`}>{e.name}</Link>
-                </TableCell>
+         <TableBody>
+           {students.map((e) => {
+             return (
+               <TableRow 
+               key={e.id}
+               className="cursor-pointer"
+               onClick={() => navigate(`/students/${e.id}`)}
+               >
+                 <TableCell className="font-medium">
+                     {e.name} {e.secondName}
+                 </TableCell>
+                 <TableCell>{e.number}</TableCell>
+                 <TableCell>{e.email}</TableCell>
 
-                <TableCell className="py-6">{e.secondName}</TableCell>
-                <TableCell className="py-6">{e.number}</TableCell>
-                <TableCell className="py-6">{e.email}</TableCell>
+                 <TableCell className="text-right">
+                   <div className="flex justify-end gap-2">
+                     <Button
+                       variant="secondary"
+                       className="h-8 px-3 text-sm"
+                       onClick={(event) => { 
+                        event.stopPropagation();
+                        setStudentToUpdate(e.id);
+                       }}
+                     >
+                       Edit
+                     </Button>
+                     <Button
+                       variant="secondary"
+                       className="h-8 px-3 text-sm"
+                       onClick={(event) => {
+                        event.stopPropagation();
+                        setStudentToDelete(e.id);
+                       }}
+                     >
+                       Delete
+                     </Button>
+                   </div>
+                 </TableCell>
+               </TableRow>
+             );
+           })}
+         </TableBody>
+       </Table>
+     </div>
 
-                <TableCell className="py-6">
-                  <ButtonGroup>
-                    <Button
-                      className="text-lg p-4"
-                      onClick={() => setStudentToUpdate(e.id)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      className="text-lg p-4"
-                      onClick={() => setStudentToDelete(e.id)}
-                    >
-                      Delete
-                    </Button>
-                  </ButtonGroup>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+     <DeleteStudentModal
+       open={!!studentToDelete}
+       studentName={
+         students.find((st) => st.id === studentToDelete)?.name || ''
+       }
+       onYes={handleConfirmDelete}
+       onNo={handleCloseModal}
+       isLoading={isDeleting}
+       error={deleteError}
+     />
 
-      <DeleteStudentModal
-        open={!!studentToDelete}
-        studentName={
-          students.find((st) => st.id === studentToDelete)?.name || ''
-        }
-        onYes={handleConfirmDelete}
-        onNo={handleCloseMoadal}
-        isLoading={isDeleting}
-        error={deleteError}
-      />
-
-      <UpdateStudentModal
-        open={!!studentToUpdate}
-        studentId={studentToUpdate}
-        onClose={() => setStudentToUpdate(null)}
-      />
-    </div>
-  );
+     <UpdateStudentModal
+       open={!!studentToUpdate}
+       studentId={studentToUpdate || ''}
+       onClose={() => setStudentToUpdate(null)}
+     />
+   </div>
+ );
 }
