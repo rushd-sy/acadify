@@ -61,14 +61,16 @@ export default function StudentsDetailsPage() {
   }
 
   return (
-    <div className="container mx-auto mt-20 max-w-2xl px-4">
-      <Card>
-        <CardHeader className="border-b bg-gray-50/50 pb-6">
-          <CardTitle className="text-2xl font-bold">Student Details</CardTitle>
+    <div className="w-full min-h-screen bg-white p-8">
+      <Card className="border-0 shadow-none">
+        <CardHeader className="border-b bg-white pb-6 px-0">
+          <CardTitle className="mx-auto text-2xl font-bold">
+            Student Details
+          </CardTitle>
         </CardHeader>
 
-        <CardContent className="grid gap-6 pt-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <CardContent className="pt-10 px-0">
+          <div className="mx-auto grid w-full max-w-3xl grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="flex flex-col gap-1">
               <span className="text-sm font-medium text-gray-500">
                 First Name

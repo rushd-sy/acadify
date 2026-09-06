@@ -66,27 +66,27 @@ export default function StudentsPage() {
   };
 
   return (
-    <div className="container mx-auto mt-20 max-w-5xl px-4">
-      <div className="rounded-md border bg-white shadow-sm overflow-x-auto">
+    <div className="w-full min-h-screen bg-white p-8">
+      <div className="overflow-x-auto">
         <Table>
           <TableCaption className="pb-4">
             A list of registered students.
           </TableCaption>
           <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Number</TableHead>
-              <TableHead>Email</TableHead>
+            <TableRow className="text-base">
+              <TableHead className="py-5">Name</TableHead>
+              <TableHead className="py-5">Number</TableHead>
+              <TableHead className="py-5">Email</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
 
-          <TableBody>
+          <TableBody className="text-base">
             {students.map((e) => {
               return (
                 <TableRow
                   key={e.id}
-                  className="cursor-pointer"
+                  className="cursor-pointer h-16"
                   onClick={() => navigate(`/students/${e.id}`)}
                 >
                   <TableCell className="font-medium">
@@ -99,7 +99,7 @@ export default function StudentsPage() {
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="secondary"
-                        className="h-8 px-3 text-sm"
+                        className="h-9 px-4 text-sm"
                         onClick={(event) => {
                           event.stopPropagation();
                           setStudentToUpdate(e.id);
