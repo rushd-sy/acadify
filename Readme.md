@@ -100,19 +100,25 @@ _(Note: The `db:reset` script will clear existing data and run the seed script a
 To run the full stack, it is recommended to open three separate terminal windows:
 
 **Terminal 2: Build the dtos**
+
 ```
 pnpm --filter dtos run build
 ```
+
 **Terminal 2: Run the Backend**
+
 ```
 pnpm --filter service run start:dev
 ```
+
 _(This command automatically runs Prisma migrations in dev mode and starts the NestJS server)._
 
 **Terminal 3: Run the Frontend**
+
 ```
 pnpm --filter dashboard run dev
 ```
+
 ---
 
 ## 🧪 Testing
