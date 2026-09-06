@@ -9,58 +9,75 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteStudentModal from '@/components/delete-student-modal';
 import { studentService } from '@/services/student.service';
 import UpdateStudentModal from '@/components/update-student-modal';
-
-const array = [
-  {
-    id: '1',
-    name: 'Yehya',
-    secondName: 'msouty',
-    number: '092323223',
-    email: 'yehya@gmail.com',
-  },
-  {
-    id: '2',
-    name: 'adel',
-    secondName: 'obaji',
-    number: '092323223',
-    email: 'adel@gmail.com',
-  },
-];
+import type { StudentDto } from 'dtos';
 
 export default function StudentsPage() {
-  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
-  const [students, setStudents] = useState(array);
+  const [students, setStudents] = useState<StudentDto[]>([]);
+  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
+  const [studentToUpdate, setStudentToUpdate] = useState<number | null>(null);
+
+  const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [studentToUpdate, setStudentToUpdate] = useState<string | null>(null);
+
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        setIsLoading(true);
+        setFetchError(null);
+
+        const data = await studentService.getAllStudents();
+
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid students response');
+        }
+
+        setStudents(data);
+      } catch (error) {
+        console.error('Failed to fetch students:', error);
+        setStudents([]);
+        setFetchError('Failed to load students. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
   const handleConfirmDelete = async () => {
-    if (!studentToDelete) {
+    if (studentToDelete === null) {
       return;
     }
 
     try {
       setIsDeleting(true);
       setDeleteError(null);
+
       await studentService.deleteStudentById(studentToDelete);
-      setStudents((prevStudents) =>
-        prevStudents.filter((student) => student.id !== studentToDelete),
+
+      setStudents((previousStudents) =>
+        previousStudents.filter((student) => student.id !== studentToDelete),
       );
+
       setStudentToDelete(null);
     } catch (error) {
-      console.log(`Failed to delete student: ${error}`);
+      console.error('Failed to delete student:', error);
       setDeleteError('Failed to delete the student. Please try again later.');
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const handleCloseModal = () => {
+  const handleCloseDeleteModal = () => {
     setStudentToDelete(null);
     setDeleteError(null);
   };
@@ -72,6 +89,7 @@ export default function StudentsPage() {
           <TableCaption className="pb-4">
             A list of registered students.
           </TableCaption>
+
           <TableHeader>
             <TableRow className="text-base">
               <TableHead className="py-5">Name</TableHead>
@@ -82,18 +100,41 @@ export default function StudentsPage() {
           </TableHeader>
 
           <TableBody className="text-base">
-            {students.map((e) => {
-              return (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={4} className="py-10 text-center">
+                  Loading students...
+                </TableCell>
+              </TableRow>
+            ) : fetchError ? (
+              <TableRow>
+                <TableCell
+                  colSpan={4}
+                  className="py-10 text-center text-red-600"
+                >
+                  {fetchError}
+                </TableCell>
+              </TableRow>
+            ) : students.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="py-10 text-center">
+                  No students available.
+                </TableCell>
+              </TableRow>
+            ) : (
+              students.map((student) => (
                 <TableRow
-                  key={e.id}
-                  className="cursor-pointer h-16"
-                  onClick={() => navigate(`/students/${e.id}`)}
+                  key={student.id}
+                  className="h-16 cursor-pointer"
+                  onClick={() => navigate(`/students/${student.id}`)}
                 >
                   <TableCell className="font-medium">
-                    {e.name} {e.secondName}
+                    {student.firstName} {student.lastName}
                   </TableCell>
-                  <TableCell>{e.number}</TableCell>
-                  <TableCell>{e.email}</TableCell>
+
+                  <TableCell>-</TableCell>
+
+                  <TableCell>{student.email}</TableCell>
 
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -102,17 +143,18 @@ export default function StudentsPage() {
                         className="h-9 px-4 text-sm"
                         onClick={(event) => {
                           event.stopPropagation();
-                          setStudentToUpdate(e.id);
+                          setStudentToUpdate(student.id);
                         }}
                       >
                         Edit
                       </Button>
+
                       <Button
                         variant="secondary"
                         className="h-8 px-3 text-sm"
                         onClick={(event) => {
                           event.stopPropagation();
-                          setStudentToDelete(e.id);
+                          setStudentToDelete(student.id);
                         }}
                       >
                         Delete
@@ -120,26 +162,27 @@ export default function StudentsPage() {
                     </div>
                   </TableCell>
                 </TableRow>
-              );
-            })}
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
 
       <DeleteStudentModal
-        open={!!studentToDelete}
+        open={studentToDelete !== null}
         studentName={
-          students.find((st) => st.id === studentToDelete)?.name || ''
+          students.find((student) => student.id === studentToDelete)
+            ?.firstName || ''
         }
         onYes={handleConfirmDelete}
-        onNo={handleCloseModal}
+        onNo={handleCloseDeleteModal}
         isLoading={isDeleting}
         error={deleteError}
       />
 
       <UpdateStudentModal
-        open={!!studentToUpdate}
-        studentId={studentToUpdate || ''}
+        open={studentToUpdate !== null}
+        studentId={studentToUpdate !== null ? String(studentToUpdate) : ''}
         onClose={() => setStudentToUpdate(null)}
       />
     </div>

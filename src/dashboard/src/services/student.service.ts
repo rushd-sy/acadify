@@ -1,11 +1,27 @@
 import { api } from '../lib/api-client';
-import type { UpdateStudentDto } from 'dtos';
+import type { StudentDto, UpdateStudentDto } from 'dtos';
 
-class StudentServic {
-  private readonly baseUrl = 'api/student';
-  async getAllStudents() {
+class StudentService {
+  private readonly baseUrl = '/api/student';
+
+  async getAllStudents(): Promise<StudentDto[]> {
     const response = await api.get(this.baseUrl);
-    return response.data;
+    const data = response.data;
+
+    if (Array.isArray(data)) {
+      return data;
+    }
+
+    if (Array.isArray(data?.students)) {
+      return data.students;
+    }
+
+    if (Array.isArray(data?.data)) {
+      return data.data;
+    }
+
+    console.error('Unexpected students response:', data);
+    return [];
   }
 
   async getStudentById(id: number) {
@@ -23,7 +39,9 @@ class StudentServic {
     updatedStudent: UpdateStudentDto,
   ) {
     const response = await api.put(`${this.baseUrl}/${id}`, updatedStudent);
+
     return response.data;
   }
 }
-export const studentService = new StudentServic();
+
+export const studentService = new StudentService();
