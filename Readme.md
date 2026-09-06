@@ -97,15 +97,22 @@ _(Note: The `db:reset` script will clear existing data and run the seed script a
 
 ### 6. Running the Application
 
-To run the full stack, it is recommended to open two separate terminal windows:
+To run the full stack, it is recommended to open three separate terminal windows:
 
-**Terminal 1: Run the Backend**
+**Terminal 2: Build the dtos**
+```
+pnpm --filter dtos run build
+```
+**Terminal 2: Run the Backend**
+```
 pnpm --filter service run start:dev
+```
 _(This command automatically runs Prisma migrations in dev mode and starts the NestJS server)._
 
-**Terminal 2: Run the Frontend**
+**Terminal 3: Run the Frontend**
+```
 pnpm --filter dashboard run dev
-
+```
 ---
 
 ## 🧪 Testing
@@ -113,13 +120,13 @@ pnpm --filter dashboard run dev
 Currently, testing is configured for the backend service using Jest.
 
 Run unit tests:
-pnpm --filter service run test
+`pnpm --filter service run test`
 
 Run end-to-end (e2e) tests:
-pnpm --filter service run test:e2e
+`pnpm --filter service run test:e2e`
 
 Run test coverage:
-pnpm --filter service run test:cov
+`pnpm --filter service run test:cov`
 
 ---
 
