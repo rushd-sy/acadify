@@ -1,9 +1,7 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
-import UpdateStudentModal from '@/components/update-student-modal';
-import DeleteStudentModal from '@/components/delete-student-modal';
-import { studentService } from '@/services/student.service';
 import {
   Card,
   CardContent,
@@ -11,33 +9,59 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import DeleteStudentModal from '@/components/delete-student-modal';
+import UpdateStudentModal from '@/components/update-student-modal';
 
-const array = [
-  {
-    id: '1',
-    name: 'Yehya',
-    secondName: 'msouty',
-    number: '092323223',
-    email: 'yehya@gmail.com',
-  },
-  {
-    id: '2',
-    name: 'adel',
-    secondName: 'obaji',
-    number: '092323223',
-    email: 'adel@gmail.com',
-  },
-];
+import { studentService } from '@/services/student.service';
+import type { StudentDetailsDto } from 'dtos';
 
 export default function StudentsDetailsPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  const [student, setStudent] = useState<StudentDetailsDto | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
-  const student = array.find((e) => e.id === id);
+  useEffect(() => {
+    const fetchStudent = async () => {
+      if (!id) {
+        setFetchError('Student ID is missing.');
+        setIsLoading(false);
+        return;
+      }
+
+      const studentId = Number(id);
+
+      if (!Number.isInteger(studentId) || studentId <= 0) {
+        setFetchError('Invalid student ID.');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        setFetchError(null);
+
+        const data = await studentService.getStudentById(studentId);
+        setStudent(data);
+      } catch (error) {
+        console.error('Failed to fetch student:', error);
+        setStudent(null);
+        setFetchError('Failed to load student. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStudent();
+  }, [id]);
 
   const handleConfirmDelete = async () => {
     if (!id) {
@@ -46,15 +70,34 @@ export default function StudentsDetailsPage() {
 
     try {
       setIsDeleting(true);
+      setDeleteError(null);
+
       await studentService.deleteStudentById(id);
       navigate('/students');
     } catch (error) {
-      console.log(`Failed to delete student: ${error}`);
+      console.error('Failed to delete student:', error);
+      setDeleteError('Failed to delete the student. Please try again later.');
     } finally {
       setIsDeleting(false);
-      setIsDeleteModalOpen(false);
     }
   };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteError(null);
+  };
+
+  if (isLoading) {
+    return <div className="mt-20 text-center text-2xl">Loading student...</div>;
+  }
+
+  if (fetchError) {
+    return (
+      <div className="mt-20 text-center text-2xl text-red-600">
+        {fetchError}
+      </div>
+    );
+  }
 
   if (!student) {
     return <div className="mt-20 text-center text-2xl">Student Not Found</div>;
@@ -75,23 +118,23 @@ export default function StudentsDetailsPage() {
               <span className="text-sm font-medium text-gray-500">
                 First Name
               </span>
-              <span className="text-lg font-semibold">{student.name}</span>
+              <span className="text-lg font-semibold">{student.firstName}</span>
             </div>
 
             <div className="flex flex-col gap-1">
               <span className="text-sm font-medium text-gray-500">
                 Second Name
               </span>
-              <span className="text-lg font-semibold">
-                {student.secondName}
-              </span>
+              <span className="text-lg font-semibold">{student.lastName}</span>
             </div>
 
             <div className="flex flex-col gap-1">
               <span className="text-sm font-medium text-gray-500">
                 Phone Number
               </span>
-              <span className="text-lg font-semibold">{student.number}</span>
+              <span className="text-lg font-semibold">
+                {student.phoneNumber}
+              </span>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -105,6 +148,7 @@ export default function StudentsDetailsPage() {
           <Button variant="secondary" onClick={() => setIsUpdateOpen(true)}>
             Edit
           </Button>
+
           <Button
             variant="secondary"
             onClick={() => setIsDeleteModalOpen(true)}
@@ -116,10 +160,11 @@ export default function StudentsDetailsPage() {
 
       <DeleteStudentModal
         open={isDeleteModalOpen}
-        studentName={student.name}
+        studentName={student.firstName}
         onYes={handleConfirmDelete}
-        onNo={() => setIsDeleteModalOpen(false)}
+        onNo={handleCloseDeleteModal}
         isLoading={isDeleting}
+        error={deleteError}
       />
 
       <UpdateStudentModal

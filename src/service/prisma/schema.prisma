@@ -24,3 +24,23 @@ model User {
   updatedAt DateTime @updatedAt
   student Student?
 }
+
+model Grade {
+  id Int  @id @default(autoincrement())
+  name String 
+  sections Section[]
+}
+
+model Curriculum {
+  id Int @id @default(autoincrement())
+  name String
+  description String?
+}
+
+model Section {
+  id Int @id @default(autoincrement())
+  name String
+  academicYear String
+  gradeId Int 
+  grade Grade @relation(fields: [gradeId], references: [id])
+}

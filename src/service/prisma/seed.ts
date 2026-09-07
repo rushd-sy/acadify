@@ -90,6 +90,55 @@ const seed = async () => {
     });
   }
 
+  const gradesData = ['10th Grade', '11th Grade', '12th Grade'];
+  for (let i = 0; i < gradesData.length; i++) {
+    const grade = await prisma.grade.upsert({
+      where: { id: i + 1 },
+      update: { name: gradesData[i] },
+      create: { id: i + 1, name: gradesData[i] },
+    });
+
+    await prisma.section.upsert({
+      where: { id: i + 1 },
+      update: {
+        name: `Section A - ${grade.name}`,
+        academicYear: '2026-2027',
+        gradeId: grade.id,
+      },
+      create: {
+        id: i + 1,
+        name: `Section A - ${grade.name}`,
+        academicYear: '2026-2027',
+        gradeId: grade.id,
+      },
+    });
+  }
+
+  console.log('Seeding Curriculums...');
+  const curriculumsData = [
+    { name: 'Mathematics', description: 'Algebra, Geometry, and Calculus' },
+    { name: 'Physics', description: 'Mechanics and Thermodynamics' },
+    {
+      name: 'Computer Science',
+      description: 'Programming and Data Structures',
+    },
+  ];
+
+  for (let i = 0; i < curriculumsData.length; i++) {
+    await prisma.curriculum.upsert({
+      where: { id: i + 1 },
+      update: {
+        name: curriculumsData[i].name,
+        description: curriculumsData[i].description,
+      },
+      create: {
+        id: i + 1,
+        name: curriculumsData[i].name,
+        description: curriculumsData[i].description,
+      },
+    });
+  }
+
   console.table(generatedAccounts);
   console.log('--------------------------------------------------\n');
 };
