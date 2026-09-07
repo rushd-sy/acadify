@@ -14,7 +14,7 @@ export default function LeftNavbar() {
 
   return (
     <nav className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex items-center gap-3 border-b border-sidebar-border p-4">
+      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
         <div className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
           <GraduationCap className="size-5" />
         </div>
