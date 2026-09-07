@@ -1,15 +1,17 @@
 import { api } from '../lib/api-client';
-import type { UpdateStudentDto } from 'dtos';
+import type { StudentDetailsDto, StudentDto, UpdateStudentDto } from 'dtos';
 
-class StudentServic {
-  private readonly baseUrl = 'api/student';
-  async getAllStudents() {
-    const response = await api.get(this.baseUrl);
+class StudentService {
+  private readonly baseUrl = '/api/student';
+
+  async getAllStudents(): Promise<StudentDto[]> {
+    const response = await api.get<StudentDto[]>(this.baseUrl);
     return response.data;
   }
 
-  async getStudentById(id: number) {
-    const response = await api.get(`${this.baseUrl}/${id}`);
+  async getStudentById(id: number): Promise<StudentDetailsDto> {
+    const response = await api.get<StudentDetailsDto>(`${this.baseUrl}/${id}`);
+
     return response.data;
   }
 
@@ -23,7 +25,9 @@ class StudentServic {
     updatedStudent: UpdateStudentDto,
   ) {
     const response = await api.put(`${this.baseUrl}/${id}`, updatedStudent);
+
     return response.data;
   }
 }
-export const studentService = new StudentServic();
+
+export const studentService = new StudentService();
