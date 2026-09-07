@@ -1,5 +1,7 @@
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -9,13 +11,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useEffect, useState } from 'react';
+
 import DeleteStudentModal from '@/components/delete-student-modal';
-import { studentService } from '@/services/student.service';
 import UpdateStudentModal from '@/components/update-student-modal';
+
+import { studentService } from '@/services/student.service';
 import type { StudentDto } from 'dtos';
 
 export default function StudentsPage() {
+  const navigate = useNavigate();
+
   const [students, setStudents] = useState<StudentDto[]>([]);
   const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
   const [studentToUpdate, setStudentToUpdate] = useState<number | null>(null);
@@ -26,8 +31,6 @@ export default function StudentsPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -35,11 +38,6 @@ export default function StudentsPage() {
         setFetchError(null);
 
         const data = await studentService.getAllStudents();
-
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid students response');
-        }
-
         setStudents(data);
       } catch (error) {
         console.error('Failed to fetch students:', error);

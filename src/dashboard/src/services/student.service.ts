@@ -1,31 +1,17 @@
 import { api } from '../lib/api-client';
-import type { StudentDto, UpdateStudentDto } from 'dtos';
+import type { StudentDetailsDto, StudentDto, UpdateStudentDto } from 'dtos';
 
 class StudentService {
   private readonly baseUrl = '/api/student';
 
   async getAllStudents(): Promise<StudentDto[]> {
-    const response = await api.get(this.baseUrl);
-    const data = response.data;
-
-    if (Array.isArray(data)) {
-      return data;
-    }
-
-    if (Array.isArray(data?.students)) {
-      return data.students;
-    }
-
-    if (Array.isArray(data?.data)) {
-      return data.data;
-    }
-
-    console.error('Unexpected students response:', data);
-    return [];
+    const response = await api.get<StudentDto[]>(this.baseUrl);
+    return response.data;
   }
 
-  async getStudentById(id: number) {
-    const response = await api.get(`${this.baseUrl}/${id}`);
+  async getStudentById(id: number): Promise<StudentDetailsDto> {
+    const response = await api.get<StudentDetailsDto>(`${this.baseUrl}/${id}`);
+
     return response.data;
   }
 

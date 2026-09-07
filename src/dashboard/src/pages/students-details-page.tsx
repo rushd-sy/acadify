@@ -13,13 +13,13 @@ import DeleteStudentModal from '@/components/delete-student-modal';
 import UpdateStudentModal from '@/components/update-student-modal';
 
 import { studentService } from '@/services/student.service';
-import type { StudentDto } from 'dtos';
+import type { StudentDetailsDto } from 'dtos';
 
 export default function StudentsDetailsPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [student, setStudent] = useState<StudentDto | null>(null);
+  const [student, setStudent] = useState<StudentDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
@@ -37,11 +37,19 @@ export default function StudentsDetailsPage() {
         return;
       }
 
+      const studentId = Number(id);
+
+      if (!Number.isInteger(studentId) || studentId <= 0) {
+        setFetchError('Invalid student ID.');
+        setIsLoading(false);
+        return;
+      }
+
       try {
         setIsLoading(true);
         setFetchError(null);
 
-        const data = await studentService.getStudentById(Number(id));
+        const data = await studentService.getStudentById(studentId);
         setStudent(data);
       } catch (error) {
         console.error('Failed to fetch student:', error);
@@ -72,6 +80,11 @@ export default function StudentsDetailsPage() {
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteError(null);
   };
 
   if (isLoading) {
@@ -119,7 +132,9 @@ export default function StudentsDetailsPage() {
               <span className="text-sm font-medium text-gray-500">
                 Phone Number
               </span>
-              <span className="text-lg font-semibold">-</span>
+              <span className="text-lg font-semibold">
+                {student.phoneNumber}
+              </span>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -147,10 +162,7 @@ export default function StudentsDetailsPage() {
         open={isDeleteModalOpen}
         studentName={student.firstName}
         onYes={handleConfirmDelete}
-        onNo={() => {
-          setIsDeleteModalOpen(false);
-          setDeleteError(null);
-        }}
+        onNo={handleCloseDeleteModal}
         isLoading={isDeleting}
         error={deleteError}
       />
