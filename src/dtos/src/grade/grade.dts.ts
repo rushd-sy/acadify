@@ -1,4 +1,4 @@
 export class GradeDto {
-    id!: number;
-    name!: string;
+  id!: number;
+  name!: string;
 }
