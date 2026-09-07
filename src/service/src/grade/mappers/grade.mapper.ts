@@ -12,12 +12,12 @@ export class GradeMapper {
 
   static toDto(gradeDomain: GradeDomain): GradeDto {
     return {
-      id: gradeDomain.id,
+      id: gradeDomain.id!,
       name: gradeDomain.name,
     };
   }
 
   static toDtoList(grades: GradeDomain[]): GradeDto[] {
-    return grades.map((grade) => this.toDto(grade));
+    return grades.map((grade): GradeDto => this.toDto(grade));
   }
 }
