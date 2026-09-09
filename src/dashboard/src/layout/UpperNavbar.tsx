@@ -1,28 +1,18 @@
-import { useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/button';
-import { ButtonGroup } from '../components/ui/button-group';
-import { useAuth } from '../providers/auth.context';
+import { Bell } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-export default function UpperNav() {
-  const navigate = useNavigate();
-
-  const { logout } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
+export default function UpperNavbar() {
   return (
-    <>
-      <ButtonGroup className="p-4 ml-10 mt-7">
-        <Button className="text-3xl p-5">Number</Button>
-        <Button className="text-3xl p-5">Email</Button>
-      </ButtonGroup>
+    <div className="flex h-full items-center justify-between gap-4 px-6">
+      <div className="flex items-center gap-3">
+        <h1 className="text-lg font-semibold">Dashboard</h1>
+      </div>
 
-      <Button className="text-3xl p-5" onClick={handleLogout}>
-        Logout
-      </Button>
-    </>
+      <div className="flex items-center gap-3">
+        <Button variant="secondary" className="size-9 p-0">
+          <Bell className="size-4" />
+        </Button>
+      </div>
+    </div>
   );
 }
