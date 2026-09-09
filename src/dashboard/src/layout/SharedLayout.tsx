@@ -1,5 +1,5 @@
 import './SharedLayout.css';
-import { Link, Outlet, Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import LeftNavbar from './LeftNavbar';
 import UpperNavbar from './UpperNavbar';
 import { useAuth } from '../providers/auth.context';
@@ -21,19 +21,18 @@ export default function SharedLayout() {
 
   return (
     <div className="shared-layout">
-      <div className="title">
-        <Link to="">
-          <h1>A C A D Y F I</h1>
-        </Link>
-      </div>
-      <div className="bg-white">
-        <UpperNavbar />
-      </div>
-      <div className="h-full min-h-0">
+      <aside className="shared-layout__sidebar">
         <LeftNavbar />
-      </div>
-      <div style={{ backgroundColor: 'rgb(203, 203, 203)' }}>
-        <Outlet />
+      </aside>
+
+      <div className="shared-layout__main">
+        <header className="shared-layout__topbar">
+          <UpperNavbar />
+        </header>
+
+        <main className="shared-layout__content">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
