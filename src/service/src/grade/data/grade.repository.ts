@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GradeDomain } from '../domain/grade.domain';
 import { GradeMapper } from '../mappers/grade.mapper';
+import { UpdateGradeDto } from 'dtos';
 
 @Injectable()
 export class GradeRepository {
@@ -11,9 +12,22 @@ export class GradeRepository {
   ) {}
 
   async findByName(name: string): Promise<GradeDomain | null> {
-    return this.prisma.grade.findFirst({
-      where: { name },
+    const grade = await this.prisma.grade.findFirst({
+      where: {
+        name: {
+          equals: name,
+          mode: 'insensitive',
+        },
+      },
     });
+    return grade ? this.mapper.toDomain(grade) : null;
+  }
+
+  async findById(id: number): Promise<GradeDomain | null> {
+    const grade = await this.prisma.grade.findUnique({
+      where: { id },
+    });
+    return grade ? this.mapper.toDomain(grade) : null;
   }
 
   async create(gradeDomain: GradeDomain): Promise<GradeDomain> {
@@ -26,5 +40,19 @@ export class GradeRepository {
   async findAll(): Promise<GradeDomain[]> {
     const grades = await this.prisma.grade.findMany();
     return grades.map((grade) => this.mapper.toDomain(grade));
+  }
+
+  async deleteById(id: number): Promise<void> {
+    await this.prisma.grade.delete({
+      where: { id },
+    });
+  }
+
+  async updateById(id: number, data: UpdateGradeDto): Promise<GradeDomain> {
+    const grade = await this.prisma.grade.update({
+      where: { id },
+      data: data,
+    });
+    return this.mapper.toDomain(grade);
   }
 }
