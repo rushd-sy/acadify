@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { GradeRepository } from '../data/grade.repository';
 import { GradeMapper } from '../mappers/grade.mapper';
-import { CreateGradeDto, GradeDto } from 'dtos';
+import { CreateGradeDto, GradeDto, UpdateGradeDto } from 'dtos';
 
 @Injectable()
 export class GradeService {
@@ -26,11 +26,11 @@ export class GradeService {
     return this.mapper.toDto(gradeDomain);
   }
 
-  async findByName(name: string): Promise<GradeDto> {
-    const gradeDomain = await this.repository.findByName(name);
+  async findById(id: number): Promise<GradeDto> {
+    const gradeDomain = await this.repository.findById(id);
 
     if (!gradeDomain) {
-      throw new NotFoundException(`Grade with name ${name} does not exist.`);
+      throw new NotFoundException(`Grade with id ${id} does not exist.`);
     }
 
     return this.mapper.toDto(gradeDomain);
@@ -39,5 +39,31 @@ export class GradeService {
   async findAll(): Promise<GradeDto[]> {
     const gradesDomain = await this.repository.findAll();
     return this.mapper.toDtoList(gradesDomain);
+  }
+
+  async updateById(id: number, data: UpdateGradeDto): Promise<GradeDto> {
+    const isExisting = await this.repository.findById(id);
+
+    if (!isExisting) {
+      throw new NotFoundException(`Grade with id ${id} not found`);
+    }
+    if (data.name !== isExisting.name) {
+      const nameConflict = await this.repository.findByName(data.name);
+      if (nameConflict) {
+        throw new ConflictException('Grade with name already exists');
+      }
+    }
+
+    const updatedDomain = await this.repository.updateById(id, data);
+    return this.mapper.toDto(updatedDomain);
+  }
+
+  async deleteById(id: number): Promise<void> {
+    const isExisting = await this.repository.findById(id);
+
+    if (!isExisting) {
+      throw new NotFoundException(`Grade with id ${id} not found`);
+    }
+    await this.repository.deleteById(id);
   }
 }
