@@ -1,6 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+
 import StudentsPage from '@/pages/students-page';
 import StudentsDetailsPage from '@/pages/students-details-page';
+import GradePage from '@/pages/grades-page';
+
 import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
 import LoginPage from './pages/login-page';
@@ -18,6 +21,7 @@ function App() {
         <Route element={<SharedLayout />}>
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
+          <Route path="/grades" element={<GradePage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
