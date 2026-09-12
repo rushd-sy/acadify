@@ -3,8 +3,8 @@ import { StudentUpdateForm } from './StudentUpdateForm';
 
 type UpdateStudentModalProps = {
   open: boolean;
-  studentId: string | null;
-  student: StudentDetailsDto | null;
+  studentId?: string;
+  student?: StudentDetailsDto;
   onUpdateSuccess: (updatedStudent: StudentDetailsDto) => void;
   onClose: () => void;
 };

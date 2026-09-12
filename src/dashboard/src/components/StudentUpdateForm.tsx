@@ -8,8 +8,8 @@ import axios from 'axios';
 
 type StudentUpdateFormProps = {
   onCancel: () => void;
-  studentId: string | null;
-  student: StudentDetailsDto | null;
+  studentId?: string;
+  student?: StudentDetailsDto;
   onUpdateSuccess: (updatedStudent: StudentDetailsDto) => void;
 };
 

@@ -22,8 +22,10 @@ export default function StudentsPage() {
   const navigate = useNavigate();
 
   const [students, setStudents] = useState<StudentDto[]>([]);
-  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
-  const [studentToUpdate, setStudentToUpdate] = useState<number | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<{
+    id: number;
+    action: 'delete' | 'update';
+  } | null>(null);
   const [studentToUpdateData, setStudentToUpdateData] =
     useState<StudentDetailsDto | null>(null);
 
@@ -54,7 +56,7 @@ export default function StudentsPage() {
   }, []);
 
   const handleConfirmDelete = async () => {
-    if (studentToDelete === null) {
+    if (selectedStudent === null) {
       return;
     }
 
@@ -62,13 +64,13 @@ export default function StudentsPage() {
       setIsDeleting(true);
       setDeleteError(null);
 
-      await studentService.deleteStudentById(studentToDelete);
+      await studentService.deleteStudentById(selectedStudent.id);
 
       setStudents((previousStudents) =>
-        previousStudents.filter((student) => student.id !== studentToDelete),
+        previousStudents.filter((student) => student.id !== selectedStudent.id),
       );
 
-      setStudentToDelete(null);
+      setSelectedStudent(null);
     } catch (error) {
       console.error('Failed to delete student:', error);
       setDeleteError('Failed to delete the student. Please try again later.');
@@ -78,7 +80,7 @@ export default function StudentsPage() {
   };
 
   const handleCloseDeleteModal = () => {
-    setStudentToDelete(null);
+    setSelectedStudent(null);
     setDeleteError(null);
   };
 
@@ -157,7 +159,10 @@ export default function StudentsPage() {
                               await studentService.getStudentById(student.id);
 
                             setStudentToUpdateData(studentDetails);
-                            setStudentToUpdate(student.id);
+                            setSelectedStudent({
+                              id: student.id,
+                              action: 'update',
+                            });
                           } catch (error) {
                             console.error(
                               'Failed to fetch student details:',
@@ -174,7 +179,10 @@ export default function StudentsPage() {
                         className="h-8 px-3 text-sm"
                         onClick={(event) => {
                           event.stopPropagation();
-                          setStudentToDelete(student.id);
+                          setSelectedStudent({
+                            id: student.id,
+                            action: 'delete',
+                          });
                         }}
                       >
                         Delete
@@ -189,9 +197,9 @@ export default function StudentsPage() {
       </div>
 
       <DeleteStudentModal
-        open={studentToDelete !== null}
+        open={selectedStudent?.action === 'delete'}
         studentName={
-          students.find((student) => student.id === studentToDelete)
+          students.find((student) => student.id === selectedStudent?.id)
             ?.firstName || ''
         }
         onYes={handleConfirmDelete}
@@ -201,10 +209,14 @@ export default function StudentsPage() {
       />
 
       <UpdateStudentModal
-        open={studentToUpdate !== null}
-        studentId={studentToUpdate !== null ? String(studentToUpdate) : ''}
-        student={studentToUpdateData}
-        onClose={() => setStudentToUpdate(null)}
+        open={selectedStudent?.action === 'update'}
+        studentId={
+          selectedStudent?.action === 'update'
+            ? String(selectedStudent.id)
+            : undefined
+        }
+        student={studentToUpdateData ?? undefined}
+        onClose={() => setSelectedStudent(null)}
         onUpdateSuccess={handleUpdateSuccess}
       />
     </div>
