@@ -16,7 +16,7 @@ import DeleteStudentModal from '@/components/delete-student-modal';
 import UpdateStudentModal from '@/components/update-student-modal';
 
 import { studentService } from '@/services/student.service';
-import type { StudentDto } from 'dtos';
+import type { StudentDetailsDto, StudentDto } from 'dtos';
 
 export default function StudentsPage() {
   const navigate = useNavigate();
@@ -24,6 +24,8 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<StudentDto[]>([]);
   const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
   const [studentToUpdate, setStudentToUpdate] = useState<number | null>(null);
+  const [studentToUpdateData, setStudentToUpdateData] =
+    useState<StudentDetailsDto | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -78,6 +80,14 @@ export default function StudentsPage() {
   const handleCloseDeleteModal = () => {
     setStudentToDelete(null);
     setDeleteError(null);
+  };
+
+  const handleUpdateSuccess = (updatedStudent: StudentDetailsDto) => {
+    setStudents((previousStudents) =>
+      previousStudents.map((student) =>
+        student.id === updatedStudent.id ? updatedStudent : student,
+      ),
+    );
   };
 
   return (
@@ -139,9 +149,21 @@ export default function StudentsPage() {
                       <Button
                         variant="secondary"
                         className="h-9 px-4 text-sm"
-                        onClick={(event) => {
+                        onClick={async (event) => {
                           event.stopPropagation();
-                          setStudentToUpdate(student.id);
+
+                          try {
+                            const studentDetails =
+                              await studentService.getStudentById(student.id);
+
+                            setStudentToUpdateData(studentDetails);
+                            setStudentToUpdate(student.id);
+                          } catch (error) {
+                            console.error(
+                              'Failed to fetch student details:',
+                              error,
+                            );
+                          }
                         }}
                       >
                         Edit
@@ -181,7 +203,9 @@ export default function StudentsPage() {
       <UpdateStudentModal
         open={studentToUpdate !== null}
         studentId={studentToUpdate !== null ? String(studentToUpdate) : ''}
+        student={studentToUpdateData}
         onClose={() => setStudentToUpdate(null)}
+        onUpdateSuccess={handleUpdateSuccess}
       />
     </div>
   );

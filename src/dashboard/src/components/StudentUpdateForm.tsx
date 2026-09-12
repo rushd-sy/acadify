@@ -3,22 +3,31 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useState } from 'react';
 import { studentService } from '@/services/student.service';
+import type { StudentDetailsDto } from 'dtos/dist/src/student/student-details.dto';
+import axios from 'axios';
 
 type StudentUpdateFormProps = {
   onCancel: () => void;
   studentId: string | null;
+  student: StudentDetailsDto | null;
+  onUpdateSuccess: (updatedStudent: StudentDetailsDto) => void;
 };
 
 export function StudentUpdateForm({
   onCancel,
   studentId,
+  student,
+  onUpdateSuccess,
 }: StudentUpdateFormProps) {
   const [studentData, setStudentData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
+    firstName: student?.firstName ?? '',
+    lastName: student?.lastName ?? '',
+    email: student?.email ?? '',
+    phoneNumber: student?.phoneNumber ?? '',
   });
+
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   return (
     <form
@@ -28,13 +37,31 @@ export function StudentUpdateForm({
           return;
         }
 
+        setUpdateError(null);
+        setIsUpdating(true);
         studentService
           .updateStudentById(studentId, studentData)
-          .then(() => {
+          .then((updatedStudent) => {
+            setIsUpdating(false);
+            onUpdateSuccess(updatedStudent);
             onCancel();
           })
           .catch((error) => {
+            setIsUpdating(false);
             console.log('Failed to update student:', error);
+            if (axios.isAxiosError(error)) {
+              const message = error.response?.data?.message;
+              if (Array.isArray(message)) {
+                setUpdateError(message.join(', '));
+                return;
+              }
+
+              if (typeof message === 'string') {
+                setUpdateError(message);
+                return;
+              }
+            }
+            setUpdateError('Failed to update student. Please try again later.');
           });
       }}
     >
@@ -100,11 +127,14 @@ export function StudentUpdateForm({
           />
         </Field>
 
+        {updateError && <p className="text-sm text-red-600">{updateError}</p>}
         <div className="pt-4 flex justify-end gap-3">
           <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit" disabled={isUpdating}>
+            {isUpdating ? 'Saving...' : 'Save Changes'}
+          </Button>
         </div>
       </FieldGroup>
     </form>
