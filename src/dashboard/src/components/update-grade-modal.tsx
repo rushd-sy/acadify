@@ -30,7 +30,9 @@ export default function UpdateGradeModal({
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  if (!open || !grade) {
+  const shouldReturn = !open || !grade;
+
+  if (shouldReturn) {
     return null;
   }
 
