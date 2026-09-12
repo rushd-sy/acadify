@@ -88,6 +88,8 @@ export default function GradePage() {
     }
   };
 
+  const showEmptyState = !isLoading && !fetchError && grades.length === 0;
+
   return (
     <>
       <div className="mx-auto mt-20 w-[70%] bg-white p-10">
@@ -128,7 +130,7 @@ export default function GradePage() {
               </TableRow>
             )}
 
-            {!isLoading && !fetchError && grades.length === 0 && (
+            {showEmptyState && (
               <TableRow>
                 <TableCell colSpan={3} className="py-8 text-center">
                   No grades available.
