@@ -1,12 +1,12 @@
 export class CurriculumDomain {
   id?: number;
   name!: string;
-  description!: string | null;
+  description?: string;
 
   private constructor(input: {
     id?: number;
     name: string;
-    description: string | null;
+    description?: string;
   }) {
     this.id = input.id;
     this.name = input.name;
@@ -15,7 +15,7 @@ export class CurriculumDomain {
 
   static create(input: {
     name: string;
-    description: string;
+    description?: string;
   }): CurriculumDomain {
     return new CurriculumDomain(input);
   }
@@ -23,7 +23,7 @@ export class CurriculumDomain {
   static fromPersistence(input: {
     id: number;
     name: string;
-    description: string | null;
+    description?: string;
   }): CurriculumDomain {
     return new CurriculumDomain(input);
   }
