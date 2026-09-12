@@ -7,8 +7,9 @@ import { StudentMapper } from './student/mappers/student.mapper';
 import { AuthModule } from './auth/auth.module';
 import { StudentRepository } from './student/data/student.repository';
 import { GradeModule } from './grade/grade.module';
+import { CurriculumModule } from './curriculum/curriculum.module';
 @Module({
-  imports: [AuthModule, GradeModule],
+  imports: [AuthModule, GradeModule, CurriculumModule],
   controllers: [HealthCheckController, StudentController],
   providers: [StudentService, StudentMapper, PrismaService, StudentRepository],
 })
