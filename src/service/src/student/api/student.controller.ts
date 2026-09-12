@@ -41,9 +41,6 @@ export class StudentController {
     @Param('id') id: number,
     @Body() updatedStudent: UpdateStudentDto,
   ): Promise<StudentDetailsDto> {
-    console.log('UPDATE STUDENT ENDPOINT HIT');
-    console.log(updatedStudent);
-    console.log(updatedStudent.constructor);
     return this.studentService.updateStudent(
       parseInt(id.toString()),
       updatedStudent,
