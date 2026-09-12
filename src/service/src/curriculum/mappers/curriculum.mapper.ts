@@ -9,7 +9,7 @@ export class CurriculumMapper {
     return CurriculumDomain.fromPersistence({
       id: curriculum.id,
       name: curriculum.name,
-      description: curriculum.description ?? '',
+      description: curriculum.description,
     });
   }
 
