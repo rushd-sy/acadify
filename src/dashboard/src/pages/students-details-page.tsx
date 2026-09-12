@@ -103,6 +103,10 @@ export default function StudentsDetailsPage() {
     return <div className="mt-20 text-center text-2xl">Student Not Found</div>;
   }
 
+  const handleUpdateSuccess = (updatedStudent: StudentDetailsDto) => {
+    setStudent(updatedStudent);
+  };
+
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <Card className="border-0 shadow-none">
@@ -169,8 +173,10 @@ export default function StudentsDetailsPage() {
 
       <UpdateStudentModal
         open={isUpdateOpen}
-        studentId={id ?? null}
+        studentId={id}
+        student={student}
         onClose={() => setIsUpdateOpen(false)}
+        onUpdateSuccess={handleUpdateSuccess}
       />
     </div>
   );

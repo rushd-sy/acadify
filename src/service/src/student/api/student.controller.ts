@@ -9,12 +9,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
-import type {
-  CreateStudentDto,
-  StudentDetailsDto,
-  StudentDto,
-  UpdateStudentDto,
-} from 'dtos';
+import type { StudentDto, StudentDetailsDto } from 'dtos';
+import { CreateStudentDto, UpdateStudentDto } from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)

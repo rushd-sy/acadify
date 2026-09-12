@@ -16,14 +16,18 @@ import DeleteStudentModal from '@/components/delete-student-modal';
 import UpdateStudentModal from '@/components/update-student-modal';
 
 import { studentService } from '@/services/student.service';
-import type { StudentDto } from 'dtos';
+import type { StudentDetailsDto, StudentDto } from 'dtos';
 
 export default function StudentsPage() {
   const navigate = useNavigate();
 
   const [students, setStudents] = useState<StudentDto[]>([]);
-  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
-  const [studentToUpdate, setStudentToUpdate] = useState<number | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<{
+    id: number;
+    action: 'delete' | 'update';
+  } | null>(null);
+  const [studentToUpdateData, setStudentToUpdateData] =
+    useState<StudentDetailsDto | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -52,7 +56,7 @@ export default function StudentsPage() {
   }, []);
 
   const handleConfirmDelete = async () => {
-    if (studentToDelete === null) {
+    if (selectedStudent === null) {
       return;
     }
 
@@ -60,13 +64,13 @@ export default function StudentsPage() {
       setIsDeleting(true);
       setDeleteError(null);
 
-      await studentService.deleteStudentById(studentToDelete);
+      await studentService.deleteStudentById(selectedStudent.id);
 
       setStudents((previousStudents) =>
-        previousStudents.filter((student) => student.id !== studentToDelete),
+        previousStudents.filter((student) => student.id !== selectedStudent.id),
       );
 
-      setStudentToDelete(null);
+      setSelectedStudent(null);
     } catch (error) {
       console.error('Failed to delete student:', error);
       setDeleteError('Failed to delete the student. Please try again later.');
@@ -76,8 +80,16 @@ export default function StudentsPage() {
   };
 
   const handleCloseDeleteModal = () => {
-    setStudentToDelete(null);
+    setSelectedStudent(null);
     setDeleteError(null);
+  };
+
+  const handleUpdateSuccess = (updatedStudent: StudentDetailsDto) => {
+    setStudents((previousStudents) =>
+      previousStudents.map((student) =>
+        student.id === updatedStudent.id ? updatedStudent : student,
+      ),
+    );
   };
 
   return (
@@ -139,9 +151,24 @@ export default function StudentsPage() {
                       <Button
                         variant="secondary"
                         className="h-9 px-4 text-sm"
-                        onClick={(event) => {
+                        onClick={async (event) => {
                           event.stopPropagation();
-                          setStudentToUpdate(student.id);
+
+                          try {
+                            const studentDetails =
+                              await studentService.getStudentById(student.id);
+
+                            setStudentToUpdateData(studentDetails);
+                            setSelectedStudent({
+                              id: student.id,
+                              action: 'update',
+                            });
+                          } catch (error) {
+                            console.error(
+                              'Failed to fetch student details:',
+                              error,
+                            );
+                          }
                         }}
                       >
                         Edit
@@ -152,7 +179,10 @@ export default function StudentsPage() {
                         className="h-8 px-3 text-sm"
                         onClick={(event) => {
                           event.stopPropagation();
-                          setStudentToDelete(student.id);
+                          setSelectedStudent({
+                            id: student.id,
+                            action: 'delete',
+                          });
                         }}
                       >
                         Delete
@@ -167,9 +197,9 @@ export default function StudentsPage() {
       </div>
 
       <DeleteStudentModal
-        open={studentToDelete !== null}
+        open={selectedStudent?.action === 'delete'}
         studentName={
-          students.find((student) => student.id === studentToDelete)
+          students.find((student) => student.id === selectedStudent?.id)
             ?.firstName || ''
         }
         onYes={handleConfirmDelete}
@@ -179,9 +209,15 @@ export default function StudentsPage() {
       />
 
       <UpdateStudentModal
-        open={studentToUpdate !== null}
-        studentId={studentToUpdate !== null ? String(studentToUpdate) : ''}
-        onClose={() => setStudentToUpdate(null)}
+        open={selectedStudent?.action === 'update'}
+        studentId={
+          selectedStudent?.action === 'update'
+            ? String(selectedStudent.id)
+            : undefined
+        }
+        student={studentToUpdateData ?? undefined}
+        onClose={() => setSelectedStudent(null)}
+        onUpdateSuccess={handleUpdateSuccess}
       />
     </div>
   );
