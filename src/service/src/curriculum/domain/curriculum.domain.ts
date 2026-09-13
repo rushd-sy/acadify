@@ -1,10 +1,10 @@
 export class CurriculumDomain {
-  id?: number;
+  id!: number;
   name!: string;
   description?: string;
 
   private constructor(input: {
-    id?: number;
+    id: number;
     name: string;
     description?: string;
   }) {
@@ -14,6 +14,7 @@ export class CurriculumDomain {
   }
 
   static create(input: {
+    id: -1;
     name: string;
     description?: string;
   }): CurriculumDomain {
