@@ -11,8 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import AddGradeModal from '@/components/add-grade-modal';
-import UpdateGradeModal from '@/components/update-grade-modal';
+import GradeModal from '@/components/grade-modal';
 import DeleteGradeModal from '@/components/delete-grade-modal';
 
 import { gradeService } from '@/services/grade.service';
@@ -24,7 +23,7 @@ export default function GradePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
   const [gradeToEdit, setGradeToEdit] = useState<GradeDto | null>(null);
   const [gradeToDelete, setGradeToDelete] = useState<GradeDto | null>(null);
 
@@ -50,18 +49,19 @@ export default function GradePage() {
     loadGrades();
   }, []);
 
-  const handleCreated = (grade: GradeDto) => {
-    setGrades((current) => [...current, grade]);
-  };
-
-  const handleUpdated = (updatedGrade: GradeDto) => {
-    setGrades((current) =>
-      current.map((grade) =>
-        grade.id === updatedGrade.id ? updatedGrade : grade,
-      ),
-    );
+  const handleGradeSaved = (savedGrade: GradeDto) => {
+    if (gradeToEdit) {
+      setGrades((current) =>
+        current.map((grade) =>
+          grade.id === savedGrade.id ? savedGrade : grade,
+        ),
+      );
+    } else {
+      setGrades((current) => [...current, savedGrade]);
+    }
 
     setGradeToEdit(null);
+    setIsGradeModalOpen(false);
   };
 
   const handleDelete = async () => {
@@ -96,7 +96,14 @@ export default function GradePage() {
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold">Grades</h1>
 
-          <Button onClick={() => setIsAddOpen(true)}>Add Grade</Button>
+          <Button
+            onClick={() => {
+              setGradeToEdit(null);
+              setIsGradeModalOpen(true);
+            }}
+          >
+            Add Grade
+          </Button>
         </div>
 
         <Table>
@@ -146,7 +153,12 @@ export default function GradePage() {
                   <TableCell>{grade.name}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button onClick={() => setGradeToEdit(grade)}>
+                      <Button
+                        onClick={() => {
+                          setGradeToEdit(grade);
+                          setIsGradeModalOpen(true);
+                        }}
+                      >
                         Edit
                       </Button>
 
@@ -166,17 +178,15 @@ export default function GradePage() {
         </Table>
       </div>
 
-      <AddGradeModal
-        open={isAddOpen}
-        onClose={() => setIsAddOpen(false)}
-        onCreated={handleCreated}
-      />
-
-      <UpdateGradeModal
-        open={gradeToEdit !== null}
+      <GradeModal
+        key={gradeToEdit ? gradeToEdit.id : 'create'}
+        open={isGradeModalOpen}
         grade={gradeToEdit}
-        onClose={() => setGradeToEdit(null)}
-        onUpdated={handleUpdated}
+        onClose={() => {
+          setGradeToEdit(null);
+          setIsGradeModalOpen(false);
+        }}
+        onSaved={handleGradeSaved}
       />
 
       <DeleteGradeModal

@@ -1,4 +1,4 @@
-import { api } from '@/lib/api-client';
+import { api } from '../lib/api-client';
 import type { CreateGradeDto, GradeDto, UpdateGradeDto } from 'dtos';
 
 class GradeService {
@@ -14,8 +14,14 @@ class GradeService {
     return response.data;
   }
 
-  async updateGrade(id: number, data: UpdateGradeDto): Promise<GradeDto> {
-    const response = await api.patch<GradeDto>(`${this.baseUrl}/${id}`, data);
+  async updateGrade(
+    id: number,
+    updatedGrade: UpdateGradeDto,
+  ): Promise<GradeDto> {
+    const response = await api.patch<GradeDto>(
+      `${this.baseUrl}/${id}`,
+      updatedGrade,
+    );
 
     return response.data;
   }

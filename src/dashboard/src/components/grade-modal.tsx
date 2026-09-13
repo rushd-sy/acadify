@@ -13,22 +13,27 @@ import { Spinner } from '@/components/ui/spinner';
 import { gradeService } from '@/services/grade.service';
 import type { GradeDto } from 'dtos';
 
-type AddGradeModalProps = {
+type GradeModalProps = {
   open: boolean;
+  grade: GradeDto | null;
   onClose: () => void;
-  onCreated: (grade: GradeDto) => void;
+  onSaved: (grade: GradeDto) => void;
 };
 
-export default function AddGradeModal({
+export default function GradeModal({
   open,
+  grade,
   onClose,
-  onCreated,
-}: AddGradeModalProps) {
-  const [name, setName] = useState('');
+  onSaved,
+}: GradeModalProps) {
+  const [name, setName] = useState(grade?.name ?? '');
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  if (!open) {
+  const isEdit = grade !== null;
+  const shouldShowGradeModal = open;
+
+  if (!shouldShowGradeModal) {
     return null;
   }
 
@@ -46,13 +51,23 @@ export default function AddGradeModal({
     onClose();
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const getValidatedName = () => {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
       setError('Grade name is required.');
+      return null;
+    }
+
+    return trimmedName;
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const trimmedName = getValidatedName();
+
+    if (!trimmedName) {
       return;
     }
 
@@ -60,16 +75,25 @@ export default function AddGradeModal({
       setIsSaving(true);
       setError(null);
 
-      const grade = await gradeService.createGrade({
-        name: trimmedName,
-      });
+      const savedGrade = isEdit
+        ? await gradeService.updateGrade(grade.id, {
+            name: trimmedName,
+          })
+        : await gradeService.createGrade({
+            name: trimmedName,
+          });
 
-      onCreated(grade);
+      onSaved(savedGrade);
       resetForm();
       onClose();
     } catch (requestError) {
-      console.error('Failed to create grade:', requestError);
-      setError('Failed to create grade. Please try again.');
+      console.error(
+        `Failed to ${isEdit ? 'update' : 'create'} grade:`,
+        requestError,
+      );
+      setError(
+        `Failed to ${isEdit ? 'update' : 'create'} grade. Please try again.`,
+      );
     } finally {
       setIsSaving(false);
     }
@@ -78,7 +102,9 @@ export default function AddGradeModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-[450px] rounded-xl bg-white p-6 shadow-lg">
-        <h2 className="mb-6 text-2xl font-semibold">Add Grade</h2>
+        <h2 className="mb-6 text-2xl font-semibold">
+          {isEdit ? 'Edit Grade' : 'Add Grade'}
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <FieldGroup>
@@ -111,7 +137,7 @@ export default function AddGradeModal({
               </Button>
 
               <Button type="submit" disabled={isSaving}>
-                {isSaving ? <Spinner /> : 'Add Grade'}
+                {isSaving ? <Spinner /> : isEdit ? 'Save Changes' : 'Add Grade'}
               </Button>
             </div>
           </FieldGroup>
