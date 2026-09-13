@@ -16,7 +16,7 @@ export class CurriculumMapper {
 
   toDto(curriculumDomain: CurriculumDomain): CurriculumDto {
     return {
-      id: curriculumDomain.id as number,
+      id: curriculumDomain.id,
       name: curriculumDomain.name,
       description: curriculumDomain.description,
     };
