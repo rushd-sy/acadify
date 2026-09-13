@@ -29,7 +29,12 @@ export class CurriculumRepository {
 
   async findByName(name: string): Promise<CurriculumDomain | null> {
     const curriculum = await this.prisma.curriculum.findFirst({
-      where: { name },
+      where: {
+        name: {
+          equals: name,
+          mode: 'insensitive',
+        },
+      },
     });
     return curriculum ? this.mapper.toDomain(curriculum) : null;
   }

@@ -14,11 +14,14 @@ export class CurriculumDomain {
   }
 
   static create(input: {
-    id: -1;
     name: string;
     description?: string;
   }): CurriculumDomain {
-    return new CurriculumDomain(input);
+    return new CurriculumDomain({
+      id: -1,
+      name: input.name,
+      description: input.description,
+    });
   }
 
   static fromPersistence(input: {
