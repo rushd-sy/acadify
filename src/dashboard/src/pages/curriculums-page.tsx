@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import DeleteCurriculumModal from '@/components/delete-student-modal';
+import DeleteCurriculumModal from '@/components/delete-curriculum-modal';
 import CurriculumModal from '@/components/curriculum-modal';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
