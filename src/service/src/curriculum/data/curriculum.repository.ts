@@ -13,7 +13,11 @@ export class CurriculumRepository {
   ) {}
 
   async findAll(): Promise<CurriculumDomain[]> {
-    const curriculums = await this.prisma.curriculum.findMany();
+    const curriculums = await this.prisma.curriculum.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    });
     return curriculums.map(
       (curriculum: Curriculum): CurriculumDomain =>
         this.mapper.toDomain(curriculum),
