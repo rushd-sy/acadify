@@ -6,6 +6,7 @@ import SharedLayout from './layout/SharedLayout';
 import LoginPage from './pages/login-page';
 import AuthLayout from './layout/AuthLayout';
 import { AuthProvider } from './providers/auth-provider';
+import CurriculumsPage from '@/pages/curriculums-page';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route element={<SharedLayout />}>
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
+          <Route path="/curriculum" element={<CurriculumsPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
