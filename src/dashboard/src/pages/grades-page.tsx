@@ -179,7 +179,7 @@ export default function GradePage() {
       </div>
 
       <GradeModal
-        key={gradeToEdit ? gradeToEdit.id : 'create'}
+        key={-1}
         open={isGradeModalOpen}
         grade={gradeToEdit}
         onClose={() => {
