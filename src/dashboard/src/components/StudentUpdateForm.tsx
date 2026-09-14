@@ -3,19 +3,17 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { useState } from 'react';
 import { studentService } from '@/services/student.service';
-import type { StudentDetailsDto } from 'dtos/dist/src/student/student-details.dto';
+import type { StudentDetailsDto } from 'dtos';
 import axios from 'axios';
 
 type StudentUpdateFormProps = {
   onCancel: () => void;
-  studentId?: string;
   student?: StudentDetailsDto;
   onUpdateSuccess: (updatedStudent: StudentDetailsDto) => void;
 };
 
 export function StudentUpdateForm({
   onCancel,
-  studentId,
   student,
   onUpdateSuccess,
 }: StudentUpdateFormProps) {
@@ -33,14 +31,14 @@ export function StudentUpdateForm({
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        if (!studentId) {
+        if (!student) {
           return;
         }
 
         setUpdateError(null);
         setIsUpdating(true);
         studentService
-          .updateStudentById(studentId, studentData)
+          .updateStudentById(student.id, studentData)
           .then((updatedStudent) => {
             setIsUpdating(false);
             onUpdateSuccess(updatedStudent);

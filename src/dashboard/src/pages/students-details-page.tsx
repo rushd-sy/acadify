@@ -173,7 +173,6 @@ export default function StudentsDetailsPage() {
 
       <UpdateStudentModal
         open={isUpdateOpen}
-        studentId={id}
         student={student}
         onClose={() => setIsUpdateOpen(false)}
         onUpdateSuccess={handleUpdateSuccess}

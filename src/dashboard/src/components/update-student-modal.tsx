@@ -1,9 +1,8 @@
-import type { StudentDetailsDto } from 'dtos/dist/src/student/student-details.dto';
+import type { StudentDetailsDto } from 'dtos';
 import { StudentUpdateForm } from './StudentUpdateForm';
 
 type UpdateStudentModalProps = {
   open: boolean;
-  studentId?: string;
   student?: StudentDetailsDto;
   onUpdateSuccess: (updatedStudent: StudentDetailsDto) => void;
   onClose: () => void;
@@ -11,7 +10,6 @@ type UpdateStudentModalProps = {
 
 export default function UpdateStudentModal({
   open,
-  studentId,
   student,
   onUpdateSuccess,
   onClose,
@@ -26,7 +24,6 @@ export default function UpdateStudentModal({
         <h2 className="mb-6 text-2xl font-semibold">Update Student</h2>
         <StudentUpdateForm
           onCancel={onClose}
-          studentId={studentId}
           student={student}
           onUpdateSuccess={onUpdateSuccess}
         />

@@ -210,11 +210,6 @@ export default function StudentsPage() {
 
       <UpdateStudentModal
         open={selectedStudent?.action === 'update'}
-        studentId={
-          selectedStudent?.action === 'update'
-            ? String(selectedStudent.id)
-            : undefined
-        }
         student={studentToUpdateData ?? undefined}
         onClose={() => setSelectedStudent(null)}
         onUpdateSuccess={handleUpdateSuccess}
