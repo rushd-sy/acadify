@@ -8,39 +8,46 @@ datasource db {
 }
 
 model Student {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+}
+
+model Teacher {
+  userId Int    @id
+  degree String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  firstName String
-  lastName String
-  phoneNumber String @unique
-  email String @unique
+  id             Int      @id @default(autoincrement())
+  firstName      String
+  lastName       String
+  phoneNumber    String   @unique
+  email          String   @unique
   hashedPassword String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  student Student?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  student        Student?
+  teacher        Teacher?
 }
 
 model Grade {
-  id Int  @id @default(autoincrement())
-  name String 
+  id       Int       @id @default(autoincrement())
+  name     String
   sections Section[]
 }
 
 model Curriculum {
-  id Int @id @default(autoincrement())
-  name String
+  id          Int     @id @default(autoincrement())
+  name        String
   description String?
 }
 
 model Section {
-  id Int @id @default(autoincrement())
-  name String
+  id           Int    @id @default(autoincrement())
+  name         String
   academicYear String
-  gradeId Int 
-  grade Grade @relation(fields: [gradeId], references: [id])
+  gradeId      Int
+  grade        Grade  @relation(fields: [gradeId], references: [id])
 }
