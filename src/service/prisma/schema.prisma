@@ -14,9 +14,9 @@ model Student {
 }
 
 model Teacher {
-  userId Int    @id
+  userId Int @id
   degree String
-  user   User   @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model User {

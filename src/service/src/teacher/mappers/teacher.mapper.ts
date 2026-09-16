@@ -15,7 +15,6 @@ import { TeacherWithUser } from '../types/teacher-user.type';
 export class TeacherMapper {
   toTeacherDto(teacher: TeacherWithUser): TeacherDto {
     return {
-      id: teacher.userId,
       userId: teacher.userId,
       firstName: teacher.user.firstName,
       lastName: teacher.user.lastName,
@@ -30,7 +29,6 @@ export class TeacherMapper {
 
   toTeacherDetailsDto(teacher: TeacherWithUser): TeacherDetailsDto {
     return {
-      id: teacher.userId,
       userId: teacher.userId,
       firstName: teacher.user.firstName,
       lastName: teacher.user.lastName,

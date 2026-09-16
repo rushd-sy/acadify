@@ -1,26 +1,19 @@
 import { UserDomain } from 'src/auth/domain/user.domain';
 
 export class TeacherDomain {
-  id: number;
   user: UserDomain;
   degree: string;
 
-  private constructor(input: { id: number; user: UserDomain; degree: string }) {
-    this.id = input.id;
+  private constructor(input: { user: UserDomain; degree: string }) {
     this.user = input.user;
     this.degree = input.degree;
   }
 
   static create(input: { user: UserDomain; degree: string }): TeacherDomain {
-    return new TeacherDomain({
-      id: -1,
-      user: input.user,
-      degree: input.degree,
-    });
+    return new TeacherDomain(input);
   }
 
   static fromPersistence(input: {
-    id: number;
     user: UserDomain;
     degree: string;
   }): TeacherDomain {
