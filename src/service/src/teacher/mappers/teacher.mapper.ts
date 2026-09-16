@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import {
   CreateTeacherDto,
-  Role,
   TeacherDetailsDto,
   TeacherDto,
   UpdateTeacherDto,
@@ -22,7 +21,6 @@ export class TeacherMapper {
       lastName: teacher.user.lastName,
       email: teacher.user.email,
       degree: teacher.degree,
-      role: Role.TEACHER,
     };
   }
 
@@ -39,7 +37,6 @@ export class TeacherMapper {
       email: teacher.user.email,
       phoneNumber: teacher.user.phoneNumber,
       degree: teacher.degree,
-      role: Role.TEACHER,
     };
   }
 

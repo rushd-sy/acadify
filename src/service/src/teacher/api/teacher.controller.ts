@@ -9,7 +9,9 @@ export class TeacherController {
   constructor(private teacherService: TeacherService) {}
 
   @Post()
-  createTeacher(@Body() newTeacher: CreateTeacherDto): Promise<TeacherDto> {
-    return this.teacherService.createTeacher(newTeacher);
+  createTeacher(
+    @Body() createTeacherDto: CreateTeacherDto,
+  ): Promise<TeacherDto> {
+    return this.teacherService.createTeacher(createTeacherDto);
   }
 }

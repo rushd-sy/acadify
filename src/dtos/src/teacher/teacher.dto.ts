@@ -1,5 +1,3 @@
-import { Role } from '../auth/role.enum';
-
 export class TeacherDto {
   id!: number;
   userId!: number;
@@ -7,5 +5,4 @@ export class TeacherDto {
   lastName!: string;
   email!: string;
   degree!: string;
-  role!: Role;
 }
