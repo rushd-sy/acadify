@@ -25,7 +25,7 @@ export default function CurriculumModal({
           {curriculum ? 'Update Curriculum' : 'Create Curriculum'}
         </h2>
         <CurriculumForm
-          key={curriculum ? curriculum.id : 'new-curriculum'}
+          key={curriculum ? curriculum.id : -1}
           onCancel={onClose}
           initialData={curriculum}
           onSuccess={onSuccess}

@@ -6,7 +6,7 @@ import type {
 } from 'dtos';
 
 class CurriculumService {
-  private readonly baseUrl = '/curriculum';
+  private readonly baseUrl = '/api/curriculums';
 
   async getAllCurriculums(): Promise<CurriculumDto[]> {
     const response = await api.get<CurriculumDto[]>(this.baseUrl);

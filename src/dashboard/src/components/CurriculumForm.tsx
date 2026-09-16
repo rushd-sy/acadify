@@ -24,8 +24,8 @@ export function CurriculumForm({
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      const idExisting = initialData?.id && initialData.id !== -1;
-      if (idExisting) {
+      const isEditCase = initialData?.id && initialData.id !== -1;
+      if (isEditCase) {
         await curriculumService.updateCurriculumById(initialData.id, formData);
       } else {
         await curriculumService.createCurriculum(formData);

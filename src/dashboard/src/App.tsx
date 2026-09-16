@@ -19,7 +19,7 @@ function App() {
         <Route element={<SharedLayout />}>
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
-          <Route path="/curriculum" element={<CurriculumsPage />} />
+          <Route path="/curriculums" element={<CurriculumsPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
