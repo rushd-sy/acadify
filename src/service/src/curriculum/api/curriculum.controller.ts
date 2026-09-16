@@ -11,7 +11,7 @@ import {
 import { CurriculumService } from '../services/curriculum.service';
 import { CreateCurriculumDto, UpdateCurriculumDto, CurriculumDto } from 'dtos';
 
-@Controller('curriculum')
+@Controller('/api/curriculums')
 export class CurriculumController {
   constructor(private readonly curriculumService: CurriculumService) {}
 
