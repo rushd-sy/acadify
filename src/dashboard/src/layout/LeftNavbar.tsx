@@ -50,8 +50,8 @@ export default function LeftNavbar() {
               >
                 <BookOpen className="size-4" />
                 Curriculums
-               </Button>
-            </Link> 
+              </Button>
+            </Link>
 
             <Link to="/grades">
               <Button
