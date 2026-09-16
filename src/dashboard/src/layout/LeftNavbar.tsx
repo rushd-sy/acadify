@@ -50,6 +50,16 @@ export default function LeftNavbar() {
               >
                 <BookOpen className="size-4" />
                 Curriculums
+               </Button>
+            </Link> 
+
+            <Link to="/grades">
+              <Button
+                variant="secondary"
+                className="w-full justify-start gap-3"
+              >
+                <BookOpen className="size-4" />
+                Grades
               </Button>
             </Link>
           </div>
