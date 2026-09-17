@@ -1,5 +1,5 @@
 import type { StudentDetailsDto } from 'dtos';
-import { StudentUpdateForm } from './StudentUpdateForm';
+import { StudentUpdateForm } from './Student-update-form';
 
 type UpdateStudentModalProps = {
   open: boolean;
