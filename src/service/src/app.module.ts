@@ -8,8 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { StudentRepository } from './student/data/student.repository';
 import { GradeModule } from './grade/grade.module';
 import { CurriculumModule } from './curriculum/curriculum.module';
+import { TeacherModule } from './teacher/teacher.module';
+
 @Module({
-  imports: [AuthModule, GradeModule, CurriculumModule],
+  imports: [AuthModule, GradeModule, CurriculumModule, TeacherModule],
   controllers: [HealthCheckController, StudentController],
   providers: [StudentService, StudentMapper, PrismaService, StudentRepository],
 })
