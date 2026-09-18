@@ -29,9 +29,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isStudent = !!user.student;
+    let role = Role.USER;
 
-    const role = isStudent ? Role.STUDENT : Role.USER;
+    if (user.student) {
+      role = Role.STUDENT;
+    } else if (user.teacher) {
+      role = Role.TEACHER;
+    }
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
