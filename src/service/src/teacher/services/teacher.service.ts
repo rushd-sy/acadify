@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TeacherMapper } from '../mappers/teacher.mapper';
-import type { CreateTeacherDto, TeacherDetailsDto, TeacherDto } from 'dtos';
+import type {
+  CreateTeacherDto,
+  TeacherDetailsDto,
+  TeacherDto,
+  UpdateTeacherDto,
+} from 'dtos';
 import { TeacherRepository } from '../data/teacher.repository';
 
 @Injectable()
@@ -30,5 +35,21 @@ export class TeacherService {
       throw new NotFoundException(`Teacher with ID ${userId} not found`);
     }
     return this.mapper.toTeacherDetailsDto(teacher);
+  }
+
+  async updateTeacherById(
+    userId: number,
+    data: UpdateTeacherDto,
+  ): Promise<TeacherDetailsDto> {
+    const updatedTeacher = await this.repository.updateTeacherById(
+      userId,
+      data,
+    );
+
+    if (!updatedTeacher) {
+      throw new NotFoundException(`Teacher with ID ${userId} not found`);
+    }
+
+    return this.mapper.toTeacherDetailsDto(updatedTeacher);
   }
 }

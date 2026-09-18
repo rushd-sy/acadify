@@ -5,10 +5,16 @@ import {
   UseGuards,
   Get,
   Param,
+  Put,
   ParseIntPipe,
 } from '@nestjs/common';
 import { TeacherService } from '../services/teacher.service';
-import type { CreateTeacherDto, TeacherDetailsDto, TeacherDto } from 'dtos';
+import type {
+  CreateTeacherDto,
+  TeacherDetailsDto,
+  TeacherDto,
+  UpdateTeacherDto,
+} from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -33,5 +39,12 @@ export class TeacherController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<TeacherDetailsDto | null> {
     return this.teacherService.findTeacherById(id);
+  }
+  @Put(':id')
+  updateTeacherById(
+    @Param('id', ParseIntPipe) userId: number,
+    @Body() data: UpdateTeacherDto,
+  ): Promise<TeacherDetailsDto> {
+    return this.teacherService.updateTeacherById(userId, data);
   }
 }
