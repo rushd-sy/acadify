@@ -90,6 +90,61 @@ const seed = async () => {
     });
   }
 
+  console.log('Seeding Teachers (with associated Users)...');
+  const degrees = [
+    'Master in Mathematics',
+    'PhD in Physics',
+    'Bachelor of Computer Science',
+    'Master in English Literature',
+    'PhD in History',
+  ];
+  for (let i = 0; i < 10; i++) {
+    const plainPassword = faker.internet.password();
+    const hashedPassword = await bcrypt.hash(plainPassword, 10);
+    const email = faker.internet.email();
+    const phoneNumber = faker.phone.number();
+
+    // نبدأ من 21 لأن الطلاب أخذوا المعرفات من 11 إلى 20
+    const userId = i + 21;
+    const degree = degrees[i % degrees.length];
+
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: {
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        phoneNumber: phoneNumber,
+        email: email,
+        hashedPassword: hashedPassword,
+      },
+      create: {
+        id: userId,
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        phoneNumber: phoneNumber,
+        email: email,
+        hashedPassword: hashedPassword,
+      },
+    });
+
+    await prisma.teacher.upsert({
+      where: { userId: userId },
+      update: {
+        degree: degree,
+      },
+      create: {
+        userId: userId,
+        degree: degree,
+      },
+    });
+
+    generatedAccounts.push({
+      Role: 'Teacher',
+      Email: email,
+      Password: plainPassword,
+    });
+  }
+
   const gradesData = ['10th Grade', '11th Grade', '12th Grade'];
   for (let i = 0; i < gradesData.length; i++) {
     const grade = await prisma.grade.upsert({
@@ -147,6 +202,7 @@ const clear = async () => {
   const prisma = new PrismaClient();
 
   await prisma.student.deleteMany();
+  await prisma.teacher.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('DB Deleted Successfully!');

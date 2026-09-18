@@ -15,6 +15,7 @@ export class UserRepository {
       },
       include: {
         student: true,
+        teacher: true,
       },
     });
     return user;
