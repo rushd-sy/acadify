@@ -41,12 +41,15 @@ export class TeacherService {
     userId: number,
     data: UpdateTeacherDto,
   ): Promise<TeacherDetailsDto> {
-    const isEditCase = await this.repository.updateTeacherById(userId, data);
+    const updatedTeacher = await this.repository.updateTeacherById(
+      userId,
+      data,
+    );
 
-    if (!isEditCase) {
+    if (!updatedTeacher) {
       throw new NotFoundException(`Teacher with ID ${userId} not found`);
     }
 
-    return this.mapper.toTeacherDetailsDto(isEditCase);
+    return this.mapper.toTeacherDetailsDto(updatedTeacher);
   }
 }
