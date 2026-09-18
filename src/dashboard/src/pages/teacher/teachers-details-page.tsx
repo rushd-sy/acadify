@@ -112,16 +112,16 @@ export default function TeachersDetailsPage() {
         </CardContent>
 
         <CardFooter className="flex justify-end gap-3 border-t bg-gray-50/50 pt-6">
+        //TODO: Use update form here
           <Button
             variant="secondary"
-            onClick={() => console.log('Edit clicked - Delegated to Adel')}
           >
             Edit
           </Button>
 
+          //TODO: use Generic Delete Modal
           <Button
             variant="secondary"
-            onClick={() => console.log('Delete clicked - Delegated to Adel')}
           >
             Delete
           </Button>
