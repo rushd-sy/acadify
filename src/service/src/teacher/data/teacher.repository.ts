@@ -40,4 +40,21 @@ export class TeacherRepository {
       return createdTeacher;
     });
   }
+
+  async findAllTeachers(): Promise<TeacherWithUser[]> {
+    return this.prisma.teacher.findMany({
+      include: {
+        user: true,
+      },
+    });
+  }
+
+  async findTeacherById(userId: number): Promise<TeacherWithUser | null> {
+    return this.prisma.teacher.findUnique({
+      where: { userId },
+      include: {
+        user: true,
+      },
+    });
+  }
 }

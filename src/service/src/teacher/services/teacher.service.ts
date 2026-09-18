@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TeacherMapper } from '../mappers/teacher.mapper';
-import type { CreateTeacherDto, TeacherDto } from 'dtos';
+import type { CreateTeacherDto, TeacherDetailsDto, TeacherDto } from 'dtos';
 import { TeacherRepository } from '../data/teacher.repository';
 
 @Injectable()
@@ -17,5 +17,18 @@ export class TeacherService {
       await this.repository.createTeacherWithUser(teacherDomain);
 
     return this.mapper.toTeacherDto(createdTeacher);
+  }
+
+  async findAllTeachers(): Promise<TeacherDto[]> {
+    const teachers = await this.repository.findAllTeachers();
+    return this.mapper.toTeacherDtoList(teachers);
+  }
+
+  async findTeacherById(userId: number): Promise<TeacherDetailsDto | null> {
+    const teacher = await this.repository.findTeacherById(userId);
+    if (!teacher) {
+      throw new NotFoundException(`Teacher with ID ${userId} not found`);
+    }
+    return this.mapper.toTeacherDetailsDto(teacher);
   }
 }
