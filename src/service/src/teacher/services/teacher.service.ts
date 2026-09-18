@@ -52,4 +52,8 @@ export class TeacherService {
 
     return this.mapper.toTeacherDetailsDto(updatedTeacher);
   }
+
+  async deleteTeacher(id: number): Promise<void> {
+    await this.repository.deleteById(id);
+  }
 }

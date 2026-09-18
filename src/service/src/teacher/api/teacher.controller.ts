@@ -7,6 +7,7 @@ import {
   Param,
   Put,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { TeacherService } from '../services/teacher.service';
 import type {
@@ -40,11 +41,17 @@ export class TeacherController {
   ): Promise<TeacherDetailsDto | null> {
     return this.teacherService.findTeacherById(id);
   }
+
   @Put(':id')
   updateTeacherById(
     @Param('id', ParseIntPipe) userId: number,
     @Body() data: UpdateTeacherDto,
   ): Promise<TeacherDetailsDto> {
     return this.teacherService.updateTeacherById(userId, data);
+  }
+
+  @Delete(':id')
+  deleteTeacher(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.teacherService.deleteTeacher(id);
   }
 }
