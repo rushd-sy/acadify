@@ -2,14 +2,15 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import StudentsPage from '@/pages/students-page';
 import StudentsDetailsPage from '@/pages/students-details-page';
+import TeachersPage from '@/pages/teachers-page';
 import GradePage from '@/pages/grades-page';
+import CurriculumsPage from '@/pages/curriculums-page';
 
 import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
 import LoginPage from './pages/login-page';
 import AuthLayout from './layout/AuthLayout';
 import { AuthProvider } from './providers/auth-provider';
-import CurriculumsPage from '@/pages/curriculums-page';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route element={<SharedLayout />}>
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
+          <Route path="/teachers" element={<TeachersPage />} />
           <Route path="/curriculums" element={<CurriculumsPage />} />
           <Route path="/grades" element={<GradePage />} />
         </Route>
