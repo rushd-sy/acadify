@@ -104,7 +104,6 @@ const seed = async () => {
     const email = faker.internet.email();
     const phoneNumber = faker.phone.number();
 
-    // نبدأ من 21 لأن الطلاب أخذوا المعرفات من 11 إلى 20
     const userId = i + 21;
     const degree = degrees[i % degrees.length];
 
