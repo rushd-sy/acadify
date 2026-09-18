@@ -94,7 +94,7 @@ export class TeacherRepository {
 
   async deleteById(id: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      const teacher = await tx.teacher.findUnique({ where: { userId: id } });
+      const teacher = await this.findTeacherById(id);
       if (teacher) {
         await tx.teacher.delete({ where: { userId: id } });
         await tx.user.delete({ where: { id: teacher.userId } });
