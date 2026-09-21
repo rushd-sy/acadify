@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -11,10 +10,11 @@ import {
 } from '@/components/ui/card';
 
 import { teacherService } from '@/services/teacher.service';
+import { useNumericParam } from '@/hooks/use-numeric-param';
 import type { TeacherDetailsDto } from 'dtos';
 
 export default function TeachersDetailsPage() {
-  const { id } = useParams<{ id: string }>();
+  const teacherId = useNumericParam('id');
 
   const [teacher, setTeacher] = useState<TeacherDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,15 +22,7 @@ export default function TeachersDetailsPage() {
 
   useEffect(() => {
     const fetchTeacher = async () => {
-      if (!id) {
-        setFetchError('Teacher ID is missing.');
-        setIsLoading(false);
-        return;
-      }
-
-      const teacherId = Number(id);
-
-      if (!Number.isInteger(teacherId) || teacherId <= 0) {
+      if (!teacherId) {
         setFetchError('Invalid teacher ID.');
         setIsLoading(false);
         return;
@@ -52,7 +44,7 @@ export default function TeachersDetailsPage() {
     };
 
     fetchTeacher();
-  }, [id]);
+  }, [teacherId]);
 
   if (isLoading) {
     return <div className="mt-20 text-center text-2xl">Loading teacher...</div>;
@@ -85,14 +77,18 @@ export default function TeachersDetailsPage() {
               <span className="text-sm font-medium text-gray-500">
                 First Name
               </span>
-              <span className="text-lg font-semibold">{teacher.firstName}</span>
+              <span className="text-lg font-semibold">
+                {teacher.firstName}
+              </span>
             </div>
 
             <div className="flex flex-col gap-1">
               <span className="text-sm font-medium text-gray-500">
                 Last Name
               </span>
-              <span className="text-lg font-semibold">{teacher.lastName}</span>
+              <span className="text-lg font-semibold">
+                {teacher.lastName}
+              </span>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -105,16 +101,19 @@ export default function TeachersDetailsPage() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm font-medium text-gray-500">Email</span>
+              <span className="text-sm font-medium text-gray-500">
+                Email
+              </span>
               <span className="text-lg font-semibold">{teacher.email}</span>
             </div>
           </div>
         </CardContent>
 
         <CardFooter className="flex justify-end gap-3 border-t bg-gray-50/50 pt-6">
-          //TODO: Use update form here
+          {/* TODO: Use update form here */}
           <Button variant="secondary">Edit</Button>
-          //TODO: use Generic Delete Modal
+
+          {/* TODO: Use Generic Delete Modal */}
           <Button variant="secondary">Delete</Button>
         </CardFooter>
       </Card>
