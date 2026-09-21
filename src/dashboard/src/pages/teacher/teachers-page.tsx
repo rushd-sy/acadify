@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Table,
@@ -15,6 +16,8 @@ import { teacherService } from '@/services/teacher.service';
 import type { TeacherDto } from 'dtos';
 
 export default function TeachersPage() {
+  const navigate = useNavigate();
+
   const [teachers, setTeachers] = useState<TeacherDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -127,7 +130,11 @@ export default function TeachersPage() {
               </TableRow>
             ) : (
               teachers.map((teacher) => (
-                <TableRow key={teacher.userId} className="h-16">
+                <TableRow
+                  key={teacher.userId}
+                  className="h-16 cursor-pointer hover:bg-gray-50"
+                  onClick={() => navigate(`/teachers/${teacher.userId}`)}
+                >
                   <TableCell className="font-medium">
                     {teacher.firstName} {teacher.lastName}
                   </TableCell>
@@ -139,7 +146,10 @@ export default function TeachersPage() {
                   <TableCell>
                     <button
                       type="button"
-                      onClick={() => handleDeleteClick(teacher)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleDeleteClick(teacher);
+                      }}
                       className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
                     >
                       Delete
