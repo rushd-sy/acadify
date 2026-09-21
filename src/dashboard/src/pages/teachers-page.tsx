@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import DeleteMoadl from '@/components/ui/delete-modal';
+import DeleteModal from '@/components/ui/delete-modal';
 import { teacherService } from '@/services/teacher.service';
 import type { TeacherDto } from 'dtos';
 
@@ -151,7 +151,7 @@ export default function TeachersPage() {
           </TableBody>
         </Table>
 
-        <DeleteMoadl
+        <DeleteModal
           open={isDeleteModalOpen}
           title="Delete Teacher"
           message={
