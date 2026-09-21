@@ -9,6 +9,10 @@ class TeacherService {
 
     return response.data;
   }
+
+  async deleteTeacher(userId: number): Promise<void> {
+    await api.delete(`${this.baseUrl}/${userId}`);
+  }
 }
 
 export const teacherService = new TeacherService();
