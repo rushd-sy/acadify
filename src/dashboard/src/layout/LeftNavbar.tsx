@@ -43,10 +43,21 @@ export default function LeftNavbar() {
                 Students
               </Button>
             </Link>
+
+            <Link to="/teachers">
+              <Button
+                variant="secondary"
+                className="mt-2 w-full justify-start gap-3"
+              >
+                <Users className="size-4" />
+                Teachers
+              </Button>
+            </Link>
+
             <Link to="/curriculums">
               <Button
                 variant="secondary"
-                className="w-full justify-start gap-3 mt-2"
+                className="mt-2 w-full justify-start gap-3"
               >
                 <BookOpen className="size-4" />
                 Curriculums

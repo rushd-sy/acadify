@@ -77,18 +77,14 @@ export default function TeachersDetailsPage() {
               <span className="text-sm font-medium text-gray-500">
                 First Name
               </span>
-              <span className="text-lg font-semibold">
-                {teacher.firstName}
-              </span>
+              <span className="text-lg font-semibold">{teacher.firstName}</span>
             </div>
 
             <div className="flex flex-col gap-1">
               <span className="text-sm font-medium text-gray-500">
                 Last Name
               </span>
-              <span className="text-lg font-semibold">
-                {teacher.lastName}
-              </span>
+              <span className="text-lg font-semibold">{teacher.lastName}</span>
             </div>
 
             <div className="flex flex-col gap-1">
@@ -101,9 +97,7 @@ export default function TeachersDetailsPage() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-sm font-medium text-gray-500">
-                Email
-              </span>
+              <span className="text-sm font-medium text-gray-500">Email</span>
               <span className="text-lg font-semibold">{teacher.email}</span>
             </div>
           </div>

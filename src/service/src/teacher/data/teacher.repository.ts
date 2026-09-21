@@ -91,4 +91,14 @@ export class TeacherRepository {
     });
     return this.findTeacherById(userId);
   }
+
+  async deleteById(id: number): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const teacher = await this.findTeacherById(id);
+      if (teacher) {
+        await tx.teacher.delete({ where: { userId: id } });
+        await tx.user.delete({ where: { id: teacher.userId } });
+      }
+    });
+  }
 }
