@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { GradeRepository } from '../data/grade.repository';
 import { GradeMapper } from '../mappers/grade.mapper';
+import { GradeDomain } from '../domain/grade.domain';
 import { CreateGradeDto, GradeDto, UpdateGradeDto } from 'dtos';
 
 @Injectable()
@@ -19,11 +20,16 @@ export class GradeService {
 
     if (existingGrade) {
       throw new ConflictException(
-        `Grade with name ${createGradeDto.name} already esists.`,
+        `Grade with name ${createGradeDto.name} already exists.`,
       );
     }
-    const gradeDomain = await this.repository.create(createGradeDto);
-    return this.mapper.toDto(gradeDomain);
+
+    const gradeDomain = GradeDomain.create({
+      name: createGradeDto.name,
+    });
+
+    const createdGrade = await this.repository.create(gradeDomain);
+    return this.mapper.toDto(createdGrade);
   }
 
   async findById(id: number): Promise<GradeDto> {
@@ -47,8 +53,10 @@ export class GradeService {
     if (!isExisting) {
       throw new NotFoundException(`Grade with id ${id} not found`);
     }
+
     if (data.name !== isExisting.name) {
       const nameConflict = await this.repository.findByName(data.name);
+
       if (nameConflict) {
         throw new ConflictException('Grade with name already exists');
       }
@@ -64,6 +72,7 @@ export class GradeService {
     if (!isExisting) {
       throw new NotFoundException(`Grade with id ${id} not found`);
     }
+
     await this.repository.deleteById(id);
   }
 }
