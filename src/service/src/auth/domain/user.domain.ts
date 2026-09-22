@@ -1,7 +1,7 @@
 import { StringUtils } from '../../utils/string.util';
 
 export class UserDomain {
-  id?: number;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -9,7 +9,7 @@ export class UserDomain {
   hashedPassword: string;
 
   private constructor(input: {
-    id?: number;
+    id: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -43,7 +43,10 @@ export class UserDomain {
     phoneNumber: string;
     hashedPassword: string;
   }): UserDomain {
-    return new UserDomain(input);
+    return new UserDomain({
+      id: -1,
+      ...input,
+    });
   }
 
   static fromPersistence(input: {
