@@ -4,7 +4,7 @@ import { teacherService } from '@/services/teacher.service';
 import { useState } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
-import axios from 'axios';
+import { getApiErrorMessage } from '@/lib/api-error.util';
 
 type TeacherFormProps = {
   onCancel: () => void;
@@ -49,22 +49,10 @@ export function TeacherForm({
             .catch((error) => {
               setIsSubmitting(false);
               console.log('Failed to update teacher:', error);
-
-              if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message;
-
-                if (Array.isArray(message)) {
-                  setFormError(message.join(', '));
-                  return;
-                }
-
-                if (typeof message === 'string') {
-                  setFormError(message);
-                  return;
-                }
-              }
-
-              setFormError('Failed to update teacher. Please try again later.');
+              const message = getApiErrorMessage(error);
+              setFormError(
+                message ?? 'Failed to update teacher. Please try again later.',
+              );
             });
 
           return;
@@ -87,22 +75,10 @@ export function TeacherForm({
           .catch((error) => {
             setIsSubmitting(false);
             console.log('Failed to create teacher:', error);
-
-            if (axios.isAxiosError(error)) {
-              const message = error.response?.data?.message;
-
-              if (Array.isArray(message)) {
-                setFormError(message.join(', '));
-                return;
-              }
-
-              if (typeof message === 'string') {
-                setFormError(message);
-                return;
-              }
-            }
-
-            setFormError('Failed to create teacher. Please try again later.');
+            const message = getApiErrorMessage(error);
+            setFormError(
+              message ?? 'Failed to create teacher. Please try again later.',
+            );
           });
       }}
     >
