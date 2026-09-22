@@ -1,5 +1,6 @@
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { TeacherForm } from './teacher-form';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 type TeacherModalProps = {
   open: boolean;
@@ -21,8 +22,8 @@ export default function TeacherModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[450px] rounded-xl bg-white p-6 shadow-lg">
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="w-[450px]">
         <h2 className="mb-6 text-2xl font-semibold">
           {teacher ? 'Update Teacher' : 'Create Teacher'}
         </h2>
@@ -32,7 +33,7 @@ export default function TeacherModal({
           onUpdateSuccess={onUpdateSuccess}
           onCreateSuccess={onCreateSuccess}
         />
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
