@@ -14,7 +14,7 @@ export class GradeMapper {
 
   toDto(gradeDomain: GradeDomain): GradeDto {
     return {
-      id: gradeDomain.id!,
+      id: gradeDomain.id,
       name: gradeDomain.name,
     };
   }
