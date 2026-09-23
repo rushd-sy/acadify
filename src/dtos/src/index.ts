@@ -4,3 +4,4 @@ export * from './user';
 export * from './grade';
 export * from './curriculum';
 export * from './teacher';
+export * from './section';
