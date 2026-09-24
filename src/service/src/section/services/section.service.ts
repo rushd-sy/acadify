@@ -19,7 +19,7 @@ export class SectionService {
         `Section with name ${createSection.name} already exists`,
       );
     }
-    const sectionDomain = this.mapper.toDokmainFromCreateDto(createSection);
+    const sectionDomain = this.mapper.toDomainFromCreateDto(createSection);
     const createdSection = await this.repository.create(sectionDomain);
     return this.mapper.toDto(createdSection);
   }
