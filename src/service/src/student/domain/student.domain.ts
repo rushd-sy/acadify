@@ -1,12 +1,12 @@
 import { UserDomain } from 'src/auth/domain/user.domain';
 
 export class StudentDomain {
-  id?: number;
+  id: number;
   userId?: number;
   user: UserDomain;
 
   private constructor(input: {
-    id?: number;
+    id: number;
     userId?: number;
     user: UserDomain;
   }) {
@@ -16,7 +16,10 @@ export class StudentDomain {
   }
 
   static create(user: UserDomain): StudentDomain {
-    return new StudentDomain({ user });
+    return new StudentDomain({
+      id: -1,
+      user,
+    });
   }
 
   static fromPersistence(input: {
