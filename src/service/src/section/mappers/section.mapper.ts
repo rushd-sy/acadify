@@ -14,7 +14,7 @@ export class SectionMapper {
     });
   }
 
-  toDokmainFromCreateDto(createDto: CreateSectionDto): SectionDomain {
+  toDomainFromCreateDto(createDto: CreateSectionDto): SectionDomain {
     return SectionDomain.create({
       name: createDto.name,
       academicYear: createDto.academicYear,

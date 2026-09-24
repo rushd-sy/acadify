@@ -9,9 +9,16 @@ import { StudentRepository } from './student/data/student.repository';
 import { GradeModule } from './grade/grade.module';
 import { CurriculumModule } from './curriculum/curriculum.module';
 import { TeacherModule } from './teacher/teacher.module';
+import { SectionModule } from './section/section.module';
 
 @Module({
-  imports: [AuthModule, GradeModule, CurriculumModule, TeacherModule],
+  imports: [
+    AuthModule,
+    GradeModule,
+    CurriculumModule,
+    TeacherModule,
+    SectionModule,
+  ],
   controllers: [HealthCheckController, StudentController],
   providers: [StudentService, StudentMapper, PrismaService, StudentRepository],
 })
