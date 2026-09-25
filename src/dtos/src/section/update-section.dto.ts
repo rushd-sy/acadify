@@ -9,4 +9,9 @@ export class UpdateSectionDto {
   @IsNotEmpty()
   @IsOptional()
   academicYear?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  gradeId?: string;
 }
