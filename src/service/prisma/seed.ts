@@ -4,7 +4,6 @@ import { Command } from 'commander';
 import * as bcrypt from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
-import { captureRejectionSymbol } from 'events';
 
 const program = new Command();
 
