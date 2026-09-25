@@ -23,7 +23,7 @@ export default function StudentsPage() {
 
   const [students, setStudents] = useState<StudentDto[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<{
-    id: number;
+    userId: number;
     action: 'delete' | 'update';
   } | null>(null);
   const [studentToUpdateData, setStudentToUpdateData] =
@@ -64,10 +64,10 @@ export default function StudentsPage() {
       setIsDeleting(true);
       setDeleteError(null);
 
-      await studentService.deleteStudentById(selectedStudent.id);
+      await studentService.deleteStudentById(selectedStudent.userId);
 
       setStudents((previousStudents) =>
-        previousStudents.filter((student) => student.id !== selectedStudent.id),
+        previousStudents.filter((student) => student.userId !== selectedStudent.userId),
       );
 
       setSelectedStudent(null);
@@ -87,7 +87,7 @@ export default function StudentsPage() {
   const handleUpdateSuccess = (updatedStudent: StudentDetailsDto) => {
     setStudents((previousStudents) =>
       previousStudents.map((student) =>
-        student.id === updatedStudent.id ? updatedStudent : student,
+        student.userId === updatedStudent.userId ? updatedStudent : student,
       ),
     );
   };
@@ -134,9 +134,9 @@ export default function StudentsPage() {
             ) : (
               students.map((student) => (
                 <TableRow
-                  key={student.id}
+                  key={student.userId}
                   className="h-16 cursor-pointer"
-                  onClick={() => navigate(`/students/${student.id}`)}
+                  onClick={() => navigate(`/students/${student.userId}`)}
                 >
                   <TableCell className="font-medium">
                     {student.firstName} {student.lastName}
@@ -156,11 +156,11 @@ export default function StudentsPage() {
 
                           try {
                             const studentDetails =
-                              await studentService.getStudentById(student.id);
+                              await studentService.getStudentById(student.userId);
 
                             setStudentToUpdateData(studentDetails);
                             setSelectedStudent({
-                              id: student.id,
+                              userId: student.userId,
                               action: 'update',
                             });
                           } catch (error) {
@@ -180,7 +180,7 @@ export default function StudentsPage() {
                         onClick={(event) => {
                           event.stopPropagation();
                           setSelectedStudent({
-                            id: student.id,
+                            userId: student.userId,
                             action: 'delete',
                           });
                         }}
@@ -199,7 +199,7 @@ export default function StudentsPage() {
       <DeleteStudentModal
         open={selectedStudent?.action === 'delete'}
         studentName={
-          students.find((student) => student.id === selectedStudent?.id)
+          students.find((student) => student.userId === selectedStudent?.userId)
             ?.firstName || ''
         }
         onYes={handleConfirmDelete}
