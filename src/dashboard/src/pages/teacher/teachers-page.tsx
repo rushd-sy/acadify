@@ -13,7 +13,9 @@ import {
 
 import DeleteModal from '@/components/ui/delete-modal';
 import { teacherService } from '@/services/teacher.service';
-import type { TeacherDto } from 'dtos';
+import type { TeacherDetailsDto, TeacherDto } from 'dtos';
+import { Button } from '@/components/ui/button';
+import TeacherModal from '@/components/teacher-modal';
 
 export default function TeachersPage() {
   const navigate = useNavigate();
@@ -28,6 +30,9 @@ export default function TeachersPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [teacherToEditData, setTeacherToEditData] =
+    useState<TeacherDetailsDto | null>(null);
+  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -89,9 +94,32 @@ export default function TeachersPage() {
     }
   };
 
+  const handleUpdateSuccess = (updatedTeacher: TeacherDetailsDto) => {
+    setTeachers((previousTeachers) =>
+      previousTeachers.map((teacher) =>
+        teacher.userId === updatedTeacher.userId ? updatedTeacher : teacher,
+      ),
+    );
+  };
+
+  const handleCreateSuccess = (createdTeacher: TeacherDto) => {
+    setTeachers((previousTeachers) => [...previousTeachers, createdTeacher]);
+  };
+
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <div className="overflow-x-auto">
+        <div className="mb-4 flex justify-end">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setTeacherToEditData(null);
+              setIsTeacherModalOpen(true);
+            }}
+          >
+            Add Teacher
+          </Button>
+        </div>
         <Table>
           <TableCaption className="pb-4">
             A list of registered teachers.
@@ -144,6 +172,29 @@ export default function TeachersPage() {
                   <TableCell>{teacher.degree}</TableCell>
 
                   <TableCell>
+                    <Button
+                      variant="secondary"
+                      className="h-9 px-4 text-sm"
+                      onClick={async (event) => {
+                        event.stopPropagation();
+
+                        try {
+                          const teacherDetails =
+                            await teacherService.getTeacherById(teacher.userId);
+
+                          setTeacherToEditData(teacherDetails);
+                          setIsTeacherModalOpen(true);
+                        } catch (error) {
+                          console.error(
+                            'Failed to fetch teacher details:',
+                            error,
+                          );
+                        }
+                      }}
+                    >
+                      Edit
+                    </Button>
+
                     <button
                       type="button"
                       onClick={(event) => {
@@ -177,6 +228,17 @@ export default function TeachersPage() {
           onClose={handleCloseDeleteModal}
           isLoading={isDeleting}
           error={deleteError ?? undefined}
+        />
+
+        <TeacherModal
+          open={isTeacherModalOpen}
+          teacher={teacherToEditData ?? undefined}
+          onUpdateSuccess={handleUpdateSuccess}
+          onCreateSuccess={handleCreateSuccess}
+          onClose={() => {
+            setIsTeacherModalOpen(false);
+            setTeacherToEditData(null);
+          }}
         />
       </div>
     </div>

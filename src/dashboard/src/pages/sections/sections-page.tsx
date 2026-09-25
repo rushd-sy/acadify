@@ -85,9 +85,7 @@ export default function SectionsPage() {
             ) : (
               sections.map((section) => (
                 <TableRow key={section.id} className="h-16">
-                  <TableCell className="font-medium">
-                    {section.name}
-                  </TableCell>
+                  <TableCell className="font-medium">{section.name}</TableCell>
 
                   <TableCell>{section.academicYear}</TableCell>
 
