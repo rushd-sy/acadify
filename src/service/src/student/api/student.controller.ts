@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Put,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
 import type { StudentDto, StudentDetailsDto } from 'dtos';
@@ -24,8 +25,10 @@ export class StudentController {
   }
 
   @Get(':id')
-  getStudentById(@Param('id') id: number): Promise<StudentDetailsDto> {
-    return this.studentService.getStudentById(parseInt(id.toString()));
+  getStudentById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<StudentDetailsDto> {
+    return this.studentService.getStudentById(id);
   }
 
   @Post()
@@ -33,17 +36,14 @@ export class StudentController {
     return this.studentService.createStudent(newStudent);
   }
   @Delete(':id')
-  deleteStudent(@Param('id') id: number): Promise<void> {
-    return this.studentService.deleteStudent(parseInt(id.toString()));
+  deleteStudent(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.studentService.deleteStudent(id);
   }
   @Put(':id')
   updateStudent(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updatedStudent: UpdateStudentDto,
   ): Promise<StudentDetailsDto> {
-    return this.studentService.updateStudent(
-      parseInt(id.toString()),
-      updatedStudent,
-    );
+    return this.studentService.updateStudent(id, updatedStudent);
   }
 }
