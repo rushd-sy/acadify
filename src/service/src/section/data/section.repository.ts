@@ -19,7 +19,18 @@ export class SectionRepository {
         },
       },
     });
+
     return section ? this.mapper.toDomain(section) : null;
+  }
+
+  async findAll(): Promise<SectionDomain[]> {
+    const sections = await this.prisma.section.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    return sections.map((section) => this.mapper.toDomain(section));
   }
 
   async create(sectionDomain: SectionDomain): Promise<SectionDomain> {
@@ -30,6 +41,7 @@ export class SectionRepository {
         gradeId: sectionDomain.gradeId,
       },
     });
+
     return this.mapper.toDomain(section);
   }
 }

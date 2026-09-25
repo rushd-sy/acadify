@@ -1,4 +1,5 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+
 import { SectionService } from '../services/section.service';
 import { CreateSectionDto, SectionDto } from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -7,6 +8,11 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 @Controller('api/sections')
 export class SectionController {
   constructor(private readonly sectionService: SectionService) {}
+
+  @Get()
+  getAllSections(): Promise<SectionDto[]> {
+    return this.sectionService.getAllSections();
+  }
 
   @Post()
   createSection(
