@@ -25,11 +25,7 @@ export default function SectionsPage() {
       .getAllSections()
       .then((data) => {
         if (isMounted) {
-          const sortedSections = [...data].sort((first, second) =>
-            first.name.localeCompare(second.name),
-          );
-
-          setSections(sortedSections);
+          setSections(data);
           setIsLoading(false);
         }
       })
@@ -89,7 +85,9 @@ export default function SectionsPage() {
             ) : (
               sections.map((section) => (
                 <TableRow key={section.id} className="h-16">
-                  <TableCell className="font-medium">{section.name}</TableCell>
+                  <TableCell className="font-medium">
+                    {section.name}
+                  </TableCell>
 
                   <TableCell>{section.academicYear}</TableCell>
 
