@@ -18,7 +18,6 @@ import { StudentWithUser } from '../types/student-user.type';
 export class StudentMapper {
   toStudentDto(student: StudentWithUser): StudentDto {
     return {
-      id: student.id,
       userId: student.userId,
       firstName: student.user.firstName,
       lastName: student.user.lastName,
@@ -33,7 +32,6 @@ export class StudentMapper {
 
   toStudentDetailsDto(student: StudentWithUser): StudentDetailsDto {
     return {
-      id: student.id,
       userId: student.userId,
       firstName: student.user.firstName,
       lastName: student.user.lastName,
