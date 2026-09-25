@@ -47,41 +47,41 @@ export class StudentRepository {
     });
   }
 
-  async findById(id: number): Promise<StudentWithUser | null> {
+  async findById(userId: number): Promise<StudentWithUser | null> {
     return this.prisma.student.findUnique({
-      where: { id },
+      where: { userId },
       include: {
         user: true,
       },
     });
   }
 
-  async deleteById(id: number): Promise<void> {
+  async deleteById(userId: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      const student = await this.findById(id);
+      const student = await this.findById(userId);
       if (student) {
         await tx.student.delete({
-          where: { id },
+          where: { userId },
         });
         await tx.user.delete({
-          where: { id: student.user.id },
+          where: { id: userId },
         });
       }
     });
   }
 
   async updateStudentData(
-    id: number,
+    userId: number,
     updateData: UpdateStudentDto,
   ): Promise<StudentWithUser | null> {
-    const student = await this.findById(id);
+    const student = await this.findById(userId);
 
     if (!student) {
       return null;
     }
 
     await this.prisma.user.update({
-      where: { id: student.userId },
+      where: { id: userId },
       data: {
         firstName: updateData.firstName ?? student.user.firstName,
         lastName: updateData.lastName ?? student.user.lastName,
@@ -90,6 +90,6 @@ export class StudentRepository {
       },
     });
 
-    return this.findById(id);
+    return this.findById(userId);
   }
 }
