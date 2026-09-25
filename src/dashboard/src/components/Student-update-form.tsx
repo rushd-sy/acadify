@@ -38,7 +38,7 @@ export function StudentUpdateForm({
         setUpdateError(null);
         setIsUpdating(true);
         studentService
-          .updateStudentById(student.id, studentData)
+          .updateStudentById(student.userId, studentData)
           .then((updatedStudent) => {
             setIsUpdating(false);
             onUpdateSuccess(updatedStudent);

@@ -67,7 +67,9 @@ export default function StudentsPage() {
       await studentService.deleteStudentById(selectedStudent.userId);
 
       setStudents((previousStudents) =>
-        previousStudents.filter((student) => student.userId !== selectedStudent.userId),
+        previousStudents.filter(
+          (student) => student.userId !== selectedStudent.userId,
+        ),
       );
 
       setSelectedStudent(null);
@@ -156,7 +158,9 @@ export default function StudentsPage() {
 
                           try {
                             const studentDetails =
-                              await studentService.getStudentById(student.userId);
+                              await studentService.getStudentById(
+                                student.userId,
+                              );
 
                             setStudentToUpdateData(studentDetails);
                             setSelectedStudent({
