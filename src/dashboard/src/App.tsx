@@ -5,6 +5,7 @@ import StudentsDetailsPage from '@/pages/students-details-page';
 import TeachersPage from '@/pages/teacher/teachers-page';
 import GradePage from '@/pages/grades-page';
 import CurriculumsPage from '@/pages/curriculums-page';
+import SectionsPage from '@/pages/sections/sections-page';
 
 import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
@@ -24,9 +25,12 @@ function App() {
         <Route element={<SharedLayout />}>
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
+
           <Route path="/teachers" element={<TeachersPage />} />
           <Route path="/teachers/:id" element={<TeachersDetailsPage />} />
+
           <Route path="/curriculums" element={<CurriculumsPage />} />
+          <Route path="/sections" element={<SectionsPage />} />
           <Route path="/grades" element={<GradePage />} />
         </Route>
 
