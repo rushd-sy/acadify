@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import DeleteStudentModal from '@/components/delete-student-modal';
-import UpdateStudentModal from '@/components/update-student-modal';
+import UpdateStudentModal from '@/components/student/student-modal';
 
 import { studentService } from '@/services/student.service';
 import type { StudentDetailsDto } from 'dtos';
@@ -176,6 +176,7 @@ export default function StudentsDetailsPage() {
         student={student}
         onClose={() => setIsUpdateOpen(false)}
         onUpdateSuccess={handleUpdateSuccess}
+        onCreateSuccess={() => {}}
       />
     </div>
   );
