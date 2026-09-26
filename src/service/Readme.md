@@ -23,7 +23,7 @@ The backend is built using **NestJS**, a scalable Node.js framework.
 ## Running the Backend
 
 ```bash
-pnpm --filter backend start:dev
+pnpm --filter backend dev
 ```
 
 ## Technologies Used
