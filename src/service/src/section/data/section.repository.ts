@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SectionDomain } from '../domaine/section.domain';
 import { SectionMapper } from '../mappers/section.mapper';
+import { UpdateSectionDto } from 'dtos';
 
 @Injectable()
 export class SectionRepository {
@@ -43,5 +44,23 @@ export class SectionRepository {
     });
 
     return this.mapper.toDomain(section);
+  }
+
+  async findById(sectionId: number): Promise<SectionDomain | null> {
+    const section = await this.prisma.section.findUnique({
+      where: { id: sectionId },
+    });
+    return section ? this.mapper.toDomain(section) : null;
+  }
+
+  async updateSectionById(
+    sectionId: number,
+    data: UpdateSectionDto,
+  ): Promise<SectionDomain> {
+    const updatedSection = await this.prisma.section.update({
+      where: { id: sectionId },
+      data: data,
+    });
+    return this.mapper.toDomain(updatedSection);
   }
 }
