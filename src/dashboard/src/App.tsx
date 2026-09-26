@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import StudentsPage from '@/pages/students-page';
-import StudentsDetailsPage from '@/pages/students-details-page';
+import StudentsPage from '@/pages/student/students-page';
+import StudentsDetailsPage from '@/pages/student/students-details-page';
 import TeachersPage from '@/pages/teacher/teachers-page';
 import GradePage from '@/pages/grades-page';
 import CurriculumsPage from '@/pages/curriculums-page';

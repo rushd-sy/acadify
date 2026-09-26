@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 
 import DeleteStudentModal from '@/components/delete-student-modal';
-import UpdateStudentModal from '@/components/update-student-modal';
+import StudentModal from '@/components/student/student-modal';
 
 import { studentService } from '@/services/student.service';
 import type { StudentDetailsDto, StudentDto } from 'dtos';
@@ -34,6 +34,8 @@ export default function StudentsPage() {
 
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -94,9 +96,25 @@ export default function StudentsPage() {
     );
   };
 
+  const handleCreateSuccess = (createdStudent: StudentDetailsDto) => {
+    setStudents((previousStudent) => [...previousStudent, createdStudent]);
+  };
+
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <div className="overflow-x-auto">
+        <h1 className="text-2xl font-bold">Students</h1>
+        <div className="mb-4 flex justify-end">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setStudentToUpdateData(null);
+              setIsStudentModalOpen(true);
+            }}
+          >
+            Add Student
+          </Button>
+        </div>
         <Table>
           <TableCaption className="pb-4">
             A list of registered students.
@@ -155,22 +173,16 @@ export default function StudentsPage() {
                         className="h-9 px-4 text-sm"
                         onClick={async (event) => {
                           event.stopPropagation();
-
                           try {
                             const studentDetails =
                               await studentService.getStudentById(
                                 student.userId,
                               );
-
                             setStudentToUpdateData(studentDetails);
-                            setSelectedStudent({
-                              userId: student.userId,
-                              action: 'update',
-                            });
+                            setIsStudentModalOpen(true);
                           } catch (error) {
                             console.error(
-                              'Failed to fetch student details:',
-                              error,
+                              `Failed to fetch student details: ${error}`,
                             );
                           }
                         }}
@@ -212,11 +224,15 @@ export default function StudentsPage() {
         error={deleteError}
       />
 
-      <UpdateStudentModal
-        open={selectedStudent?.action === 'update'}
+      <StudentModal
+        open={isStudentModalOpen}
         student={studentToUpdateData ?? undefined}
-        onClose={() => setSelectedStudent(null)}
         onUpdateSuccess={handleUpdateSuccess}
+        onCreateSuccess={handleCreateSuccess}
+        onClose={() => {
+          setIsStudentModalOpen(false);
+          setStudentToUpdateData(null);
+        }}
       />
     </div>
   );
