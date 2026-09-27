@@ -1,5 +1,6 @@
-import { GraduationCap, LogOut, Users, BookOpen } from 'lucide-react';
+import { GraduationCap, Layers3, LogOut, Users, BookOpen } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../providers/auth.context';
 
@@ -64,10 +65,20 @@ export default function LeftNavbar() {
               </Button>
             </Link>
 
+            <Link to="/sections">
+              <Button
+                variant="secondary"
+                className="mt-2 w-full justify-start gap-3"
+              >
+                <Layers3 className="size-4" />
+                Sections
+              </Button>
+            </Link>
+
             <Link to="/grades">
               <Button
                 variant="secondary"
-                className="w-full justify-start gap-3"
+                className="mt-2 w-full justify-start gap-3"
               >
                 <BookOpen className="size-4" />
                 Grades

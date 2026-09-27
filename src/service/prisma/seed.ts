@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { Command } from 'commander';
 import * as bcrypt from 'bcrypt';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const program = new Command();
 
@@ -50,7 +52,6 @@ const seed = async () => {
     const email = faker.internet.email();
     const phoneNumber = faker.phone.number();
 
-    const studentId = i + 1;
     const userId = i + 11;
 
     await prisma.user.upsert({
@@ -73,12 +74,11 @@ const seed = async () => {
     });
 
     await prisma.student.upsert({
-      where: { id: studentId },
+      where: { userId: userId },
       update: {
         userId: userId,
       },
       create: {
-        id: studentId,
         userId: userId,
       },
     });
@@ -193,8 +193,29 @@ const seed = async () => {
     });
   }
 
-  console.table(generatedAccounts);
-  console.log('--------------------------------------------------\n');
+  const outputPath = path.join(process.cwd(), 'seeded-accounts.json');
+  fs.writeFileSync(
+    outputPath,
+    JSON.stringify(generatedAccounts, null, 2),
+    'utf-8',
+  );
+  console.log(`\n✅ Accounts genereted and securely saved to: ${outputPath}`);
+  console.log('----------------------');
+
+  console.log('Synchronizing PostgreSQL Auto-Increment Sequences...');
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"User_id_seq"', (SELECT MAX(id) FROM "User"));`,
+  );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"Grade_id_seq"', (SELECT MAX(id) FROM "Grade"));`,
+  );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"Section_id_seq"', (SELECT MAX(id) FROM "Section"));`,
+  );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"Curriculum_id_seq"', (SELECT MAX(id) FROM "Curriculum"));`,
+  );
+  console.log('✅ Sequences synchronized successfully.\n');
 };
 
 const clear = async () => {

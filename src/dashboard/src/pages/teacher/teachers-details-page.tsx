@@ -14,6 +14,7 @@ import {
 import { teacherService } from '@/services/teacher.service';
 import { useNumericParam } from '@/hooks/use-numeric-param';
 import type { TeacherDetailsDto } from 'dtos';
+import TeacherModal from '@/components/teacher-modal';
 
 export default function TeachersDetailsPage() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function TeachersDetailsPage() {
   const [teacher, setTeacher] = useState<TeacherDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -138,8 +140,12 @@ export default function TeachersDetailsPage() {
         </CardContent>
 
         <CardFooter className="flex justify-end gap-3 border-t bg-gray-50/50 pt-6">
-          {/* TODO: Use update form here */}
-          <Button variant="secondary">Edit</Button>
+          <Button
+            variant="secondary"
+            onClick={() => setIsTeacherModalOpen(true)}
+          >
+            Edit
+          </Button>
 
           <Button
             variant="secondary"
@@ -152,6 +158,17 @@ export default function TeachersDetailsPage() {
           </Button>
         </CardFooter>
       </Card>
+
+      <TeacherModal
+        open={isTeacherModalOpen}
+        teacher={teacher}
+        onUpdateSuccess={(updatedTeacher) => {
+          setTeacher(updatedTeacher);
+          setIsTeacherModalOpen(false);
+        }}
+        onCreateSuccess={() => {}}
+        onClose={() => setIsTeacherModalOpen(false)}
+      />
 
       <DeleteModal
         open={isDeleteModalOpen}

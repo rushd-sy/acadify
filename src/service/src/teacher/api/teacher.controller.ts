@@ -10,12 +10,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { TeacherService } from '../services/teacher.service';
-import type {
-  CreateTeacherDto,
-  TeacherDetailsDto,
-  TeacherDto,
-  UpdateTeacherDto,
-} from 'dtos';
+import type { TeacherDetailsDto, TeacherDto } from 'dtos';
+import { CreateTeacherDto, UpdateTeacherDto } from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)

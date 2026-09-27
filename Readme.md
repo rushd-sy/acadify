@@ -97,25 +97,19 @@ _(Note: The `db:reset` script will clear existing data and run the seed script a
 
 ### 6. Running the Application
 
-To run the full stack, it is recommended to open three separate terminal windows:
+From the repo root, one command runs the full stack (builds `dtos`, then starts backend + frontend in parallel):
 
-**Terminal 2: Build the dtos**
+```
+pnpm run dev
+```
+
+_(Backend runs Prisma migrations automatically and starts on `http://localhost:3000`; frontend starts on `http://localhost:5173`)._
+
+If you need to run a piece on its own, you can still target it individually:
 
 ```
 pnpm --filter dtos run build
-```
-
-**Terminal 2: Run the Backend**
-
-```
-pnpm --filter service run start:dev
-```
-
-_(This command automatically runs Prisma migrations in dev mode and starts the NestJS server)._
-
-**Terminal 3: Run the Frontend**
-
-```
+pnpm --filter service run dev
 pnpm --filter dashboard run dev
 ```
 
@@ -141,6 +135,7 @@ Run test coverage:
 You can run these commands from the root directory to manage the entire monorepo:
 
 - `pnpm install` — Installs dependencies and enforces pnpm via `preinstall`.
+- `pnpm run dev` — Builds `dtos`, then runs backend and frontend in parallel.
 - `pnpm format` — Formats the entire codebase using Prettier.
 - `pnpm lint` — Runs ESLint across all packages.
 - `pnpm build` — Builds all workspaces.
