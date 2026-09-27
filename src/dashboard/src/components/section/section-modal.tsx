@@ -1,26 +1,32 @@
-import { SectionForm } from './SectionForm';
+import { DialogContent, Dialog, DialogTitle } from '../ui/dialog';
+import { SectionForm } from './section-form';
+import type { SectionDto } from 'dtos';
 
 type SectionModalProps = {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (section: SectionDto) => void;
+  section?: SectionDto;
 };
 
 export default function SectionModal({
   open,
   onClose,
   onSuccess,
+  section,
 }: SectionModalProps) {
-  if (!open) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[450px] rounded-xl bg-white p-6 shadow-lg">
-        <h2 className="mb-6 text-2xl font-semibold">Create Section</h2>
-        <SectionForm onCancel={onClose} onSuccess={onSuccess} />
-      </div>
-    </div>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="w-[450px]">
+        <DialogTitle className="mb-6 text-2xl font-semibold">
+          {section ? 'Edit Section' : 'Create Section'}
+        </DialogTitle>
+        <SectionForm
+          onCancel={onClose}
+          onSuccess={onSuccess}
+          section={section}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
