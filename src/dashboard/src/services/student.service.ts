@@ -1,5 +1,10 @@
 import { api } from '../lib/api-client';
-import type { StudentDetailsDto, StudentDto, UpdateStudentDto } from 'dtos';
+import type {
+  StudentDetailsDto,
+  CreateStudentDto,
+  StudentDto,
+  UpdateStudentDto,
+} from 'dtos';
 
 class StudentService {
   private readonly baseUrl = '/api/student';
@@ -26,6 +31,11 @@ class StudentService {
   ) {
     const response = await api.put(`${this.baseUrl}/${id}`, updatedStudent);
 
+    return response.data;
+  }
+
+  async createStudent(data: CreateStudentDto): Promise<StudentDetailsDto> {
+    const response = await api.post<StudentDetailsDto>(this.baseUrl, data);
     return response.data;
   }
 }
