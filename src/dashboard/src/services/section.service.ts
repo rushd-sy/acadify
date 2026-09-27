@@ -1,5 +1,5 @@
 import { api } from '../lib/api-client';
-import { SectionDto, type CreateSectionDto } from 'dtos';
+import type { SectionDto, CreateSectionDto } from 'dtos';
 
 class SectionService {
   private readonly baseUrl = '/api/sections';
