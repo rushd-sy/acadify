@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
+import DeleteModal from '@/components/ui/delete-modal';
 import {
   Card,
   CardContent,
@@ -15,12 +17,16 @@ import type { TeacherDetailsDto } from 'dtos';
 import TeacherModal from '@/components/teacher-modal';
 
 export default function TeachersDetailsPage() {
+  const navigate = useNavigate();
   const teacherId = useNumericParam('id');
 
   const [teacher, setTeacher] = useState<TeacherDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTeacher = async () => {
@@ -47,6 +53,34 @@ export default function TeachersDetailsPage() {
 
     fetchTeacher();
   }, [teacherId]);
+
+  const handleDelete = async () => {
+    if (!teacherId) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      setDeleteError(null);
+
+      await teacherService.deleteTeacher(teacherId);
+      navigate('/teachers');
+    } catch (error) {
+      console.error('Failed to delete teacher:', error);
+      setDeleteError('Failed to delete teacher. Please try again later.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setIsDeleteModalOpen(false);
+    setDeleteError(null);
+  };
 
   if (isLoading) {
     return <div className="mt-20 text-center text-2xl">Loading teacher...</div>;
@@ -106,7 +140,6 @@ export default function TeachersDetailsPage() {
         </CardContent>
 
         <CardFooter className="flex justify-end gap-3 border-t bg-gray-50/50 pt-6">
-          {/* TODO: Use update form here */}
           <Button
             variant="secondary"
             onClick={() => setIsTeacherModalOpen(true)}
@@ -114,8 +147,15 @@ export default function TeachersDetailsPage() {
             Edit
           </Button>
 
-          {/* TODO: Use Generic Delete Modal */}
-          <Button variant="secondary">Delete</Button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setDeleteError(null);
+              setIsDeleteModalOpen(true);
+            }}
+          >
+            Delete
+          </Button>
         </CardFooter>
       </Card>
 
@@ -128,6 +168,24 @@ export default function TeachersDetailsPage() {
         }}
         onCreateSuccess={() => {}}
         onClose={() => setIsTeacherModalOpen(false)}
+      />
+
+      <DeleteModal
+        open={isDeleteModalOpen}
+        title="Delete Teacher"
+        message={
+          <>
+            Are you sure you want to delete{' '}
+            <strong>
+              {teacher.firstName} {teacher.lastName}
+            </strong>
+            ?
+          </>
+        }
+        onConfirm={handleDelete}
+        onClose={handleCloseDeleteModal}
+        isLoading={isDeleting}
+        error={deleteError ?? undefined}
       />
     </div>
   );
