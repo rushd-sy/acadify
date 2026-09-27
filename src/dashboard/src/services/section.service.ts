@@ -14,7 +14,7 @@ class SectionService {
     return response.data;
   }
 
-    async getSectionById(id: number): Promise<SectionDto> {
+  async getSectionById(id: number): Promise<SectionDto> {
     const response = await api.get<SectionDto>(`${this.baseUrl}/${id}`);
 
     return response.data;
@@ -31,9 +31,6 @@ class SectionService {
 
     return respone.data;
   }
-
 }
-
-
 
 export const sectionService = new SectionService();
