@@ -21,7 +21,7 @@ class SectionService {
   }
 
   async updateSection(
-    id: number | string,
+    id: number,
     updateSection: UpdateSectionDto,
   ): Promise<SectionDto> {
     const respone = await api.put<SectionDto>(
