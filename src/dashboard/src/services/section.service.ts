@@ -1,5 +1,5 @@
 import { api } from '../lib/api-client';
-import type { SectionDto, CreateSectionDto } from 'dtos';
+import { SectionDto, type CreateSectionDto } from 'dtos';
 
 class SectionService {
   private readonly baseUrl = '/api/sections';
@@ -12,6 +12,10 @@ class SectionService {
   async createSection(data: CreateSectionDto): Promise<SectionDto> {
     const response = await api.post<SectionDto>(this.baseUrl, data);
     return response.data;
+  }
+
+  async deleteSection(id: number): Promise<void> {
+    await api.delete(`${this.baseUrl}/${id}`);
   }
 }
 
