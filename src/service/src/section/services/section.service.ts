@@ -1,10 +1,12 @@
 import {
-  Injectable,
   ConflictException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { SectionRepository } from '../data/section.repository';
 import { SectionMapper } from '../mappers/section.mapper';
+
 import { CreateSectionDto, SectionDto, UpdateSectionDto } from 'dtos';
 
 @Injectable()
@@ -67,8 +69,17 @@ export class SectionService {
         );
       }
     }
+
     const updatedSection = await this.repository.updateSectionById(id, data);
 
     return this.mapper.toDto(updatedSection);
+  }
+
+  async deleteSection(id: number): Promise<void> {
+    const deletedSection = await this.repository.deleteById(id);
+
+    if (!deletedSection) {
+      throw new NotFoundException(`Section with ID ${id} not found`);
+    }
   }
 }
