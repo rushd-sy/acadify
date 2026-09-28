@@ -35,15 +35,8 @@ export default function LoginPage() {
 
     try {
       setIsLoading(true);
-      const userData = await login({ email, password });
-
-      if (userData?.role === 'STUDENT') {
-        navigate('/students');
-        return;
-      } else if (userData?.role === 'USER') {
-        navigate('/');
-        return;
-      }
+      await login({ email, password });
+      navigate('/home', { replace: true });
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -61,12 +54,12 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account.
+            Enter your credentials below to login to your account.
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
-          <CardContent className="grid gap-4">
+          <CardContent className="grid gap-4 pb-6">
             {error && (
               <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-500">
                 {error}
@@ -78,7 +71,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="mohammad@gmail.com"
+                placeholder="Enter Your Email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 disabled={isLoading}
