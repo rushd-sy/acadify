@@ -14,22 +14,21 @@ class StudentService {
     return response.data;
   }
 
-  async getStudentById(id: number): Promise<StudentDetailsDto> {
-    const response = await api.get<StudentDetailsDto>(`${this.baseUrl}/${id}`);
+  async getStudentById(userId: number): Promise<StudentDetailsDto> {
+    const response = await api.get<StudentDetailsDto>(
+      `${this.baseUrl}/${userId}`,
+    );
 
     return response.data;
   }
 
-  async deleteStudentById(id: number | string) {
-    const response = await api.delete(`${this.baseUrl}/${id}`);
+  async deleteStudentById(userId: number) {
+    const response = await api.delete(`${this.baseUrl}/${userId}`);
     return response.data;
   }
 
-  async updateStudentById(
-    id: number | string,
-    updatedStudent: UpdateStudentDto,
-  ) {
-    const response = await api.put(`${this.baseUrl}/${id}`, updatedStudent);
+  async updateStudentById(userId: number, updatedStudent: UpdateStudentDto) {
+    const response = await api.put(`${this.baseUrl}/${userId}`, updatedStudent);
 
     return response.data;
   }

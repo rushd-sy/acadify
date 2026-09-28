@@ -29,6 +29,7 @@ export default function StudentsDetailsPage() {
 
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
+  const userId = Number(id);
   useEffect(() => {
     const fetchStudent = async () => {
       if (!id) {
@@ -37,9 +38,7 @@ export default function StudentsDetailsPage() {
         return;
       }
 
-      const studentId = Number(id);
-
-      if (!Number.isInteger(studentId) || studentId <= 0) {
+      if (!Number.isInteger(userId) || userId <= 0) {
         setFetchError('Invalid student ID.');
         setIsLoading(false);
         return;
@@ -49,7 +48,7 @@ export default function StudentsDetailsPage() {
         setIsLoading(true);
         setFetchError(null);
 
-        const data = await studentService.getStudentById(studentId);
+        const data = await studentService.getStudentById(userId);
         setStudent(data);
       } catch (error) {
         console.error('Failed to fetch student:', error);
@@ -61,7 +60,7 @@ export default function StudentsDetailsPage() {
     };
 
     fetchStudent();
-  }, [id]);
+  }, [id, userId]);
 
   const handleConfirmDelete = async () => {
     if (!id) {
@@ -72,7 +71,7 @@ export default function StudentsDetailsPage() {
       setIsDeleting(true);
       setDeleteError(null);
 
-      await studentService.deleteStudentById(id);
+      await studentService.deleteStudentById(userId);
       navigate('/students');
     } catch (error) {
       console.error('Failed to delete student:', error);
