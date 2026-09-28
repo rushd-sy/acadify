@@ -1,4 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { SectionRepository } from '../data/section.repository';
 import { SectionMapper } from '../mappers/section.mapper';
 import { CreateSectionDto, SectionDto } from 'dtos';
@@ -32,5 +36,13 @@ export class SectionService {
     const createdSection = await this.repository.create(sectionDomain);
 
     return this.mapper.toDto(createdSection);
+  }
+
+  async deleteSection(id: number): Promise<void> {
+    const deletedSection = await this.repository.deleteById(id);
+
+    if (!deletedSection) {
+      throw new NotFoundException(`Section with ID ${id} not found`);
+    }
   }
 }

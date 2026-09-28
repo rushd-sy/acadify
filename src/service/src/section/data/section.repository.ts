@@ -44,4 +44,20 @@ export class SectionRepository {
 
     return this.mapper.toDomain(section);
   }
+
+  async deleteById(id: number): Promise<SectionDomain | null> {
+    const section = await this.prisma.section.findUnique({
+      where: { id },
+    });
+
+    if (!section) {
+      return null;
+    }
+
+    const deletedSection = await this.prisma.section.delete({
+      where: { id },
+    });
+
+    return this.mapper.toDomain(deletedSection);
+  }
 }
