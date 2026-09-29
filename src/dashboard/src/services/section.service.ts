@@ -24,12 +24,16 @@ class SectionService {
     id: number,
     updateSection: UpdateSectionDto,
   ): Promise<SectionDto> {
-    const respone = await api.put<SectionDto>(
+    const response = await api.put<SectionDto>(
       `${this.baseUrl}/${id}`,
       updateSection,
     );
 
-    return respone.data;
+    return response.data;
+  }
+
+  async deleteSection(id: number): Promise<void> {
+    await api.delete(`${this.baseUrl}/${id}`);
   }
 }
 

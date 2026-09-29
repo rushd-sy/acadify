@@ -1,12 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
-  Post,
-  UseGuards,
   Param,
   ParseIntPipe,
+  Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
 import { SectionService } from '../services/section.service';
@@ -41,5 +42,10 @@ export class SectionController {
     @Body() updateSection: UpdateSectionDto,
   ): Promise<SectionDto> {
     return this.sectionService.updateSectionById(id, updateSection);
+  }
+
+  @Delete(':id')
+  deleteSection(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.sectionService.deleteSection(id);
   }
 }
