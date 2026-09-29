@@ -107,9 +107,7 @@ export default function SectionsPage() {
       await sectionService.deleteSection(selectedSection.id);
 
       setSections((currentSections) =>
-        currentSections.filter(
-          (section) => section.id !== selectedSection.id,
-        ),
+        currentSections.filter((section) => section.id !== selectedSection.id),
       );
 
       setIsDeleteModalOpen(false);
