@@ -10,7 +10,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { Button } from '@/components/ui/button';
 import DeleteModal from '@/components/ui/delete-modal';
+import SectionModal from '@/components/section/section-modal';
 import { sectionService } from '@/services/section.service';
 
 import type { SectionDto } from 'dtos';
@@ -23,6 +25,8 @@ export default function SectionsPage() {
   const [selectedSection, setSelectedSection] = useState<SectionDto | null>(
     null,
   );
+  const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -52,6 +56,32 @@ export default function SectionsPage() {
       isMounted = false;
     };
   }, []);
+
+  const handleEditSection = async (sectionId: number) => {
+    try {
+      const section = await sectionService.getSectionById(sectionId);
+
+      setSelectedSection(section);
+      setIsSectionModalOpen(true);
+    } catch (error) {
+      console.error('Failed to fetch section:', error);
+    }
+  };
+
+  const handleCloseSectionModal = () => {
+    setIsSectionModalOpen(false);
+    setSelectedSection(null);
+  };
+
+  const handleSectionUpdateSuccess = (updatedSection: SectionDto) => {
+    setSections((currentSections) =>
+      currentSections.map((section) =>
+        section.id === updatedSection.id ? updatedSection : section,
+      ),
+    );
+
+    handleCloseSectionModal();
+  };
 
   const handleDeleteClick = (section: SectionDto) => {
     setSelectedSection(section);
@@ -138,7 +168,14 @@ export default function SectionsPage() {
 
                   <TableCell>{section.gradeId}</TableCell>
 
-                  <TableCell>
+                  <TableCell className="space-x-2">
+                    <Button
+                      variant="secondary"
+                      onClick={() => handleEditSection(section.id)}
+                    >
+                      Edit
+                    </Button>
+
                     <button
                       type="button"
                       onClick={(event) => {
@@ -171,6 +208,13 @@ export default function SectionsPage() {
           error={deleteError ?? undefined}
         />
       </div>
+
+      <SectionModal
+        open={isSectionModalOpen}
+        onClose={handleCloseSectionModal}
+        onSuccess={handleSectionUpdateSuccess}
+        section={selectedSection ?? undefined}
+      />
     </div>
   );
 }

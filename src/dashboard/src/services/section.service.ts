@@ -1,5 +1,5 @@
 import { api } from '../lib/api-client';
-import { SectionDto, type CreateSectionDto } from 'dtos';
+import type { SectionDto, CreateSectionDto, UpdateSectionDto } from 'dtos';
 
 class SectionService {
   private readonly baseUrl = '/api/sections';
@@ -11,6 +11,24 @@ class SectionService {
 
   async createSection(data: CreateSectionDto): Promise<SectionDto> {
     const response = await api.post<SectionDto>(this.baseUrl, data);
+    return response.data;
+  }
+
+  async getSectionById(id: number): Promise<SectionDto> {
+    const response = await api.get<SectionDto>(`${this.baseUrl}/${id}`);
+
+    return response.data;
+  }
+
+  async updateSection(
+    id: number,
+    updateSection: UpdateSectionDto,
+  ): Promise<SectionDto> {
+    const response = await api.put<SectionDto>(
+      `${this.baseUrl}/${id}`,
+      updateSection,
+    );
+
     return response.data;
   }
 
