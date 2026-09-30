@@ -1,4 +1,11 @@
-import { GraduationCap, Layers3, LogOut, Users, BookOpen } from 'lucide-react';
+import {
+  GraduationCap,
+  Layers3,
+  LogOut,
+  Users,
+  BookOpen,
+  Home,
+} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -35,10 +42,19 @@ export default function LeftNavbar() {
           </p>
 
           <div className="space-y-1">
-            <Link to="/students">
+            <Link to="/home">
               <Button
                 variant="secondary"
                 className="w-full justify-start gap-3"
+              >
+                <Home className="size-4" />
+                Home
+              </Button>
+            </Link>
+            <Link to="/students">
+              <Button
+                variant="secondary"
+                className="mt-2 w-full justify-start gap-3"
               >
                 <Users className="size-4" />
                 Students

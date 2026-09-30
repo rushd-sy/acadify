@@ -13,6 +13,7 @@ import LoginPage from './pages/login-page';
 import AuthLayout from './layout/AuthLayout';
 import { AuthProvider } from './providers/auth-provider';
 import TeachersDetailsPage from './pages/teacher/teachers-details-page';
+import HomePage from './pages/home-page';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         </Route>
 
         <Route element={<SharedLayout />}>
+          <Route path="/home" element={<HomePage />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
 
@@ -35,6 +37,8 @@ function App() {
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
+
+        <Route path="/" element={<Navigate to="/home" replace />} />
 
         <Route path="*" element={<ErrorPage />} />
       </Routes>
