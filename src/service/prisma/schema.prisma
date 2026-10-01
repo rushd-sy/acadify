@@ -16,6 +16,7 @@ model Teacher {
   userId Int @id
   degree String
   user User @relation(fields: [userId], references: [id])
+  teacherCurriculums TeacherCurriculum[]
 }
 
 model User {
@@ -41,6 +42,7 @@ model Curriculum {
   id          Int     @id @default(autoincrement())
   name        String
   description String?
+  teacherCurriculums TeacherCurriculum[]
 }
 
 model Section {
@@ -49,4 +51,16 @@ model Section {
   academicYear String
   gradeId      Int
   grade        Grade  @relation(fields: [gradeId], references: [id])
+  teacherCurriculums TeacherCurriculum[]
+}
+
+model TeacherCurriculum {
+  id Int @id @default(autoincrement())
+  userId Int 
+  curriculumId Int 
+  sectionId Int
+
+  teacher Teacher @relation(fields: [userId], references: [userId])
+  curriculum Curriculum @relation(fields: [curriculumId], references: [id])
+  section Section @relation(fields: [sectionId], references: [id])
 }
