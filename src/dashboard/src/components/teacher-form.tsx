@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { getApiErrorMessage } from '@/lib/api-error.util';
+import { Spinner } from './ui/spinner';
 
 type TeacherFormProps = {
   onCancel: () => void;
@@ -186,7 +187,7 @@ export function TeacherForm({
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit'}
+            {isSubmitting ? <Spinner /> : 'Submit'}
           </Button>
         </div>
       </FieldGroup>
