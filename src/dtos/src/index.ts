@@ -5,4 +5,4 @@ export * from './grade';
 export * from './curriculum';
 export * from './teacher';
 export * from './section';
-export * from './teacher-curriculum';
+export * from './section-teacher';
