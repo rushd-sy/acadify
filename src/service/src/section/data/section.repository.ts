@@ -4,6 +4,17 @@ import { SectionDomain } from '../domaine/section.domain';
 import { SectionMapper } from '../mappers/section.mapper';
 import { UpdateSectionDto } from 'dtos';
 
+const sectionIncludeRelations = {
+  teacherCurriculums: {
+    include: {
+      teacher: {
+        include: { user: true },
+      },
+      curriculum: true,
+    },
+  },
+};
+
 @Injectable()
 export class SectionRepository {
   constructor(
@@ -19,6 +30,7 @@ export class SectionRepository {
           mode: 'insensitive',
         },
       },
+      include: sectionIncludeRelations,
     });
 
     return section ? this.mapper.toDomain(section) : null;
@@ -29,6 +41,7 @@ export class SectionRepository {
       orderBy: {
         name: 'asc',
       },
+      include: sectionIncludeRelations,
     });
 
     return sections.map((section) => this.mapper.toDomain(section));
@@ -41,6 +54,7 @@ export class SectionRepository {
         academicYear: sectionDomain.academicYear,
         gradeId: sectionDomain.gradeId,
       },
+      include: sectionIncludeRelations,
     });
 
     return this.mapper.toDomain(section);
@@ -49,6 +63,7 @@ export class SectionRepository {
   async findById(sectionId: number): Promise<SectionDomain | null> {
     const section = await this.prisma.section.findUnique({
       where: { id: sectionId },
+      include: sectionIncludeRelations,
     });
 
     return section ? this.mapper.toDomain(section) : null;
@@ -61,6 +76,7 @@ export class SectionRepository {
     const updatedSection = await this.prisma.section.update({
       where: { id: sectionId },
       data: data,
+      include: sectionIncludeRelations,
     });
 
     return this.mapper.toDomain(updatedSection);
@@ -77,6 +93,7 @@ export class SectionRepository {
 
     const deletedSection = await this.prisma.section.delete({
       where: { id },
+      include: sectionIncludeRelations,
     });
 
     return this.mapper.toDomain(deletedSection);
