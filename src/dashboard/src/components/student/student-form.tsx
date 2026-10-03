@@ -169,7 +169,7 @@ export function StudentForm({
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? <Spinner /> : 'Submit'}
+            {isSubmitting ? <Spinner className="text-white" /> : 'Submit'}
           </Button>
         </div>
       </FieldGroup>
