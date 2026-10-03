@@ -206,7 +206,7 @@ const seed = async () => {
 
   console.log('Seeding TeacherCurriculum Relations...');
   let relationId = 1;
-  let currentTeacherId = 21; 
+  let currentTeacherId = 21;
 
   for (const section of sectionsConfig) {
     for (let i = 0; i < section.teachersCount; i++) {
