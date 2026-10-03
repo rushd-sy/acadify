@@ -6,7 +6,7 @@ import {
   BookOpen,
   Home,
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../providers/auth.context';
@@ -42,64 +42,101 @@ export default function LeftNavbar() {
           </p>
 
           <div className="space-y-1">
-            <Link to="/home">
-              <Button
-                variant="secondary"
-                className="w-full justify-start gap-3"
-              >
-                <Home className="size-4" />
-                Home
-              </Button>
-            </Link>
-            <Link to="/students">
-              <Button
-                variant="secondary"
-                className="mt-2 w-full justify-start gap-3"
-              >
-                <Users className="size-4" />
-                Students
-              </Button>
-            </Link>
+            <NavLink to="/home" end>
+              {({ isActive }) => (
+                <Button
+                  variant="secondary"
+                  className={`w-full justify-start gap-3 ${
+                    !isActive
+                      ? 'bg-transparent hover:bg-sidebar-accent'
+                      : '!bg-black/10 hover:!bg-black/10'
+                  }`}
+                >
+                  <Home className="size-4" />
+                  Home
+                </Button>
+              )}
+            </NavLink>
 
-            <Link to="/teachers">
-              <Button
-                variant="secondary"
-                className="mt-2 w-full justify-start gap-3"
-              >
-                <Users className="size-4" />
-                Teachers
-              </Button>
-            </Link>
+            <NavLink to="/students">
+              {({ isActive }) => (
+                <Button
+                  variant="secondary"
+                  className={`mt-2 w-full justify-start gap-3 ${
+                    !isActive
+                      ? 'bg-transparent hover:bg-sidebar-accent'
+                      : '!bg-black/10 hover:!bg-black/10'
+                  }`}
+                >
+                  <Users className="size-4" />
+                  Students
+                </Button>
+              )}
+            </NavLink>
 
-            <Link to="/curriculums">
-              <Button
-                variant="secondary"
-                className="mt-2 w-full justify-start gap-3"
-              >
-                <BookOpen className="size-4" />
-                Curriculums
-              </Button>
-            </Link>
+            <NavLink to="/teachers">
+              {({ isActive }) => (
+                <Button
+                  variant="secondary"
+                  className={`mt-2 w-full justify-start gap-3 ${
+                    !isActive
+                      ? 'bg-transparent hover:bg-sidebar-accent'
+                      : '!bg-black/10 hover:!bg-black/10'
+                  }`}
+                >
+                  <Users className="size-4" />
+                  Teachers
+                </Button>
+              )}
+            </NavLink>
 
-            <Link to="/sections">
-              <Button
-                variant="secondary"
-                className="mt-2 w-full justify-start gap-3"
-              >
-                <Layers3 className="size-4" />
-                Sections
-              </Button>
-            </Link>
+            <NavLink to="/curriculums">
+              {({ isActive }) => (
+                <Button
+                  variant="secondary"
+                  className={`mt-2 w-full justify-start gap-3 ${
+                    !isActive
+                      ? 'bg-transparent hover:bg-sidebar-accent'
+                      : '!bg-black/10 hover:!bg-black/10'
+                  }`}
+                >
+                  <BookOpen className="size-4" />
+                  Curriculums
+                </Button>
+              )}
+            </NavLink>
 
-            <Link to="/grades">
-              <Button
-                variant="secondary"
-                className="mt-2 w-full justify-start gap-3"
-              >
-                <BookOpen className="size-4" />
-                Grades
-              </Button>
-            </Link>
+            <NavLink to="/sections">
+              {({ isActive }) => (
+                <Button
+                  variant="secondary"
+                  className={`mt-2 w-full justify-start gap-3 ${
+                    !isActive
+                      ? 'bg-transparent hover:bg-sidebar-accent'
+                      : '!bg-black/10 hover:!bg-black/10'
+                  }`}
+                >
+                  <Layers3 className="size-4" />
+                  Sections
+                </Button>
+              )}
+            </NavLink>
+
+            <NavLink to="/grades">
+              {({ isActive }) => (
+                <Button
+                  variant="secondary"
+                  className={`mt-2 w-full justify-start gap-3 ${
+                    !isActive
+                      ? 'bg-transparent hover:bg-sidebar-accent'
+                      : '!bg-black/10 hover:!bg-black/10'
+                  }`}
+                >
+                  <BookOpen className="size-4" />
+                  Grades
+                </Button>
+              )}
+            </NavLink>
           </div>
         </div>
       </div>
