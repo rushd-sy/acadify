@@ -144,26 +144,37 @@ const seed = async () => {
     });
   }
 
+  console.log('Seeding Grades...');
   const gradesData = ['10th Grade', '11th Grade', '12th Grade'];
   for (let i = 0; i < gradesData.length; i++) {
-    const grade = await prisma.grade.upsert({
+    await prisma.grade.upsert({
       where: { id: i + 1 },
       update: { name: gradesData[i] },
       create: { id: i + 1, name: gradesData[i] },
     });
+  }
 
+  console.log('Seeding Sections...');
+  const sectionsConfig = [
+    { id: 1, name: 'Section A - 10th Grade', gradeId: 1, teachersCount: 4 },
+    { id: 2, name: 'Section B - 10th Grade', gradeId: 1, teachersCount: 3 },
+    { id: 3, name: 'Section A - 11th Grade', gradeId: 2, teachersCount: 2 },
+    { id: 4, name: 'Section A - 12th Grade', gradeId: 3, teachersCount: 0 },
+  ];
+
+  for (const section of sectionsConfig) {
     await prisma.section.upsert({
-      where: { id: i + 1 },
+      where: { id: section.id },
       update: {
-        name: `Section A - ${grade.name}`,
+        name: section.name,
         academicYear: '2026-2027',
-        gradeId: grade.id,
+        gradeId: section.gradeId,
       },
       create: {
-        id: i + 1,
-        name: `Section A - ${grade.name}`,
+        id: section.id,
+        name: section.name,
         academicYear: '2026-2027',
-        gradeId: grade.id,
+        gradeId: section.gradeId,
       },
     });
   }
@@ -193,13 +204,41 @@ const seed = async () => {
     });
   }
 
+  console.log('Seeding TeacherCurriculum Relations...');
+  let relationId = 1;
+  let currentTeacherId = 21; 
+
+  for (const section of sectionsConfig) {
+    for (let i = 0; i < section.teachersCount; i++) {
+      const randomCurriculumId = Math.floor(Math.random() * 3) + 1;
+
+      await prisma.teacherCurriculum.upsert({
+        where: { id: relationId },
+        update: {
+          userId: currentTeacherId,
+          sectionId: section.id,
+          curriculumId: randomCurriculumId,
+        },
+        create: {
+          id: relationId,
+          userId: currentTeacherId,
+          sectionId: section.id,
+          curriculumId: randomCurriculumId,
+        },
+      });
+
+      relationId++;
+      currentTeacherId++;
+    }
+  }
+
   const outputPath = path.join(process.cwd(), 'seeded-accounts.json');
   fs.writeFileSync(
     outputPath,
     JSON.stringify(generatedAccounts, null, 2),
     'utf-8',
   );
-  console.log(`\n✅ Accounts genereted and securely saved to: ${outputPath}`);
+  console.log(`\n✅ Accounts generated and securely saved to: ${outputPath}`);
   console.log('----------------------');
 
   console.log('Synchronizing PostgreSQL Auto-Increment Sequences...');
@@ -215,14 +254,21 @@ const seed = async () => {
   await prisma.$executeRawUnsafe(
     `SELECT setval('"Curriculum_id_seq"', (SELECT MAX(id) FROM "Curriculum"));`,
   );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"TeacherCurriculum_id_seq"', (SELECT MAX(id) FROM "TeacherCurriculum"));`,
+  );
   console.log('✅ Sequences synchronized successfully.\n');
 };
 
 const clear = async () => {
   const prisma = new PrismaClient();
 
+  await prisma.teacherCurriculum.deleteMany();
   await prisma.student.deleteMany();
   await prisma.teacher.deleteMany();
+  await prisma.section.deleteMany();
+  await prisma.curriculum.deleteMany();
+  await prisma.grade.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('DB Deleted Successfully!');
