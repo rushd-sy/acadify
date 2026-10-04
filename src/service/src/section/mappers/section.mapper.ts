@@ -2,16 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { SectionDomain } from '../domaine/section.domain';
 import { CreateSectionDto, SectionDto } from 'dtos';
 import { SectionWithRelations } from '../types/section-relations';
+import { Section } from '@prisma/client';
 
 @Injectable()
 export class SectionMapper {
-  toDomain(section: SectionWithRelations): SectionDomain {
+  toDomain(section: Section | SectionWithRelations): SectionDomain {
+    const hasRelations = 'teacherCurriculums' in section;
+    const teacherCurriculums = hasRelations
+      ? section.teacherCurriculums
+      : undefined;
     return SectionDomain.fromPersistence({
       id: section.id,
       name: section.name,
       academicYear: section.academicYear,
       gradeId: section.gradeId,
-      teacherCurriculums: section.teacherCurriculums?.map((tc) => ({
+      teacherCurriculums: teacherCurriculums?.map((tc) => ({
         teacherId: tc.id,
         teacher: {
           userId: tc.teacher.userId,

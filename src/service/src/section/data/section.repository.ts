@@ -76,7 +76,6 @@ export class SectionRepository {
     const updatedSection = await this.prisma.section.update({
       where: { id: sectionId },
       data: data,
-      include: sectionIncludeRelations,
     });
 
     return this.mapper.toDomain(updatedSection);
@@ -93,7 +92,6 @@ export class SectionRepository {
 
     const deletedSection = await this.prisma.section.delete({
       where: { id },
-      include: sectionIncludeRelations,
     });
 
     return this.mapper.toDomain(deletedSection);
