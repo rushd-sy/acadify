@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -16,6 +15,7 @@ import SectionModal from '@/components/section/section-modal';
 import { sectionService } from '@/services/section.service';
 
 import type { SectionDto } from 'dtos';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function SectionsPage() {
   const [sections, setSections] = useState<SectionDto[]>([]);
@@ -122,12 +122,12 @@ export default function SectionsPage() {
 
   return (
     <div className="w-full min-h-screen bg-white p-8">
+      <PageHeader
+        title="Sections"
+        description="A list of sections within your institute."
+      />
       <div className="overflow-x-auto">
         <Table>
-          <TableCaption className="pb-4">
-            A list of sections within your institute.
-          </TableCaption>
-
           <TableHeader>
             <TableRow className="text-base">
               <TableHead className="py-5">Name</TableHead>

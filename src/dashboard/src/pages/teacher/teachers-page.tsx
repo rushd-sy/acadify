@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -16,6 +15,7 @@ import { teacherService } from '@/services/teacher.service';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { Button } from '@/components/ui/button';
 import TeacherModal from '@/components/teacher-modal';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function TeachersPage() {
   const navigate = useNavigate();
@@ -109,22 +109,18 @@ export default function TeachersPage() {
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <div className="overflow-x-auto">
-        <div className="mb-4 flex justify-end">
-          <Button
-            variant="secondary"
-            onClick={() => {
+        <PageHeader
+          title="Teachers"
+          description="A list of registered teachers."
+          action={{
+            label: 'Add Teacher',
+            onClick: () => {
               setTeacherToEditData(null);
               setIsTeacherModalOpen(true);
-            }}
-          >
-            Add Teacher
-          </Button>
-        </div>
+            },
+          }}
+        />
         <Table>
-          <TableCaption className="pb-4">
-            A list of registered teachers.
-          </TableCaption>
-
           <TableHeader>
             <TableRow className="text-base">
               <TableHead className="py-5">Name</TableHead>

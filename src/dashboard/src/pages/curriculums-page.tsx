@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -14,6 +13,7 @@ import DeleteCurriculumModal from '@/components/delete-curriculum-modal';
 import CurriculumModal from '@/components/curriculum-modal';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function CurriculumsPage() {
   const [curriculums, setCurriculums] = useState<CurriculumDto[]>([]);
@@ -87,16 +87,16 @@ export default function CurriculumsPage() {
 
   return (
     <div className="w-full min-h-screen bg-white p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Curriculums</h1>
-        <Button onClick={() => setIsModalOpen(true)}>Create Curriculum</Button>
-      </div>
+      <PageHeader
+        title="Curriculums"
+        action={{
+          label: 'Create Curriculum',
+          onClick: () => setIsModalOpen(true),
+        }}
+      />
 
       <div className="overflow-x-auto">
         <Table>
-          <TableCaption className="pb-4">
-            Manage academic subjects.
-          </TableCaption>
           <TableHeader>
             <TableRow className="text-base">
               <TableHead className="py-5">Name</TableHead>
