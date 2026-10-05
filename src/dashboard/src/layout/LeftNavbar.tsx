@@ -11,6 +11,15 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../providers/auth.context';
 
+const NAVBAR_ELEMENTS = [
+  { name: 'Home', path: '/home', icon: Home },
+  { name: 'Students', path: '/students', icon: Users },
+  { name: 'Teachers', path: '/teachers', icon: Users },
+  { name: 'Curriculums', path: '/curriculums', icon: BookOpen },
+  { name: 'Sections', path: '/sections', icon: Layers3 },
+  { name: 'Grades', path: '/grades', icon: BookOpen },
+];
+
 export default function LeftNavbar() {
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -42,101 +51,25 @@ export default function LeftNavbar() {
           </p>
 
           <div className="space-y-1">
-            <NavLink to="/home" end>
-              {({ isActive }) => (
-                <Button
-                  variant="secondary"
-                  className={`w-full justify-start gap-3 ${
-                    !isActive
-                      ? 'bg-transparent hover:bg-sidebar-accent'
-                      : '!bg-black/10 hover:!bg-black/10'
-                  }`}
-                >
-                  <Home className="size-4" />
-                  Home
-                </Button>
-              )}
-            </NavLink>
-
-            <NavLink to="/students">
-              {({ isActive }) => (
-                <Button
-                  variant="secondary"
-                  className={`mt-2 w-full justify-start gap-3 ${
-                    !isActive
-                      ? 'bg-transparent hover:bg-sidebar-accent'
-                      : '!bg-black/10 hover:!bg-black/10'
-                  }`}
-                >
-                  <Users className="size-4" />
-                  Students
-                </Button>
-              )}
-            </NavLink>
-
-            <NavLink to="/teachers">
-              {({ isActive }) => (
-                <Button
-                  variant="secondary"
-                  className={`mt-2 w-full justify-start gap-3 ${
-                    !isActive
-                      ? 'bg-transparent hover:bg-sidebar-accent'
-                      : '!bg-black/10 hover:!bg-black/10'
-                  }`}
-                >
-                  <Users className="size-4" />
-                  Teachers
-                </Button>
-              )}
-            </NavLink>
-
-            <NavLink to="/curriculums">
-              {({ isActive }) => (
-                <Button
-                  variant="secondary"
-                  className={`mt-2 w-full justify-start gap-3 ${
-                    !isActive
-                      ? 'bg-transparent hover:bg-sidebar-accent'
-                      : '!bg-black/10 hover:!bg-black/10'
-                  }`}
-                >
-                  <BookOpen className="size-4" />
-                  Curriculums
-                </Button>
-              )}
-            </NavLink>
-
-            <NavLink to="/sections">
-              {({ isActive }) => (
-                <Button
-                  variant="secondary"
-                  className={`mt-2 w-full justify-start gap-3 ${
-                    !isActive
-                      ? 'bg-transparent hover:bg-sidebar-accent'
-                      : '!bg-black/10 hover:!bg-black/10'
-                  }`}
-                >
-                  <Layers3 className="size-4" />
-                  Sections
-                </Button>
-              )}
-            </NavLink>
-
-            <NavLink to="/grades">
-              {({ isActive }) => (
-                <Button
-                  variant="secondary"
-                  className={`mt-2 w-full justify-start gap-3 ${
-                    !isActive
-                      ? 'bg-transparent hover:bg-sidebar-accent'
-                      : '!bg-black/10 hover:!bg-black/10'
-                  }`}
-                >
-                  <BookOpen className="size-4" />
-                  Grades
-                </Button>
-              )}
-            </NavLink>
+            {NAVBAR_ELEMENTS.map(({ name, path, icon: Icon }, index) => (
+              <NavLink key={path} to={path} end={path === '/home'}>
+                {({ isActive }) => (
+                  <Button
+                    variant="secondary"
+                    className={`${
+                      index > 0 ? 'mt-2 ' : ''
+                    }w-full justify-start gap-3 ${
+                      !isActive
+                        ? 'bg-transparent hover:bg-sidebar-accent'
+                        : '!bg-black/10 hover:!bg-black/10'
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                    {name}
+                  </Button>
+                )}
+              </NavLink>
+            ))}
           </div>
         </div>
       </div>
