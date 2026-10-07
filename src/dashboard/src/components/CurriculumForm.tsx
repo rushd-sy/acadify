@@ -16,6 +16,8 @@ type CurriculumFormProps = {
   initialData?: CurriculumDto;
 };
 
+const curriculumFormFields = ['name', 'description'];
+
 export function CurriculumForm({
   onCancel,
   onSuccess,
@@ -45,10 +47,10 @@ export function CurriculumForm({
     } catch (error) {
       console.error('Failed to save curriculum:', error);
 
-      const validationErrors = getApiValidationErrors(error, [
-        'name',
-        'description',
-      ]);
+      const validationErrors = getApiValidationErrors(
+        error,
+        curriculumFormFields,
+      );
 
       if (Object.keys(validationErrors).length > 0) {
         setFieldErrors(validationErrors);

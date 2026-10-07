@@ -17,6 +17,8 @@ type SectionFormProps = {
   section?: SectionDto;
 };
 
+const sectionFormFields = ['name', 'academicYear', 'gradeId'];
+
 export function SectionForm({
   onCancel,
   onSuccess,
@@ -53,11 +55,7 @@ export function SectionForm({
 
       onSuccess(updatedSection);
     } catch (error) {
-      const validationErrors = getApiValidationErrors(error, [
-        'name',
-        'academicYear',
-        'gradeId',
-      ]);
+      const validationErrors = getApiValidationErrors(error, sectionFormFields);
 
       if (Object.keys(validationErrors).length > 0) {
         setFieldErrors(validationErrors);

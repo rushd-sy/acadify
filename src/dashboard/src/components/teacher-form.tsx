@@ -17,6 +17,15 @@ type TeacherFormProps = {
   onCreateSuccess: (createdTeacher: TeacherDto) => void;
 };
 
+const teacherFormFields = [
+  'firstName',
+  'lastName',
+  'email',
+  'phoneNumber',
+  'password',
+  'degree',
+];
+
 export function TeacherForm({
   onCancel,
   teacher,
@@ -35,6 +44,19 @@ export function TeacherForm({
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const handleFormError = (error: unknown, fallbackMessage: string) => {
+    setIsSubmitting(false);
+
+    const validationErrors = getApiValidationErrors(error, teacherFormFields);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+    } else {
+      const message = getApiErrorMessage(error);
+      setFormError(message ?? fallbackMessage);
+    }
+  };
   return (
     <form
       onSubmit={(event) => {
@@ -53,26 +75,11 @@ export function TeacherForm({
               onCancel();
             })
             .catch((error) => {
-              setIsSubmitting(false);
               console.log('Failed to update teacher:', error);
-              const validationErrors = getApiValidationErrors(error, [
-                'firstName',
-                'lastName',
-                'email',
-                'phoneNumber',
-                'password',
-                'degree',
-              ]);
-
-              if (Object.keys(validationErrors).length > 0) {
-                setFieldErrors(validationErrors);
-              } else {
-                const message = getApiErrorMessage(error);
-                setFormError(
-                  message ??
-                    'Failed to update teacher. Please try again later.',
-                );
-              }
+              handleFormError(
+                error,
+                'Failed to update teacher. Please try again later.',
+              );
             });
 
           return;
@@ -93,25 +100,11 @@ export function TeacherForm({
             onCancel();
           })
           .catch((error) => {
-            setIsSubmitting(false);
             console.log('Failed to create teacher:', error);
-            const validationErrors = getApiValidationErrors(error, [
-              'firstName',
-              'lastName',
-              'email',
-              'phoneNumber',
-              'password',
-              'degree',
-            ]);
-
-            if (Object.keys(validationErrors).length > 0) {
-              setFieldErrors(validationErrors);
-            } else {
-              const message = getApiErrorMessage(error);
-              setFormError(
-                message ?? 'Failed to create teacher. Please try again later.',
-              );
-            }
+            handleFormError(
+              error,
+              'Failed to create teacher. Please try again later.',
+            );
           });
       }}
     >

@@ -17,6 +17,14 @@ type StudentFormProps = {
   onCreateSuccess: (createdStudent: StudentDetailsDto) => void;
 };
 
+const studentFormFields = [
+  'firstName',
+  'lastName',
+  'email',
+  'phoneNumber',
+  'password',
+];
+
 export function StudentForm({
   onCancel,
   student,
@@ -35,6 +43,19 @@ export function StudentForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  const handleFormError = (error: unknown, fallbackMessage: string) => {
+    setIsSubmitting(false);
+
+    const validationErrors = getApiValidationErrors(error, studentFormFields);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+    } else {
+      const message = getApiErrorMessage(error);
+
+      setFormError(message ?? fallbackMessage);
+    }
+  };
   return (
     <form
       onSubmit={(event) => {
@@ -53,26 +74,12 @@ export function StudentForm({
               onCancel();
             })
             .catch((error) => {
-              setIsSubmitting(false);
-              console.log('Failed to update student:', error);
-              const validationErrors = getApiValidationErrors(error, [
-                'firstName',
-                'lastName',
-                'email',
-                'phoneNumber',
-                'password',
-              ]);
+              console.error('Failed to update student:', error);
 
-              if (Object.keys(validationErrors).length > 0) {
-                setFieldErrors(validationErrors);
-              } else {
-                const message = getApiErrorMessage(error);
-
-                setFormError(
-                  message ??
-                    'Failed to update student. Please try again later.',
-                );
-              }
+              handleFormError(
+                error,
+                'Failed to update student. Please try again later.',
+              );
             });
 
           return;
@@ -92,25 +99,12 @@ export function StudentForm({
             onCancel();
           })
           .catch((error) => {
-            setIsSubmitting(false);
-            console.log('Failed to create student:', error);
-            const validationErrors = getApiValidationErrors(error, [
-              'firstName',
-              'lastName',
-              'email',
-              'phoneNumber',
-              'password',
-            ]);
+            console.error('Failed to create student:', error);
 
-            if (Object.keys(validationErrors).length > 0) {
-              setFieldErrors(validationErrors);
-            } else {
-              const message = getApiErrorMessage(error);
-
-              setFormError(
-                message ?? 'Failed to create student. Please try again later.',
-              );
-            }
+            handleFormError(
+              error,
+              'Failed to create student. Please try again later.',
+            );
           });
       }}
     >
