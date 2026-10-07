@@ -16,6 +16,7 @@ import DeleteGradeModal from '@/components/delete-grade-modal';
 
 import { gradeService } from '@/services/grade.service';
 import type { GradeDto } from 'dtos';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function GradePage() {
   const [grades, setGrades] = useState<GradeDto[]>([]);
@@ -93,18 +94,16 @@ export default function GradePage() {
   return (
     <>
       <div className="mx-auto mt-20 w-[70%] bg-white p-10">
-        <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">Grades</h1>
-
-          <Button
-            onClick={() => {
+        <PageHeader
+          title="Grades"
+          action={{
+            label: 'Add Grade',
+            onClick: () => {
               setGradeToEdit(null);
               setIsGradeModalOpen(true);
-            }}
-          >
-            Add Grade
-          </Button>
-        </div>
+            },
+          }}
+        />
 
         <Table>
           <TableHeader>

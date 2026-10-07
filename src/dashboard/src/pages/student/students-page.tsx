@@ -17,6 +17,7 @@ import StudentModal from '@/components/student/student-modal';
 
 import { studentService } from '@/services/student.service';
 import type { StudentDetailsDto, StudentDto } from 'dtos';
+import { PageHeader } from '@/components/ui/page-header';
 
 export default function StudentsPage() {
   const navigate = useNavigate();
@@ -103,18 +104,17 @@ export default function StudentsPage() {
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <div className="overflow-x-auto">
-        <h1 className="text-2xl font-bold">Students</h1>
-        <div className="mb-4 flex justify-end">
-          <Button
-            variant="secondary"
-            onClick={() => {
+        <PageHeader
+          title="Students"
+          description="A list of registered students."
+          action={{
+            label: 'Add Student',
+            onClick: () => {
               setStudentToUpdateData(null);
               setIsStudentModalOpen(true);
-            }}
-          >
-            Add Student
-          </Button>
-        </div>
+            },
+          }}
+        />
         <Table>
           <TableCaption className="pb-4">
             A list of registered students.
