@@ -25,6 +25,8 @@ const studentFormFields = [
   'password',
 ];
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function StudentForm({
   onCancel,
   student,
@@ -42,6 +44,28 @@ export function StudentForm({
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const validateStudentForm = (data: typeof studentData) => {
+    const errors: Record<string, string> = {};
+    if (!data.firstName.trim()) {
+      errors.firstName = 'First name is required.';
+    }
+    if (!data.lastName.trim()) {
+      errors.lastName = 'Last name is required.';
+    }
+    if (!data.email.trim()) {
+      errors.email = 'Email is required.';
+    } else if (!emailRegex.test(data.email)) {
+      errors.email = 'Email must be a valid email address.';
+    }
+    if (!data.phoneNumber.trim()) {
+      errors.phoneNumber = 'Phone number is required.';
+    }
+    if (!student && !data.password.trim()) {
+      errors.password = 'Password is required.';
+    }
+    return errors;
+  };
 
   const handleFormError = (error: unknown, fallbackMessage: string) => {
     setIsSubmitting(false);
@@ -62,8 +86,15 @@ export function StudentForm({
         event.preventDefault();
 
         setFormError(null);
-        setIsSubmitting(true);
         setFieldErrors({});
+
+        const validationErrors = validateStudentForm(studentData);
+
+        if (Object.keys(validationErrors).length > 0) {
+          setFieldErrors(validationErrors);
+          return;
+        }
+        setIsSubmitting(true);
 
         if (student) {
           studentService
