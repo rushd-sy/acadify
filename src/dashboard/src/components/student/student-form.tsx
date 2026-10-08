@@ -4,7 +4,10 @@ import { studentService } from '@/services/student.service';
 import { useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { getApiErrorMessage } from '@/lib/api-error.util';
+import {
+  getApiErrorMessage,
+  getApiValidationErrors,
+} from '@/lib/api-error.util';
 import { Spinner } from '../ui/spinner';
 
 type StudentFormProps = {
@@ -13,6 +16,14 @@ type StudentFormProps = {
   onUpdateSuccess: (updatedStudent: StudentDetailsDto) => void;
   onCreateSuccess: (createdStudent: StudentDetailsDto) => void;
 };
+
+const studentFormFields = [
+  'firstName',
+  'lastName',
+  'email',
+  'phoneNumber',
+  'password',
+];
 
 export function StudentForm({
   onCancel,
@@ -30,7 +41,21 @@ export function StudentForm({
 
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  const handleFormError = (error: unknown, fallbackMessage: string) => {
+    setIsSubmitting(false);
+
+    const validationErrors = getApiValidationErrors(error, studentFormFields);
+
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+    } else {
+      const message = getApiErrorMessage(error);
+
+      setFormError(message ?? fallbackMessage);
+    }
+  };
   return (
     <form
       onSubmit={(event) => {
@@ -38,6 +63,7 @@ export function StudentForm({
 
         setFormError(null);
         setIsSubmitting(true);
+        setFieldErrors({});
 
         if (student) {
           studentService
@@ -48,11 +74,11 @@ export function StudentForm({
               onCancel();
             })
             .catch((error) => {
-              setIsSubmitting(false);
-              console.log('Failed to update student:', error);
-              const message = getApiErrorMessage(error);
-              setFormError(
-                message ?? 'Failed to update student. Please try again later.',
+              console.error('Failed to update student:', error);
+
+              handleFormError(
+                error,
+                'Failed to update student. Please try again later.',
               );
             });
 
@@ -73,59 +99,62 @@ export function StudentForm({
             onCancel();
           })
           .catch((error) => {
-            setIsSubmitting(false);
-            console.log('Failed to create student:', error);
-            const message = getApiErrorMessage(error);
-            setFormError(
-              message ?? 'Failed to create student. Please try again later.',
+            console.error('Failed to create student:', error);
+
+            handleFormError(
+              error,
+              'Failed to create student. Please try again later.',
             );
           });
       }}
     >
       <FieldGroup className="max-w-md">
         <Field>
-          <FieldLabel>
-            First Name
-            <Input
-              className="firstName"
-              placeholder="Mohammad"
-              value={studentData.firstName}
-              onChange={(data) =>
-                setStudentData({ ...studentData, firstName: data.target.value })
-              }
-            />
-          </FieldLabel>
+          <FieldLabel>First Name</FieldLabel>
+          <Input
+            className="firstName"
+            placeholder="Mohammad"
+            value={studentData.firstName}
+            onChange={(data) =>
+              setStudentData({ ...studentData, firstName: data.target.value })
+            }
+          />
+          {fieldErrors.firstName && (
+            <p className="text-sm text-red-600">{fieldErrors.firstName}</p>
+          )}
         </Field>
 
         <Field>
-          <FieldLabel>
-            Last Name
-            <Input
-              className="lastName"
-              placeholder="Arrata"
-              value={studentData.lastName}
-              onChange={(data) =>
-                setStudentData({ ...studentData, lastName: data.target.value })
-              }
-            />
-          </FieldLabel>
+          <FieldLabel>Last Name</FieldLabel>
+          <Input
+            className="lastName"
+            placeholder="Arrata"
+            value={studentData.lastName}
+            onChange={(data) =>
+              setStudentData({ ...studentData, lastName: data.target.value })
+            }
+          />
+          {fieldErrors.lastName && (
+            <p className="text-sm text-red-600">{fieldErrors.lastName}</p>
+          )}
         </Field>
 
         <Field>
-          <FieldLabel>
-            Email
-            <Input
-              className="email"
-              placeholder="mohammadarrata@gmail.com"
-              value={studentData.email}
-              onChange={(data) =>
-                setStudentData({ ...studentData, email: data.target.value })
-              }
-            />
-            <FieldDescription>
-              The primary email used for academic notifications.
-            </FieldDescription>
-          </FieldLabel>
+          <FieldLabel>Email</FieldLabel>
+          <FieldDescription>
+            The primary email used for academic notifications.
+          </FieldDescription>
+          <Input
+            className="email"
+            placeholder="mohammadarrata@gmail.com"
+            value={studentData.email}
+            onChange={(data) =>
+              setStudentData({ ...studentData, email: data.target.value })
+            }
+          />
+          {fieldErrors.email && (
+            <p className="text-sm text-red-600">{fieldErrors.email}</p>
+          )}
         </Field>
 
         <Field>
@@ -142,24 +171,28 @@ export function StudentForm({
               setStudentData({ ...studentData, phoneNumber: data.target.value })
             }
           />
+          {fieldErrors.phoneNumber && (
+            <p className="text-sm text-red-600">{fieldErrors.phoneNumber}</p>
+          )}
         </Field>
 
         {!student && (
           <Field>
-            <FieldLabel>
-              Password
-              <Input
-                type="password"
-                placeholder="Enter password"
-                value={studentData.password}
-                onChange={(data) =>
-                  setStudentData({
-                    ...studentData,
-                    password: data.target.value,
-                  })
-                }
-              />
-            </FieldLabel>
+            <FieldLabel>Password</FieldLabel>
+            <Input
+              type="password"
+              placeholder="Enter password"
+              value={studentData.password}
+              onChange={(data) =>
+                setStudentData({
+                  ...studentData,
+                  password: data.target.value,
+                })
+              }
+            />
+            {fieldErrors.password && (
+              <p className="text-sm text-red-600">{fieldErrors.password}</p>
+            )}
           </Field>
         )}
 
