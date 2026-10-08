@@ -10,6 +10,7 @@ import { GradeModule } from './grade/grade.module';
 import { CurriculumModule } from './curriculum/curriculum.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { SectionModule } from './section/section.module';
+import { ExamModule } from './exam/exam.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SectionModule } from './section/section.module';
     CurriculumModule,
     TeacherModule,
     SectionModule,
+    ExamModule,
   ],
   controllers: [HealthCheckController, StudentController],
   providers: [StudentService, StudentMapper, PrismaService, StudentRepository],
