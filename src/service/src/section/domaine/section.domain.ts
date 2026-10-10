@@ -1,19 +1,34 @@
+export interface TeacherCurriculumInfo {
+  teacherId: number;
+  teacher: {
+    userId: number;
+    firstName: string;
+    lastName: string;
+  };
+  curriculum: {
+    name: string;
+  };
+}
+
 export class SectionDomain {
   id: number;
   name: string;
   academicYear: string;
   gradeId: number;
+  teacherCurriculums?: TeacherCurriculumInfo[];
 
   private constructor(input: {
     id: number;
     name: string;
     academicYear: string;
     gradeId: number;
+    teacherCurriculums?: TeacherCurriculumInfo[];
   }) {
     this.id = input.id;
     this.name = input.name;
     this.academicYear = input.academicYear;
     this.gradeId = input.gradeId;
+    this.teacherCurriculums = input.teacherCurriculums;
   }
 
   static create(input: {
@@ -34,6 +49,7 @@ export class SectionDomain {
     name: string;
     academicYear: string;
     gradeId: number;
+    teacherCurriculums?: TeacherCurriculumInfo[];
   }): SectionDomain {
     return new SectionDomain(input);
   }
