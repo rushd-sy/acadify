@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Button } from '@/components/ui/button';
-import { useAuth } from '../providers/auth.context';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -14,10 +14,11 @@ import {
 } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 
+import { useAuth } from '../providers/auth.context';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,38 +50,61 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
-          <CardDescription>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#f5f5f5] px-4 py-6 text-[#171717]">
+      <div className="mb-6 flex items-center justify-center gap-5">
+        <img
+          src="/acadify-app-icon.svg"
+          alt=""
+          className="h-12 w-12 shrink-0 object-contain"
+        />
+        <h1 className="text-2xl font-semibold tracking-tight">Acadify</h1>
+      </div>
+
+      <Card className="w-full max-w-md rounded-3xl border border-[#dedede] bg-white text-[#171717] shadow-[0_2px_5px_rgba(0,0,0,0.08)]">
+        <CardHeader className="space-y-2 px-6 pb-5 pt-7">
+          <CardTitle className="text-center text-2xl font-semibold">
+            Login
+          </CardTitle>
+
+          <CardDescription className="text-center text-sm leading-relaxed text-[#737373] sm:text-base">
             Enter your credentials below to login to your account.
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
-          <CardContent className="grid gap-4 pb-6">
+          <CardContent className="grid gap-5 px-6">
             {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-500">
+              <div
+                role="alert"
+                className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+              >
                 {error}
               </div>
             )}
 
             <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">
+                Email
+              </Label>
+
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter Your Email"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 disabled={isLoading}
                 required
+                autoComplete="email"
+                className="h-11 rounded-xl border-[#dedede] bg-white px-4 text-sm shadow-sm focus-visible:ring-[#a3a3a3]/30"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-sm font-medium">
+                Password
+              </Label>
+
               <Input
                 id="password"
                 type="password"
@@ -89,19 +113,21 @@ export default function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 disabled={isLoading}
                 required
+                autoComplete="current-password"
+                className="h-11 rounded-xl border-[#dedede] bg-white px-4 text-sm shadow-sm focus-visible:ring-[#a3a3a3]/30"
               />
             </div>
           </CardContent>
 
-          <CardFooter>
+          <CardFooter className="border-0 bg-transparent px-6 pb-7 pt-5">
             <Button
               type="submit"
-              className="w-full flex items-center justify-center"
               disabled={isLoading}
+              className="h-11 w-full rounded-xl bg-[#171717] text-sm font-medium text-white hover:bg-[#333333] disabled:opacity-60"
             >
               {isLoading ? (
                 <>
-                  <Spinner className="mr-2 text-white" />
+                  <Spinner className="mr-2" />
                   Logging in...
                 </>
               ) : (
@@ -111,6 +137,23 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
-    </div>
+      <p className="mt-6 max-w-sm px-4 text-center text-sm leading-6 text-[#737373]">
+        By clicking continue, you agree to our{' '}
+        <a
+          href="/terms"
+          className="underline underline-offset-4 hover:text-[#171717]"
+        >
+          Terms of Service
+        </a>{' '}
+        and{' '}
+        <a
+          href="/privacy"
+          className="underline underline-offset-4 hover:text-[#171717]"
+        >
+          Privacy Policy
+        </a>
+        .
+      </p>
+    </main>
   );
 }
