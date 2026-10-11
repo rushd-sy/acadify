@@ -6,13 +6,16 @@ import {
   AssignmentNotFoundError,
 } from './section.errors';
 
+export interface SectionProps {
+  name: string;
+  academicYear: string;
+  gradeId: number;
+  assignments: TeachingAssignment[];
+}
 export class Section {
   private constructor(
     readonly id: number | null,
-    private _name: string,
-    private _academicYear: string,
-    private _gradeId: number,
-    private _assignments: TeachingAssignment[],
+    private props: SectionProps,
   ) {}
 
   static create(input: {
@@ -20,37 +23,29 @@ export class Section {
     academicYear: string;
     gradeId: number;
   }): Section {
-    return new Section(
-      null,
-      Section.assertName(input.name),
-      Section.assertAcademicYear(input.academicYear),
-      input.gradeId,
-      [],
-    );
+    return new Section(null, {
+      name: Section.assertName(input.name),
+      academicYear: Section.assertAcademicYear(input.academicYear),
+      gradeId: input.gradeId,
+      assignments: [],
+    });
   }
 
-  static fromPersistence(input: {
-    id: number;
-    name: string;
-    academicYear: string;
-    gradeId: number;
-    assignments: TeachingAssignment[];
-  }): Section {
-    return new Section(
-      input.id,
-      input.name,
-      input.academicYear,
-      input.gradeId,
-      input.assignments,
-    );
+  static fromPersistence(
+    input: {
+      id: number;
+    } & SectionProps,
+  ): Section {
+    const { id, ...props } = input;
+    return new Section(id, props);
   }
 
   private static assertName(raw: string): string {
-    const s = raw.trim();
-    if (s.length < 1 || s.length > 50) {
+    const trimmedName = raw.trim();
+    if (trimmedName.length < 1 || trimmedName.length > 50) {
       throw new InvalidSectionNameError(raw);
     }
-    return s;
+    return trimmedName;
   }
 
   private static assertAcademicYear(raw: string): string {
@@ -64,44 +59,44 @@ export class Section {
   }
 
   get name() {
-    return this._name;
+    return this.props.name;
   }
   get academicYear() {
-    return this._academicYear;
+    return this.props.academicYear;
   }
   get gradeId() {
-    return this._gradeId;
+    return this.props.gradeId;
   }
   get assignments(): readonly TeachingAssignment[] {
-    return this._assignments;
+    return this.props.assignments;
   }
 
   rename(name: string) {
-    this._name = Section.assertName(name);
+    this.props.name = Section.assertName(name);
   }
 
   changeAcademicYear(year: string) {
-    this._academicYear = Section.assertAcademicYear(year);
+    this.props.academicYear = Section.assertAcademicYear(year);
   }
 
   assignTeacher(teacherId: number, curriculumId: number) {
-    const isAssigned = this._assignments.some((a) =>
-      a.matches(teacherId, curriculumId),
+    const isAssigned = this.props.assignments.some((assignment) =>
+      assignment.matches(teacherId, curriculumId),
     );
     if (isAssigned) {
       throw new DuplicateAssignmentError(teacherId, curriculumId);
     }
-    return this._assignments.push(
+    return this.props.assignments.push(
       TeachingAssignment.create(teacherId, curriculumId),
     );
   }
 
   unassignedTeacher(teacherId: number, curriculumId: number) {
-    const beforeCount = this._assignments.length;
-    this._assignments = this._assignments.filter(
-      (a) => !a.matches(teacherId, curriculumId),
+    const beforeCount = this.props.assignments.length;
+    this.props.assignments = this.props.assignments.filter(
+      (assignment) => !assignment.matches(teacherId, curriculumId),
     );
-    if (this._assignments.length === beforeCount) {
+    if (this.props.assignments.length === beforeCount) {
       throw new AssignmentNotFoundError(teacherId, curriculumId);
     }
   }
