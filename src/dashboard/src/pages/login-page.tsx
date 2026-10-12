@@ -50,17 +50,12 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#f5f5f5] px-4 py-6 text-[#171717]">
-      <div className="mb-6 flex items-center justify-center gap-5">
-        <img
-          src="/acadify-app-icon.svg"
-          alt=""
-          className="h-12 w-12 shrink-0 object-contain"
-        />
-        <h1 className="text-2xl font-semibold tracking-tight">Acadify</h1>
-      </div>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#F7F3EC] px-4 py-6 text-[#171717]">
+      <h1 className="mb-6">
+        <img src="/acadify-logo.svg" alt="Acadify" className="h-20 w-auto" />
+      </h1>
 
-      <Card className="w-full max-w-md rounded-3xl border border-[#dedede] bg-white text-[#171717] shadow-[0_2px_5px_rgba(0,0,0,0.08)]">
+      <Card className="w-full max-w-md rounded-3xl border border-[#E6DFD2] bg-[#FBF9F5] text-[#171717] shadow-[0_2px_5px_rgba(0,0,0,0.08)]">
         <CardHeader className="space-y-2 px-6 pb-5 pt-7">
           <CardTitle className="text-center text-2xl font-semibold">
             Login
@@ -96,7 +91,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 required
                 autoComplete="email"
-                className="h-11 rounded-xl border-[#dedede] bg-white px-4 text-sm shadow-sm focus-visible:ring-[#a3a3a3]/30"
+                className="h-11 rounded-xl border-[#E6DFD2] bg-[#F7F3EC] px-4 text-sm shadow-sm focus-visible:ring-[#a3a3a3]/30"
               />
             </div>
 
@@ -114,7 +109,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 required
                 autoComplete="current-password"
-                className="h-11 rounded-xl border-[#dedede] bg-white px-4 text-sm shadow-sm focus-visible:ring-[#a3a3a3]/30"
+                className="h-11 rounded-xl border-[#E6DFD2] bg-[#F7F3EC] px-4 text-sm shadow-sm focus-visible:ring-[#a3a3a3]/30"
               />
             </div>
           </CardContent>
