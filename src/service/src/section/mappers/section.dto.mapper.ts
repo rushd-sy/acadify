@@ -1,16 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SectionDto, SectionTeacherDto } from 'dtos';
-import { SectionDomain } from '../domain/section.domain';
-
-export interface AssembledSectionData {
-  section: SectionDomain;
-  teachers: {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    curriculumName: string;
-  }[];
-}
+import { AssembledSectionData } from '../data/section-assembled-data';
 
 @Injectable()
 export class SectionDtoMapper {
