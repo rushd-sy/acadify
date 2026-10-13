@@ -1,4 +1,4 @@
-import { Section } from '../domain/section.domain';
+import { SectionDomain } from '../domain/section.domain';
 import {
   Section as PrismaSection,
   TeacherCurriculum as PrismaAssignment,
@@ -10,11 +10,11 @@ type PrismaSectionWithAssignments = PrismaSection & {
 };
 
 export class SectionPersistenceMapper {
-  static toDomain(prismaSection: PrismaSectionWithAssignments): Section {
+  static toDomain(prismaSection: PrismaSectionWithAssignments): SectionDomain {
     const assignments = prismaSection.teacherCurriculums.map((tc) =>
       TeachingAssignment.fromPersistence(tc.id, tc.userId, tc.curriculumId),
     );
-    return Section.fromPersistence({
+    return SectionDomain.fromPersistence({
       id: prismaSection.id,
       name: prismaSection.name,
       academicYear: prismaSection.academicYear,
