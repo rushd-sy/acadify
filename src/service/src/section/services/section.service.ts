@@ -33,7 +33,7 @@ export class SectionService {
   }
 
   async createSection(createSection: CreateSectionDto): Promise<SectionDto> {
-    const existingSection = await this.repository.findByName(
+    const existingSection = await this.repository.existsByName(
       createSection.name,
     );
 
@@ -61,7 +61,7 @@ export class SectionService {
     }
 
     if (data.name) {
-      const existingSection = await this.repository.findByName(data.name);
+      const existingSection = await this.repository.existsByName(data.name);
 
       if (existingSection && existingSection.id !== id) {
         throw new ConflictException(

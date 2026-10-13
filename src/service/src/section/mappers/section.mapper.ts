@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Section } from '@prisma/client';
-import { SectionDomain } from '../domaine/section.domain';
+import { SectionDomain } from '../domain/section.domain';
 import { CreateSectionDto, SectionDto } from 'dtos';
 
 @Injectable()

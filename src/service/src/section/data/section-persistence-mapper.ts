@@ -1,9 +1,9 @@
-import { Section } from '../domaine/section.aggregate';
+import { Section } from '../domain/section.domain';
 import {
   Section as PrismaSection,
   TeacherCurriculum as PrismaAssignment,
 } from '@prisma/client';
-import { TeachingAssignment } from '../domaine/teaching-assignment.entity';
+import { TeachingAssignment } from '../domain/teaching-assignment.entity';
 
 type PrismaSectionWithAssignments = PrismaSection & {
   teacherCurriculums: PrismaAssignment[];
