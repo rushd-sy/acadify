@@ -1,7 +1,7 @@
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '../ui/field';
 import type { StudentDetailsDto } from 'dtos';
 import { studentService } from '@/services/student.service';
-import { useState } from 'react';
+import { useActionState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import {
@@ -17,6 +17,21 @@ type StudentFormProps = {
   onCreateSuccess: (createdStudent: StudentDetailsDto) => void;
 };
 
+type StudentFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+};
+
+type StudentFormState = {
+  success: boolean;
+  fieldErrors: Record<string, string>;
+  formError: string | null;
+  values?: StudentFormData;
+};
+
 const studentFormFields = [
   'firstName',
   'lastName',
@@ -25,117 +40,153 @@ const studentFormFields = [
   'password',
 ];
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const initialFormState: StudentFormState = {
+  success: false,
+  fieldErrors: {},
+  formError: null,
+};
+
 export function StudentForm({
   onCancel,
   student,
   onUpdateSuccess,
   onCreateSuccess,
 }: StudentFormProps) {
-  const [studentData, setStudentData] = useState({
-    firstName: student?.firstName ?? '',
-    lastName: student?.lastName ?? '',
-    email: student?.email ?? '',
-    phoneNumber: student?.phoneNumber ?? '',
-    password: '',
-  });
+  const validateStudentForm = (data: StudentFormData) => {
+    const errors: Record<string, string> = {};
+    if (!data.firstName.trim()) {
+      errors.firstName = 'First name is required.';
+    }
+    if (!data.lastName.trim()) {
+      errors.lastName = 'Last name is required.';
+    }
+    if (!data.email.trim()) {
+      errors.email = 'Email is required.';
+    } else if (!emailRegex.test(data.email)) {
+      errors.email = 'Email must be a valid email address.';
+    }
+    if (!data.phoneNumber.trim()) {
+      errors.phoneNumber = 'Phone number is required.';
+    }
+    if (!student && !data.password.trim()) {
+      errors.password = 'Password is required.';
+    }
+    return errors;
+  };
 
-  const [formError, setFormError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-  const handleFormError = (error: unknown, fallbackMessage: string) => {
-    setIsSubmitting(false);
-
-    const validationErrors = getApiValidationErrors(error, studentFormFields);
+  const studentAction = async (
+    _prevState: StudentFormState,
+    formData: FormData,
+  ): Promise<StudentFormState> => {
+    const studentData = {
+      firstName: String(formData.get('firstName') ?? ''),
+      lastName: String(formData.get('lastName') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      phoneNumber: String(formData.get('phoneNumber') ?? ''),
+      password: String(formData.get('password') ?? ''),
+    };
+    const validationErrors = validateStudentForm(studentData);
 
     if (Object.keys(validationErrors).length > 0) {
-      setFieldErrors(validationErrors);
-    } else {
-      const message = getApiErrorMessage(error);
-
-      setFormError(message ?? fallbackMessage);
+      return {
+        success: false,
+        fieldErrors: validationErrors,
+        formError: null,
+        values: studentData,
+      };
     }
-  };
-  return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
 
-        setFormError(null);
-        setIsSubmitting(true);
-        setFieldErrors({});
-
-        if (student) {
-          studentService
-            .updateStudentById(student.userId, studentData)
-            .then((updatedStudent) => {
-              setIsSubmitting(false);
-              onUpdateSuccess(updatedStudent);
-              onCancel();
-            })
-            .catch((error) => {
-              console.error('Failed to update student:', error);
-
-              handleFormError(
-                error,
-                'Failed to update student. Please try again later.',
-              );
-            });
-
-          return;
-        }
-
-        studentService
-          .createStudent({
+    try {
+      if (student) {
+        const updatedStudent = await studentService.updateStudentById(
+          student.userId,
+          {
             firstName: studentData.firstName,
             lastName: studentData.lastName,
             email: studentData.email,
             phoneNumber: studentData.phoneNumber,
-            hashedPassword: studentData.password,
-          })
-          .then((createdStudent) => {
-            setIsSubmitting(false);
-            onCreateSuccess(createdStudent);
-            onCancel();
-          })
-          .catch((error) => {
-            console.error('Failed to create student:', error);
+          },
+        );
 
-            handleFormError(
-              error,
-              'Failed to create student. Please try again later.',
-            );
-          });
-      }}
-    >
+        onUpdateSuccess(updatedStudent);
+      } else {
+        const createdStudent = await studentService.createStudent({
+          firstName: studentData.firstName,
+          lastName: studentData.lastName,
+          email: studentData.email,
+          phoneNumber: studentData.phoneNumber,
+          hashedPassword: studentData.password,
+        });
+
+        onCreateSuccess(createdStudent);
+      }
+
+      onCancel();
+
+      return {
+        success: true,
+        fieldErrors: {},
+        formError: null,
+        values: studentData,
+      };
+    } catch (error: unknown) {
+      console.error('Failed to save student:', error);
+
+      const apiFieldErrors = getApiValidationErrors(error, studentFormFields);
+
+      if (Object.keys(apiFieldErrors).length > 0) {
+        return {
+          success: false,
+          fieldErrors: apiFieldErrors,
+          formError: null,
+          values: studentData,
+        };
+      }
+
+      return {
+        success: false,
+        fieldErrors: {},
+        formError:
+          getApiErrorMessage(error) ??
+          `Failed to ${student ? 'update' : 'create'} student. Please try again later.`,
+        values: studentData,
+      };
+    }
+  };
+
+  const [state, formAction, isPending] = useActionState(
+    studentAction,
+    initialFormState,
+  );
+
+  return (
+    <form action={formAction}>
       <FieldGroup className="max-w-md">
         <Field>
           <FieldLabel>First Name</FieldLabel>
           <Input
-            className="firstName"
+            name="firstName"
             placeholder="Mohammad"
-            value={studentData.firstName}
-            onChange={(data) =>
-              setStudentData({ ...studentData, firstName: data.target.value })
-            }
+            defaultValue={state.values?.firstName ?? student?.firstName ?? ''}
           />
-          {fieldErrors.firstName && (
-            <p className="text-sm text-red-600">{fieldErrors.firstName}</p>
+          {state.fieldErrors.firstName && (
+            <p className="text-sm text-red-600">
+              {state.fieldErrors.firstName}
+            </p>
           )}
         </Field>
 
         <Field>
           <FieldLabel>Last Name</FieldLabel>
           <Input
-            className="lastName"
+            name="lastName"
             placeholder="Arrata"
-            value={studentData.lastName}
-            onChange={(data) =>
-              setStudentData({ ...studentData, lastName: data.target.value })
-            }
+            defaultValue={state.values?.lastName ?? student?.lastName ?? ''}
           />
-          {fieldErrors.lastName && (
-            <p className="text-sm text-red-600">{fieldErrors.lastName}</p>
+          {state.fieldErrors.lastName && (
+            <p className="text-sm text-red-600">{state.fieldErrors.lastName}</p>
           )}
         </Field>
 
@@ -145,15 +196,12 @@ export function StudentForm({
             The primary email used for academic notifications.
           </FieldDescription>
           <Input
-            className="email"
+            name="email"
             placeholder="mohammadarrata@gmail.com"
-            value={studentData.email}
-            onChange={(data) =>
-              setStudentData({ ...studentData, email: data.target.value })
-            }
+            defaultValue={state.values?.email ?? student?.email ?? ''}
           />
-          {fieldErrors.email && (
-            <p className="text-sm text-red-600">{fieldErrors.email}</p>
+          {state.fieldErrors.email && (
+            <p className="text-sm text-red-600">{state.fieldErrors.email}</p>
           )}
         </Field>
 
@@ -166,13 +214,14 @@ export function StudentForm({
             type="tel"
             name="phoneNumber"
             placeholder="+963 954 220 986"
-            value={studentData.phoneNumber}
-            onChange={(data) =>
-              setStudentData({ ...studentData, phoneNumber: data.target.value })
+            defaultValue={
+              state.values?.phoneNumber ?? student?.phoneNumber ?? ''
             }
           />
-          {fieldErrors.phoneNumber && (
-            <p className="text-sm text-red-600">{fieldErrors.phoneNumber}</p>
+          {state.fieldErrors.phoneNumber && (
+            <p className="text-sm text-red-600">
+              {state.fieldErrors.phoneNumber}
+            </p>
           )}
         </Field>
 
@@ -181,28 +230,27 @@ export function StudentForm({
             <FieldLabel>Password</FieldLabel>
             <Input
               type="password"
+              name="password"
               placeholder="Enter password"
-              value={studentData.password}
-              onChange={(data) =>
-                setStudentData({
-                  ...studentData,
-                  password: data.target.value,
-                })
-              }
+              defaultValue={state.values?.password ?? ''}
             />
-            {fieldErrors.password && (
-              <p className="text-sm text-red-600">{fieldErrors.password}</p>
+            {state.fieldErrors.password && (
+              <p className="text-sm text-red-600">
+                {state.fieldErrors.password}
+              </p>
             )}
           </Field>
         )}
 
-        {formError && <p className="text-sm text-red-600">{formError}</p>}
+        {state.formError && (
+          <p className="text-sm text-red-600">{state.formError}</p>
+        )}
         <div className="pt-4 flex justify-end gap-3">
           <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? <Spinner className="text-white" /> : 'Submit'}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Spinner className="text-black" /> : 'Submit'}
           </Button>
         </div>
       </FieldGroup>
