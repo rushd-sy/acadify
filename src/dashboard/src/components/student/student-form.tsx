@@ -25,7 +25,6 @@ type StudentFormData = {
   password: string;
 };
 
-
 type StudentFormState = {
   success: boolean;
   fieldErrors: Record<string, string>;
