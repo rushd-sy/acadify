@@ -3,23 +3,27 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-
 import { SectionRepository } from '../data/section.repository';
-import { SectionMapper } from '../mappers/section.mapper';
-
+import { SectionDtoMapper } from '../mappers/section.dto.mapper';
+import { SectionDomainMapper } from '../mappers/section.domain.mapper';
 import { CreateSectionDto, SectionDto, UpdateSectionDto } from 'dtos';
 
 @Injectable()
 export class SectionService {
   constructor(
     private readonly repository: SectionRepository,
-    private readonly mapper: SectionMapper,
+    private readonly dtoMapper: SectionDtoMapper,
+    private readonly domainMapper: SectionDomainMapper,
   ) {}
 
   async getAllSections(): Promise<SectionDto[]> {
     const sections = await this.repository.findAll();
+    const assembledData = sections.map((section) => ({
+      section,
+      teachers: [],
+    }));
 
-    return this.mapper.toDtoList(sections);
+    return this.dtoMapper.toDtoList(assembledData);
   }
 
   async findById(id: number): Promise<SectionDto> {
@@ -29,11 +33,14 @@ export class SectionService {
       throw new NotFoundException(`Section with ID ${id} not found`);
     }
 
-    return this.mapper.toDto(sectionDomain);
+    return this.dtoMapper.toDto({
+      section: sectionDomain,
+      teachers: [],
+    });
   }
 
   async createSection(createSection: CreateSectionDto): Promise<SectionDto> {
-    const existingSection = await this.repository.findByName(
+    const existingSection = await this.repository.existsByName(
       createSection.name,
     );
 
@@ -43,11 +50,15 @@ export class SectionService {
       );
     }
 
-    const sectionDomain = this.mapper.toDomainFromCreateDto(createSection);
+    const sectionDomain =
+      this.domainMapper.toDomainFromCreateDto(createSection);
 
-    const createdSection = await this.repository.create(sectionDomain);
+    const createdSection = await this.repository.save(sectionDomain);
 
-    return this.mapper.toDto(createdSection);
+    return this.dtoMapper.toDto({
+      section: createdSection,
+      teachers: [],
+    });
   }
 
   async updateSectionById(
@@ -61,24 +72,32 @@ export class SectionService {
     }
 
     if (data.name) {
-      const existingSection = await this.repository.findByName(data.name);
+      const isNameTaken = await this.repository.existsByName(data.name, id);
 
-      if (existingSection && existingSection.id !== id) {
+      if (isNameTaken) {
         throw new ConflictException(
           `Section with name "${data.name}" already exists`,
         );
       }
+      sectionDomain.rename(data.name);
     }
 
-    const updatedSection = await this.repository.updateSectionById(id, data);
+    if (data.academicYear) {
+      sectionDomain.changeAcademicYear(data.academicYear);
+    }
 
-    return this.mapper.toDto(updatedSection);
+    const updatedSection = await this.repository.save(sectionDomain);
+
+    return this.dtoMapper.toDto({
+      section: updatedSection,
+      teachers: [],
+    });
   }
 
   async deleteSection(id: number): Promise<void> {
-    const deletedSection = await this.repository.deleteById(id);
+    const isDeleted = await this.repository.deleteById(id);
 
-    if (!deletedSection) {
+    if (!isDeleted) {
       throw new NotFoundException(`Section with ID ${id} not found`);
     }
   }
