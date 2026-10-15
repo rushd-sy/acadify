@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Table,
@@ -30,6 +31,7 @@ export default function SectionsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -161,7 +163,11 @@ export default function SectionsPage() {
               </TableRow>
             ) : (
               sections.map((section) => (
-                <TableRow key={section.id} className="h-16">
+                <TableRow
+                  key={section.id}
+                  className="h-16 cursor-pointer transition-colors hover:bg-gray-50"
+                  onClick={() => navigate(`/sections/${section.id}`)}
+                >
                   <TableCell className="font-medium">{section.name}</TableCell>
 
                   <TableCell>{section.academicYear}</TableCell>
@@ -171,15 +177,18 @@ export default function SectionsPage() {
                   <TableCell className="space-x-2">
                     <Button
                       variant="secondary"
-                      onClick={() => handleEditSection(section.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditSection(section.id);
+                      }}
                     >
                       Edit
                     </Button>
 
                     <button
                       type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
+                      onClick={(e) => {
+                        e.stopPropagation();
                         handleDeleteClick(section);
                       }}
                       className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
