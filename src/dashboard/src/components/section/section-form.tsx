@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useActionState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,83 +9,143 @@ import {
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { sectionService } from '@/services/section.service';
-import type { CreateSectionDto, SectionDto } from 'dtos';
+import type { SectionDto } from 'dtos';
 
 type SectionFormProps = {
   onCancel: () => void;
-  onSuccess: (section: SectionDto) => void;
+  onUpdateSuccess: (updateSection: SectionDto) => void;
+  onCreateSuccess: (createSection: SectionDto) => void;
   section?: SectionDto;
+};
+
+type SectionFormData = {
+  name: string;
+  academicYear: string;
+  gradeId: number;
+};
+
+type SectionFormState = {
+  success: boolean;
+  fieldErrors: Record<string, string>;
+  formError: string | null;
+  values?: SectionFormData;
 };
 
 const sectionFormFields = ['name', 'academicYear', 'gradeId'];
 
+const initialFormState: SectionFormState = {
+  success: false,
+  fieldErrors: {},
+  formError: null,
+};
+
 export function SectionForm({
   onCancel,
-  onSuccess,
+  onUpdateSuccess,
+  onCreateSuccess,
   section,
 }: SectionFormProps) {
-  const [formData, setFormData] = useState<CreateSectionDto>({
-    name: section?.name ?? '',
-    academicYear: section?.academicYear ?? '',
-    gradeId: section?.gradeId ?? 0,
-  });
+  const validateSectionForm = (data: SectionFormData) => {
+    const errors: Record<string, string> = {};
+    if (!data.name.trim()) {
+      errors.name = 'Section name is required.';
+    }
+    if (!data.academicYear.trim()) {
+      errors.academicYear = 'Academic year is required.';
+    }
+    if (!data.gradeId) {
+      errors.gradeId = 'Grade ID is required.';
+    } else if (!Number.isInteger(data.gradeId) || data.gradeId <= 0) {
+      errors.gradeId = 'Please select a valid Grade ID.';
+    }
+    return errors;
+  };
+  const sectionAction = async (
+    _prevState: SectionFormState,
+    formData: FormData,
+  ): Promise<SectionFormState> => {
+    const gradeIdValue = String(formData.get('gradeId') ?? '');
+    const gradeId = Number(gradeIdValue);
+    const sectionData = {
+      name: String(formData.get('name') || ''),
+      academicYear: String(formData.get('academicYear') || ''),
+      gradeId,
+    };
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setIsLoading(true);
-    setError(null);
-    setFieldErrors({});
+    const validationErrors = validateSectionForm(sectionData);
+    if (Object.keys(validationErrors).length > 0) {
+      return {
+        success: false,
+        fieldErrors: validationErrors,
+        formError: null,
+        values: sectionData,
+      };
+    }
 
     try {
-      let updatedSection: SectionDto;
-
       if (section) {
-        updatedSection = await sectionService.updateSection(
-          section.id,
-          formData,
-        );
+        const updatedSection = await sectionService.updateSection(section.id, {
+          name: sectionData.name,
+          academicYear: sectionData.academicYear,
+          gradeId: sectionData.gradeId,
+        });
+
+        onUpdateSuccess(updatedSection);
       } else {
-        updatedSection = await sectionService.createSection(formData);
+        const createdSection = await sectionService.createSection({
+          name: sectionData.name,
+          academicYear: sectionData.academicYear,
+          gradeId: sectionData.gradeId,
+        });
+
+        onCreateSuccess(createdSection);
       }
+      onCancel();
 
-      onSuccess(updatedSection);
-    } catch (error) {
-      const validationErrors = getApiValidationErrors(error, sectionFormFields);
-
-      if (Object.keys(validationErrors).length > 0) {
-        setFieldErrors(validationErrors);
-      } else {
-        const message = getApiErrorMessage(error);
-
-        setError(
-          message ??
-            (section
-              ? 'Failed to update section. Please try again later.'
-              : 'Failed to create section. Please try again later.'),
-        );
+      return {
+        success: true,
+        fieldErrors: {},
+        formError: null,
+      };
+    } catch (error: unknown) {
+      console.error('Failed to save section:', error);
+      const apiFieldErrors = getApiValidationErrors(error, sectionFormFields);
+      if (Object.keys(apiFieldErrors).length > 0) {
+        return {
+          success: false,
+          fieldErrors: apiFieldErrors,
+          formError: null,
+          values: sectionData,
+        };
       }
-    } finally {
-      setIsLoading(false);
+      return {
+        success: false,
+        fieldErrors: {},
+        formError:
+          getApiErrorMessage(error) ??
+          `Failed to ${section ? 'update' : 'create'} section. Please try again later.`,
+        values: sectionData,
+      };
     }
   };
 
+  const [state, formAction, isPending] = useActionState(
+    sectionAction,
+    initialFormState,
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="name">Section Name</Label>
         <Input
           id="name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          name="name"
           placeholder="e.g. Section A"
+          defaultValue={state.values?.name ?? section?.name}
         />
-        {fieldErrors.name && (
-          <p className="text-sm text-red-600">{fieldErrors.name}</p>
+        {state.fieldErrors.name && (
+          <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
         )}
       </div>
 
@@ -93,14 +153,14 @@ export function SectionForm({
         <Label htmlFor="academicYear">Academic Year</Label>
         <Input
           id="academicYear"
-          value={formData.academicYear}
-          onChange={(e) =>
-            setFormData({ ...formData, academicYear: e.target.value })
-          }
+          name="academicYear"
           placeholder="e.g. 2026-2027"
+          defaultValue={state.values?.academicYear ?? section?.academicYear}
         />
-        {fieldErrors.academicYear && (
-          <p className="text-sm text-red-600">{fieldErrors.academicYear}</p>
+        {state.fieldErrors.academicYear && (
+          <p className="text-sm text-red-600">
+            {state.fieldErrors.academicYear}
+          </p>
         )}
       </div>
 
@@ -109,35 +169,31 @@ export function SectionForm({
         <Input
           id="gradeId"
           type="number"
-          value={formData.gradeId || ''}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              gradeId: parseInt(e.target.value) || 0,
-            })
-          }
+          name="gradeId"
           placeholder="Enter Grade ID"
+          defaultValue={state.values?.gradeId ?? section?.gradeId}
         />
-        {fieldErrors.gradeId && (
-          <p className="text-sm text-red-600">{fieldErrors.gradeId}</p>
+        {state.fieldErrors.gradeId && (
+          <p className="text-sm text-red-600">{state.fieldErrors.gradeId}</p>
         )}
       </div>
 
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {state.formError && (
+        <div className="text-sm text-red-600">{state.formError}</div>
+      )}
 
       <div className="mt-4 flex justify-end gap-2">
         <Button
           type="button"
           variant="secondary"
           onClick={onCancel}
-          disabled={isLoading}
+          disabled={isPending}
         >
           Cancel
         </Button>
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Spinner />}
-          {section ? 'Update' : 'Create'}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <Spinner className="text-black" /> : 'Submit'}
         </Button>
       </div>
     </form>
