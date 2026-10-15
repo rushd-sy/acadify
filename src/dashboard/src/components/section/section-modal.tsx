@@ -5,14 +5,16 @@ import type { SectionDto } from 'dtos';
 type SectionModalProps = {
   open: boolean;
   onClose: () => void;
-  onSuccess: (section: SectionDto) => void;
+  onUpdateSuccess: (updateSection: SectionDto) => void;
+  onCreateSuccess: (createSection: SectionDto) => void;
   section?: SectionDto;
 };
 
 export default function SectionModal({
   open,
   onClose,
-  onSuccess,
+  onUpdateSuccess,
+  onCreateSuccess,
   section,
 }: SectionModalProps) {
   return (
@@ -23,7 +25,8 @@ export default function SectionModal({
         </DialogTitle>
         <SectionForm
           onCancel={onClose}
-          onSuccess={onSuccess}
+          onUpdateSuccess={onUpdateSuccess}
+          onCreateSuccess={onCreateSuccess}
           section={section}
         />
       </DialogContent>
