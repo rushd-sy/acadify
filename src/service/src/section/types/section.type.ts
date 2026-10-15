@@ -1,5 +1,5 @@
-import { Section, TeacherCurriculum } from '@prisma/client';
+import { Section, SectionCurriculumTeacher } from '@prisma/client';
 
 export type SectionWithRelations = Section & {
-  teacherCurriculums?: TeacherCurriculum[];
+  sectionCurriculumTeachers?: SectionCurriculumTeacher[];
 };

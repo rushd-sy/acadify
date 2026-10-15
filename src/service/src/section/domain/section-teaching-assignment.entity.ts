@@ -1,4 +1,4 @@
-export class SectionTeachingAssignment {
+export class SectionCurriculumTeacher {
   id?: number;
   teacherId!: number;
   curriculumId!: number;
@@ -16,16 +16,16 @@ export class SectionTeachingAssignment {
   static create(
     teacherId: number,
     curriculumId: number,
-  ): SectionTeachingAssignment {
-    return new SectionTeachingAssignment({ teacherId, curriculumId });
+  ): SectionCurriculumTeacher {
+    return new SectionCurriculumTeacher({ teacherId, curriculumId });
   }
 
   static fromPersistence(input: {
     id: number;
     teacherId: number;
     curriculumId: number;
-  }): SectionTeachingAssignment {
-    return new SectionTeachingAssignment(input);
+  }): SectionCurriculumTeacher {
+    return new SectionCurriculumTeacher(input);
   }
 
   matches(teacherId: number, curriculumId: number): boolean {

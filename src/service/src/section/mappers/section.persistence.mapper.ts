@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SectionDomain } from '../domain/section.domain';
-import { SectionTeachingAssignment } from '../domain/section-teaching-assignment.entity';
+import { SectionCurriculumTeacher } from '../domain/section-teaching-assignment.entity';
 import type { SectionWithRelations } from '../types/section.type';
 
 @Injectable()
@@ -11,9 +11,9 @@ export class SectionPersistenceMapper {
       name: prismaSection.name,
       academicYear: prismaSection.academicYear,
       gradeId: prismaSection.gradeId,
-      assignments: prismaSection.teacherCurriculums
-        ? prismaSection.teacherCurriculums.map((tc) =>
-            SectionTeachingAssignment.fromPersistence({
+      assignments: prismaSection.sectionCurriculumTeachers
+        ? prismaSection.sectionCurriculumTeachers.map((tc) =>
+            SectionCurriculumTeacher.fromPersistence({
               id: tc.id,
               teacherId: tc.userId,
               curriculumId: tc.curriculumId,

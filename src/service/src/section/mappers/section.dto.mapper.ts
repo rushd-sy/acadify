@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SectionDto, SectionTeacherDto } from 'dtos';
+import { SectionDto, SectionCurriculumTeacherDto } from 'dtos';
 import { AssembledSectionData } from '../data/section-assembled-data';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class SectionDtoMapper {
       gradeId: assembledData.section.gradeId,
       teachers:
         assembledData.teachers?.map(
-          (t): SectionTeacherDto => ({
+          (t): SectionCurriculumTeacherDto => ({
             teacherId: t.userId,
             teacherFirstName: t.firstName,
             teacherLastName: t.lastName,

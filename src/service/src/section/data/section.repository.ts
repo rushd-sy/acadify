@@ -18,14 +18,14 @@ export class SectionRepository {
   async findById(id: number): Promise<SectionDomain | null> {
     const section = await this.prisma.section.findUnique({
       where: { id },
-      include: { teacherCurriculums: true },
+      include: { sectionCurriculumTeachers: true },
     });
     return section ? this.mapper.toDomain(section) : null;
   }
   async findAll(): Promise<SectionDomain[]> {
     const sections = await this.prisma.section.findMany({
       orderBy: { name: 'asc' },
-      include: { teacherCurriculums: true },
+      include: { sectionCurriculumTeachers: true },
     });
     return sections.map((section) => this.mapper.toDomain(section));
   }
@@ -48,7 +48,7 @@ export class SectionRepository {
 
         const completeSection = await tx.section.findUnique({
           where: { id: savedSectionId },
-          include: { teacherCurriculums: true },
+          include: { sectionCurriculumTeachers: true },
         });
 
         return this.mapper.toDomain(completeSection!);
@@ -84,17 +84,17 @@ export class SectionRepository {
     sectionId: number,
     section: SectionDomain,
   ): Promise<void> {
-    const newAssignments = section.teachingAssignments.filter(
+    const newAssignments = section.sectionCurriculumTeachers.filter(
       (assignment) => assignment.id === null,
     );
-    const existingAssignments = section.teachingAssignments.filter(
+    const existingAssignments = section.sectionCurriculumTeachers.filter(
       (assignment) => assignment.id !== null,
     );
     const existingAssignmentIds = existingAssignments.map(
       (assignment) => assignment.id as number,
     );
 
-    await tx.teacherCurriculum.deleteMany({
+    await tx.sectionCurriculumTeacher.deleteMany({
       where: {
         sectionId: sectionId,
         id:
@@ -105,7 +105,7 @@ export class SectionRepository {
     });
 
     if (newAssignments.length > 0) {
-      await tx.teacherCurriculum.createMany({
+      await tx.sectionCurriculumTeacher.createMany({
         data: newAssignments.map((assignment) => ({
           sectionId: sectionId,
           userId: assignment.teacherId,
@@ -130,7 +130,9 @@ export class SectionRepository {
   async deleteById(id: number): Promise<boolean> {
     try {
       await this.prisma.$transaction(async (tx) => {
-        await tx.teacherCurriculum.deleteMany({ where: { sectionId: id } });
+        await tx.sectionCurriculumTeacher.deleteMany({
+          where: { sectionId: id },
+        });
         await tx.section.delete({ where: { id } });
       });
       return true;
