@@ -1,9 +1,9 @@
-import { SectionTeacherDto } from '../section-teacher';
+import { SectionCurriculumTeacherDto } from '../section-teacher';
 
 export class SectionDto {
   id!: number;
   name!: string;
   academicYear!: string;
   gradeId!: number;
-  teachers?: SectionTeacherDto[];
+  teachers?: SectionCurriculumTeacherDto[];
 }
