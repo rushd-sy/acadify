@@ -1,4 +1,4 @@
-import { SectionTeachingAssignment } from './section-teaching-assignment.entity';
+import { SectionCurriculumTeacher } from './section-teaching-assignment.entity';
 import {
   InvalidAcademicYearError,
   InvalidSectionNameError,
@@ -11,20 +11,20 @@ export class SectionDomain {
   name!: string;
   academicYear!: string;
   gradeId!: number;
-  teachingAssignments!: SectionTeachingAssignment[];
+  sectionCurriculumTeachers!: SectionCurriculumTeacher[];
 
   private constructor(input: {
     id: number;
     name: string;
     academicYear: string;
     gradeId: number;
-    assignments: SectionTeachingAssignment[];
+    assignments: SectionCurriculumTeacher[];
   }) {
     this.id = input.id;
     this.name = input.name;
     this.academicYear = input.academicYear;
     this.gradeId = input.gradeId;
-    this.teachingAssignments = input.assignments;
+    this.sectionCurriculumTeachers = input.assignments;
   }
 
   static create(input: {
@@ -49,7 +49,7 @@ export class SectionDomain {
     name: string;
     academicYear: string;
     gradeId: number;
-    assignments: SectionTeachingAssignment[];
+    assignments: SectionCurriculumTeacher[];
   }): SectionDomain {
     return new SectionDomain(input);
   }
@@ -80,23 +80,23 @@ export class SectionDomain {
   }
 
   assignTeacher(teacherId: number, curriculumId: number) {
-    const isAssigned = this.teachingAssignments.some((assignment) =>
+    const isAssigned = this.sectionCurriculumTeachers.some((assignment) =>
       assignment.matches(teacherId, curriculumId),
     );
     if (isAssigned) {
       throw new DuplicateAssignmentError(teacherId, curriculumId);
     }
-    return this.teachingAssignments.push(
-      SectionTeachingAssignment.create(teacherId, curriculumId),
+    return this.sectionCurriculumTeachers.push(
+      SectionCurriculumTeacher.create(teacherId, curriculumId),
     );
   }
 
   unassignTeacher(teacherId: number, curriculumId: number) {
-    const beforeCount = this.teachingAssignments.length;
-    this.teachingAssignments = this.teachingAssignments.filter(
+    const beforeCount = this.sectionCurriculumTeachers.length;
+    this.sectionCurriculumTeachers = this.sectionCurriculumTeachers.filter(
       (assignment) => !assignment.matches(teacherId, curriculumId),
     );
-    if (this.teachingAssignments.length === beforeCount) {
+    if (this.sectionCurriculumTeachers.length === beforeCount) {
       throw new AssignmentNotFoundError(teacherId, curriculumId);
     }
   }
