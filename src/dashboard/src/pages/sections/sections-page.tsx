@@ -91,6 +91,11 @@ export default function SectionsPage() {
     setIsDeleteModalOpen(true);
   };
 
+  const handleCreateSection = (createdSection: SectionDto) => {
+    setSections((previousSections) => [...previousSections, createdSection]);
+    handleCloseSectionModal();
+  };
+
   const handleCloseDeleteModal = () => {
     if (isDeleting) return;
 
@@ -127,6 +132,13 @@ export default function SectionsPage() {
       <PageHeader
         title="Sections"
         description="A list of sections within your institute."
+        action={{
+          label: 'Add Section',
+          onClick: () => {
+            setSelectedSection(null);
+            setIsSectionModalOpen(true);
+          },
+        }}
       />
       <div className="overflow-x-auto">
         <Table>
@@ -221,7 +233,8 @@ export default function SectionsPage() {
       <SectionModal
         open={isSectionModalOpen}
         onClose={handleCloseSectionModal}
-        onSuccess={handleSectionUpdateSuccess}
+        onUpdateSuccess={handleSectionUpdateSuccess}
+        onCreateSuccess={handleCreateSection}
         section={selectedSection ?? undefined}
       />
     </div>
