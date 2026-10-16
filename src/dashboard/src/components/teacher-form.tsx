@@ -8,8 +8,8 @@ import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
-import { Spinner } from './ui/spinner';
 import { emailRegex } from '@/lib/validation.util';
+import { Spinner } from './ui/spinner';
 
 type TeacherFormProps = {
   onCancel: () => void;
