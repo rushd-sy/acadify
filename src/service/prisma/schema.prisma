@@ -54,6 +54,13 @@ model Section {
   sectionCurriculumTeachers SectionCurriculumTeacher[]
 }
 
+model Exam {
+  UniqueID       Int      @id @default(autoincrement())
+  examTemplateId Int?
+  title          String
+  date           DateTime
+}
+
 model SectionCurriculumTeacher {
   id Int @id @default(autoincrement())
   userId Int 
