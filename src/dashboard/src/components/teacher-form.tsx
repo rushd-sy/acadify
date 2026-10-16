@@ -10,6 +10,7 @@ import {
 } from '@/lib/api-error.util';
 import { emailRegex } from '@/lib/validation.util';
 import { Spinner } from './ui/spinner';
+import { getFormString } from '@/lib/form-data.util';
 
 type TeacherFormProps = {
   onCancel: () => void;
@@ -27,45 +28,11 @@ type TeacherFormData = {
   password: string;
 };
 
-type OptionalTeacherFormData = Partial<TeacherFormData>;
-
-type TeacherUpdateFormData = Omit<TeacherFormData, 'password'>;
-
-const getFormString = (formData: FormData, name: string) => {
-  const value = formData.get(name);
-  return typeof value === 'string' ? value : undefined;
-};
-
-const isTeacherCreateFormData = (
-  data: OptionalTeacherFormData,
-): data is TeacherFormData => {
-  return (
-    typeof data.firstName === 'string' &&
-    typeof data.lastName === 'string' &&
-    typeof data.email === 'string' &&
-    typeof data.phoneNumber === 'string' &&
-    typeof data.degree === 'string' &&
-    typeof data.password === 'string'
-  );
-};
-
-const isTeacherUpdateFormData = (
-  data: OptionalTeacherFormData,
-): data is TeacherUpdateFormData => {
-  return (
-    typeof data.firstName === 'string' &&
-    typeof data.lastName === 'string' &&
-    typeof data.email === 'string' &&
-    typeof data.phoneNumber === 'string' &&
-    typeof data.degree === 'string'
-  );
-};
-
 type TeacherFormState = {
   success: boolean;
   fieldErrors: Record<string, string>;
   formError: string | null;
-  values?: OptionalTeacherFormData;
+  values?: TeacherFormData;
 };
 
 const teacherFormFields = [
@@ -89,28 +56,20 @@ export function TeacherForm({
   onUpdateSuccess,
   onCreateSuccess,
 }: TeacherFormProps) {
-  const validateTeacherForm = (data: OptionalTeacherFormData) => {
-    const errors = {} as Record<string, string>;
-    if (!data.firstName?.trim()) {
-      errors.firstName = 'First name is required.';
-    }
-    if (!data.lastName?.trim()) {
-      errors.lastName = 'Last name is required.';
-    }
-    if (!data.email?.trim()) {
+  const validateTeacherForm = (data: TeacherFormData) => {
+    const errors: Record<string, string> = {};
+    if (!data.firstName.trim()) errors.firstName = 'First name is required.';
+    if (!data.lastName.trim()) errors.lastName = 'Last name is required.';
+    if (!data.email.trim()) {
       errors.email = 'Email is required.';
     } else if (!emailRegex.test(data.email)) {
       errors.email = 'Invalid email format.';
     }
-    if (!data.phoneNumber?.trim()) {
+    if (!data.phoneNumber.trim())
       errors.phoneNumber = 'Phone number is required.';
-    }
-    if (!data.degree?.trim()) {
-      errors.degree = 'Degree is required.';
-    }
-    if (!teacher && !data.password?.trim()) {
+    if (!data.degree.trim()) errors.degree = 'Degree is required.';
+    if (!teacher && !data.password.trim())
       errors.password = 'Password is required.';
-    }
     return errors;
   };
 
@@ -118,7 +77,7 @@ export function TeacherForm({
     _prevState: TeacherFormState,
     formData: FormData,
   ): Promise<TeacherFormState> => {
-    const teacherData: OptionalTeacherFormData = {
+    const teacherData: TeacherFormData = {
       firstName: getFormString(formData, 'firstName'),
       lastName: getFormString(formData, 'lastName'),
       email: getFormString(formData, 'email'),
@@ -128,7 +87,6 @@ export function TeacherForm({
     };
 
     const validationErrors = validateTeacherForm(teacherData);
-
     if (Object.keys(validationErrors).length > 0) {
       return {
         success: false,
@@ -140,56 +98,26 @@ export function TeacherForm({
 
     try {
       if (teacher) {
-        if (!isTeacherUpdateFormData(teacherData)) {
-          return {
-            success: false,
-            fieldErrors: {},
-            formError: 'Please fill in all required fields.',
-            values: teacherData,
-          };
-        }
+        const { password, ...updateData } = teacherData;
+        void password;
 
         const updatedTeacher = await teacherService.updateTeacherById(
           teacher.userId,
-          {
-            firstName: teacherData.firstName,
-            lastName: teacherData.lastName,
-            email: teacherData.email,
-            phoneNumber: teacherData.phoneNumber,
-            degree: teacherData.degree,
-          },
+          updateData,
         );
 
         onUpdateSuccess(updatedTeacher);
       } else {
-        if (!isTeacherCreateFormData(teacherData)) {
-          return {
-            success: false,
-            fieldErrors: {},
-            formError: 'Please fill in all required fields.',
-            values: teacherData,
-          };
-        }
-
+        const { password, ...rest } = teacherData;
         const createdTeacher = await teacherService.createTeacher({
-          firstName: teacherData.firstName,
-          lastName: teacherData.lastName,
-          email: teacherData.email,
-          phoneNumber: teacherData.phoneNumber,
-          degree: teacherData.degree,
-          hashedPassword: teacherData.password,
+          ...rest,
+          hashedPassword: password,
         });
-
         onCreateSuccess(createdTeacher);
       }
 
       onCancel();
-
-      return {
-        success: true,
-        fieldErrors: {},
-        formError: null,
-      };
+      return { success: true, fieldErrors: {}, formError: null };
     } catch (error: unknown) {
       console.error('Failed to save teacher:', error);
 
