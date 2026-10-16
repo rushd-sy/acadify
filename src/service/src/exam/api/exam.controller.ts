@@ -1,4 +1,13 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { ExamService } from '../services/exam.service';
+import { ExamDto } from 'dtos';
 
-@Controller('api/exams')
-export class ExamController {}
+@Controller('exams')
+export class ExamController {
+  constructor(private readonly service: ExamService) {}
+
+  @Get()
+  findAll(): Promise<ExamDto[]> {
+    return this.service.findAll();
+  }
+}
