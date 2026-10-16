@@ -14,6 +14,7 @@ import AuthLayout from './layout/AuthLayout';
 import { AuthProvider } from './providers/auth-provider';
 import TeachersDetailsPage from './pages/teacher/teachers-details-page';
 import HomePage from './pages/home-page';
+import SectionDetailsPage from './pages/sections/section-details-page';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
 
           <Route path="/curriculums" element={<CurriculumsPage />} />
           <Route path="/sections" element={<SectionsPage />} />
+          <Route path="/sections/:id" element={<SectionDetailsPage />} />
           <Route path="/grades" element={<GradePage />} />
         </Route>
 
