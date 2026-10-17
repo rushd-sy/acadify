@@ -8,9 +8,10 @@ import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
-import { emailRegex } from '@/lib/validation.util';
+import { emailRegex } from '@/forms/validation.util';
 import { Spinner } from './ui/spinner';
-import { getFormString } from '@/lib/form-data.util';
+import { getFormString } from '@/forms/form-data.util';
+import { createInitialFormState, type FormState } from '@/forms/state';
 
 type TeacherFormProps = {
   onCancel: () => void;
@@ -28,13 +29,6 @@ type TeacherFormData = {
   password: string;
 };
 
-type TeacherFormState = {
-  success: boolean;
-  fieldErrors: Record<string, string>;
-  formError: string | null;
-  values?: TeacherFormData;
-};
-
 const teacherFormFields = [
   'firstName',
   'lastName',
@@ -44,11 +38,9 @@ const teacherFormFields = [
   'degree',
 ];
 
-const initialFormState: TeacherFormState = {
-  success: false,
-  fieldErrors: {},
-  formError: null,
-};
+type TeacherFormState = FormState<TeacherFormData>;
+
+const initialFormState = createInitialFormState<TeacherFormData>();
 
 export function TeacherForm({
   onCancel,
