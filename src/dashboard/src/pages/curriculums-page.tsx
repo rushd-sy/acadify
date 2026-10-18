@@ -85,6 +85,13 @@ export default function CurriculumsPage() {
     fetchCurriculums();
   };
 
+  const handleCreateSuccess = (createdCurriculum: CurriculumDto) => {
+    setCurriculums((previousCurriculums) => [
+      ...previousCurriculums,
+      createdCurriculum,
+    ]);
+  };
+
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <PageHeader
@@ -174,7 +181,8 @@ export default function CurriculumsPage() {
           setIsModalOpen(false);
           setCurriculumToEdit(null);
         }}
-        onSuccess={handleFormSuccess}
+        onUpdateSuccess={handleFormSuccess}
+        onCreateSuccess={handleCreateSuccess}
       />
     </div>
   );
