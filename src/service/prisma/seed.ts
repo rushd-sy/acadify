@@ -193,13 +193,56 @@ const seed = async () => {
     });
   }
 
+  console.log('Assigning Students to Sections...');
+  for (let i = 0; i < 10; i++) {
+    const studentId = i + 11;
+    const sectionId = (i % 3) + 1;
+
+    await prisma.studentSection.upsert({
+      where: { id: i + 1 },
+      update: {
+        studentId: studentId,
+        sectionId: sectionId,
+        status: 'ACTIVE',
+      },
+      create: {
+        id: i + 1,
+        studentId: studentId,
+        sectionId: sectionId,
+        status: 'ACTIVE',
+      },
+    });
+  }
+
+  console.log('Assigning Teachers to Sections and Curriculums...');
+  for (let i = 0; i < 10; i++) {
+    const teacherId = i + 21;
+    const sectionId = (i % 3) + 1;
+    const curriculumId = (i % 3) + 1;
+
+    await prisma.sectionCurriculumTeacher.upsert({
+      where: { id: i + 1 },
+      update: {
+        userId: teacherId,
+        sectionId: sectionId,
+        curriculumId: curriculumId,
+      },
+      create: {
+        id: i + 1,
+        userId: teacherId,
+        sectionId: sectionId,
+        curriculumId: curriculumId,
+      },
+    });
+  }
+
   const outputPath = path.join(process.cwd(), 'seeded-accounts.json');
   fs.writeFileSync(
     outputPath,
     JSON.stringify(generatedAccounts, null, 2),
     'utf-8',
   );
-  console.log(`\n✅ Accounts genereted and securely saved to: ${outputPath}`);
+  console.log(`\n✅ Accounts generated and securely saved to: ${outputPath}`);
   console.log('----------------------');
 
   console.log('Synchronizing PostgreSQL Auto-Increment Sequences...');
@@ -215,14 +258,26 @@ const seed = async () => {
   await prisma.$executeRawUnsafe(
     `SELECT setval('"Curriculum_id_seq"', (SELECT MAX(id) FROM "Curriculum"));`,
   );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"StudentSection_id_seq"', (SELECT MAX(id) FROM "StudentSection"));`,
+  );
+  await prisma.$executeRawUnsafe(
+    `SELECT setval('"SectionCurriculumTeacher_id_seq"', (SELECT MAX(id) FROM "SectionCurriculumTeacher"));`,
+  );
   console.log('✅ Sequences synchronized successfully.\n');
 };
 
 const clear = async () => {
   const prisma = new PrismaClient();
 
+  await prisma.studentSection.deleteMany();
+  await prisma.sectionCurriculumTeacher.deleteMany();
+
   await prisma.student.deleteMany();
   await prisma.teacher.deleteMany();
+  await prisma.section.deleteMany();
+  await prisma.curriculum.deleteMany();
+  await prisma.grade.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('DB Deleted Successfully!');

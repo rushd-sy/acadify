@@ -1,4 +1,5 @@
 import { SectionCurriculumTeacherDto } from '../section-teacher';
+import { StudentDetailsDto } from '../student';
 
 export class SectionDto {
   id!: number;
@@ -6,4 +7,5 @@ export class SectionDto {
   academicYear!: string;
   gradeId!: number;
   teachers?: SectionCurriculumTeacherDto[];
+  students?: StudentDetailsDto[];
 }
