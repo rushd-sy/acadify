@@ -203,13 +203,11 @@ const seed = async () => {
       update: {
         studentId: studentId,
         sectionId: sectionId,
-        status: 'ACTIVE',
       },
       create: {
         id: i + 1,
         studentId: studentId,
         sectionId: sectionId,
-        status: 'ACTIVE',
       },
     });
   }
