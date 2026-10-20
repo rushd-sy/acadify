@@ -1,25 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { Exam } from '@prisma/client';
-import { ExamDomain } from '../domain/exam.domain';
 import { ExamDto } from 'dtos';
+import { ExamDomain } from '../domain/exam.domain';
 
 @Injectable()
 export class ExamMapper {
   toDomain(exam: Exam): ExamDomain {
     return ExamDomain.fromPersistence({
-      UniqueID: exam.UniqueID,
-      examTemplateId: exam.examTemplateId,
+      id: exam.id,
+      examTemplateId: exam.examTemplateId ?? undefined,
       title: exam.title,
       date: exam.date,
+      minScore: exam.minScore,
+      maxScore: exam.maxScore,
     });
   }
 
   toDto(examDomain: ExamDomain): ExamDto {
     return {
-      UniqueID: examDomain.UniqueID,
+      id: examDomain.id,
       examTemplateId: examDomain.examTemplateId,
       title: examDomain.title,
       date: examDomain.date,
+      minScore: examDomain.minScore,
+      maxScore: examDomain.maxScore,
     };
   }
 

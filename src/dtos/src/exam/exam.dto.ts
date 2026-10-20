@@ -1,6 +1,10 @@
 export class ExamDto {
-  UniqueID!: number;
-  examTemplateId!: number | null;
+  id!: number;
+  examTemplateId?: number;
   title!: string;
   date!: Date;
+  curriculumId?: number;
+  docuURL?: string;
+  minScore!: number;
+  maxScore!: number;
 }

@@ -1,26 +1,34 @@
 export class ExamDomain {
-  UniqueID: number;
-  examTemplateId: number | null;
+  id: number;
+  examTemplateId?: number;
   title: string;
   date: Date;
+  minScore: number;
+  maxScore: number;
 
   private constructor(input: {
-    UniqueID: number;
-    examTemplateId: number | null;
+    id: number;
+    examTemplateId?: number;
     title: string;
     date: Date;
+    minScore: number;
+    maxScore: number;
   }) {
-    this.UniqueID = input.UniqueID;
+    this.id = input.id;
     this.examTemplateId = input.examTemplateId;
     this.title = input.title;
     this.date = input.date;
+    this.minScore = input.minScore;
+    this.maxScore = input.maxScore;
   }
 
   static fromPersistence(input: {
-    UniqueID: number;
-    examTemplateId: number | null;
+    id: number;
+    examTemplateId?: number;
     title: string;
     date: Date;
+    minScore: number;
+    maxScore: number;
   }): ExamDomain {
     return new ExamDomain(input);
   }
