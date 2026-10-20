@@ -67,11 +67,12 @@ model SectionCurriculumTeacher {
   section Section @relation(fields: [sectionId], references: [id])
 }
 
+
+
 model StudentSection {
   id Int @id @default(autoincrement())
   studentId Int 
   sectionId Int 
-  status String @default("ACTIVE")
   startDate DateTime @default(now())
   endDate DateTime?
 
