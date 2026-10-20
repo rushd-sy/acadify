@@ -1,5 +1,5 @@
 export class SectionStudentDto {
-  userId!: number;
+  studentId!: number;
   studentFirstName!: string;
   studentLastName!: string;
   email!: string;
