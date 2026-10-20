@@ -146,10 +146,11 @@ export default function SectionDetailsPage() {
       <SectionModal
         open={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSuccess={(updatedSection) => {
+        onUpdateSuccess={(updatedSection) => {
           setSection(updatedSection);
           setIsEditModalOpen(false);
         }}
+        onCreateSuccess={() => {}}
         section={section}
       />
     </div>
