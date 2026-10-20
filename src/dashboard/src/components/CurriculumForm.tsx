@@ -39,8 +39,6 @@ export function CurriculumForm({
   const validateCurriculumForm = (data: CurriculumFormData) => {
     const errors: Record<string, string> = {};
     if (!data.name.trim()) errors.name = 'Curriculum name is required.';
-    if (!data.description.trim())
-      errors.description = 'Description is required.';
     return errors;
   };
 

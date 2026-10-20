@@ -6,7 +6,6 @@ export class UpdateCurriculumDto {
   @IsOptional()
   name?: string;
 
-  @IsNotEmpty()
   @IsString()
   @IsOptional()
   description?: string;
