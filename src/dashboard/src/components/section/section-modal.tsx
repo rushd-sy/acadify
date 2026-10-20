@@ -25,8 +25,8 @@ export default function SectionModal({
         </DialogTitle>
         <SectionForm
           onCancel={onClose}
-          onUpdateSuccess={onUpdateSuccess}
           onCreateSuccess={onCreateSuccess}
+          onUpdateSuccess={onUpdateSuccess}
           section={section}
         />
       </DialogContent>

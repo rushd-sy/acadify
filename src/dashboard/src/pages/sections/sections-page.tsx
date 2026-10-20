@@ -224,8 +224,8 @@ export default function SectionsPage() {
       <SectionModal
         open={isSectionModalOpen}
         onClose={handleCloseSectionModal}
-        onUpdateSuccess={handleSectionUpdateSuccess}
         onCreateSuccess={handleCreateSection}
+        onUpdateSuccess={handleSectionUpdateSuccess}
         section={selectedSection ?? undefined}
       />
     </div>

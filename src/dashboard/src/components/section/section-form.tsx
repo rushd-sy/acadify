@@ -43,8 +43,23 @@ export function SectionForm({
     if (!data.name.trim()) {
       errors.name = 'Section name is required.';
     }
-    if (!data.academicYear.trim()) {
+    const academicYear = data.academicYear.trim();
+
+    if (!academicYear) {
       errors.academicYear = 'Academic year is required.';
+    } else {
+      const academicYearMatch = academicYear.match(/^(\d{4})\/(\d{4})$/);
+      if (!academicYearMatch) {
+        errors.academicYear =
+          'Academic year must be in the format YYYY/YYYY (e.g. 2026/2027).';
+      } else {
+        const startYear = Number(academicYearMatch[1]);
+        const endYear = Number(academicYearMatch[2]);
+        if (endYear !== startYear + 1) {
+          errors.academicYear =
+            'The second year must be one year after the first year.';
+        }
+      }
     }
     if (!data.gradeId) {
       errors.gradeId = 'Grade ID is required.';
@@ -59,6 +74,7 @@ export function SectionForm({
   ): Promise<SectionFormState> => {
     const gradeIdValue = getFormString(formData, 'gradeId').trim();
     const gradeId = Number(gradeIdValue);
+
     const sectionData = {
       name: getFormString(formData, 'name'),
       academicYear: getFormString(formData, 'academicYear'),
@@ -138,7 +154,7 @@ export function SectionForm({
         <Input
           id="academicYear"
           name="academicYear"
-          placeholder="e.g. 2026-2027"
+          placeholder="e.g. 2026/2027"
           defaultValue={state.values?.academicYear ?? section?.academicYear}
         />
         {state.fieldErrors.academicYear && (
