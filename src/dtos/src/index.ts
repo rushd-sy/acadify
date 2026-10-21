@@ -6,4 +6,5 @@ export * from './curriculum';
 export * from './teacher';
 export * from './section';
 export * from './section-teacher';
+export * from './exam';
 export * from './section-student/section-student.dto';
