@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useActionState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,83 +9,145 @@ import {
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { sectionService } from '@/services/section.service';
-import type { CreateSectionDto, SectionDto } from 'dtos';
+import type { SectionDto } from 'dtos';
+import { getFormString } from '@/forms/form-data.util';
+import { createInitialFormState, type FormState } from '@/forms/state';
 
 type SectionFormProps = {
   onCancel: () => void;
-  onSuccess: (section: SectionDto) => void;
+  onUpdateSuccess: (updateSection: SectionDto) => void;
+  onCreateSuccess: (createSection: SectionDto) => void;
   section?: SectionDto;
+};
+
+type SectionFormData = {
+  name: string;
+  academicYear: string;
+  gradeId: number;
 };
 
 const sectionFormFields = ['name', 'academicYear', 'gradeId'];
 
+type SectionFormState = FormState<SectionFormData>;
+
+const initialFormState = createInitialFormState<SectionFormData>();
+
+const ACADEMIC_YEAR_PATTERN = /^(\d{4})\/(\d{4})$/;
+
+const validateAcademicYear = (value: string) => {
+  if (!value) return 'Academic year is required.';
+
+  const match = value.match(ACADEMIC_YEAR_PATTERN);
+  if (!match)
+    return 'Academic year must be in the format YYYY/YYYY (e.g. 2026/2027).';
+
+  const [, start, end] = match.map(Number);
+  if (end !== start + 1)
+    return 'The second year must be one year after the first year.';
+
+  return null;
+};
+
 export function SectionForm({
   onCancel,
-  onSuccess,
+  onUpdateSuccess,
+  onCreateSuccess,
   section,
 }: SectionFormProps) {
-  const [formData, setFormData] = useState<CreateSectionDto>({
-    name: section?.name ?? '',
-    academicYear: section?.academicYear ?? '',
-    gradeId: section?.gradeId ?? 0,
-  });
+  const validateSectionForm = (data: SectionFormData) => {
+    const errors: Record<string, string> = {};
+    if (!data.name.trim()) {
+      errors.name = 'Section name is required.';
+    }
+    const academicYearError = validateAcademicYear(data.academicYear);
+    if (academicYearError) {
+      errors.academicYear = academicYearError;
+    }
+    if (!data.gradeId) {
+      errors.gradeId = 'Grade ID is required.';
+    } else if (!Number.isInteger(data.gradeId) || data.gradeId <= 0) {
+      errors.gradeId = 'Please select a valid Grade ID.';
+    }
+    return errors;
+  };
+  const sectionAction = async (
+    _prevState: SectionFormState,
+    formData: FormData,
+  ): Promise<SectionFormState> => {
+    const gradeIdValue = getFormString(formData, 'gradeId').trim();
+    const gradeId = Number(gradeIdValue);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const sectionData = {
+      name: getFormString(formData, 'name'),
+      academicYear: getFormString(formData, 'academicYear'),
+      gradeId,
+    };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setIsLoading(true);
-    setError(null);
-    setFieldErrors({});
+    const validationErrors = validateSectionForm(sectionData);
+    if (Object.keys(validationErrors).length > 0) {
+      return {
+        success: false,
+        fieldErrors: validationErrors,
+        formError: null,
+        values: sectionData,
+      };
+    }
 
     try {
-      let updatedSection: SectionDto;
-
       if (section) {
-        updatedSection = await sectionService.updateSection(
+        const updatedSection = await sectionService.updateSection(
           section.id,
-          formData,
+          sectionData,
         );
+
+        onUpdateSuccess(updatedSection);
       } else {
-        updatedSection = await sectionService.createSection(formData);
+        const createdSection = await sectionService.createSection(sectionData);
+
+        onCreateSuccess(createdSection);
       }
+      onCancel();
 
-      onSuccess(updatedSection);
-    } catch (error) {
-      const validationErrors = getApiValidationErrors(error, sectionFormFields);
-
-      if (Object.keys(validationErrors).length > 0) {
-        setFieldErrors(validationErrors);
-      } else {
-        const message = getApiErrorMessage(error);
-
-        setError(
-          message ??
-            (section
-              ? 'Failed to update section. Please try again later.'
-              : 'Failed to create section. Please try again later.'),
-        );
+      return { success: true, fieldErrors: {}, formError: null };
+    } catch (error: unknown) {
+      console.error('Failed to save section:', error);
+      const apiFieldErrors = getApiValidationErrors(error, sectionFormFields);
+      if (Object.keys(apiFieldErrors).length > 0) {
+        return {
+          success: false,
+          fieldErrors: apiFieldErrors,
+          formError: null,
+          values: sectionData,
+        };
       }
-    } finally {
-      setIsLoading(false);
+      return {
+        success: false,
+        fieldErrors: {},
+        formError:
+          getApiErrorMessage(error) ??
+          `Failed to ${section ? 'update' : 'create'} section. Please try again later.`,
+        values: sectionData,
+      };
     }
   };
 
+  const [state, formAction, isPending] = useActionState(
+    sectionAction,
+    initialFormState,
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form action={formAction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="name">Section Name</Label>
         <Input
           id="name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          name="name"
           placeholder="e.g. Section A"
+          defaultValue={state.values?.name ?? section?.name}
         />
-        {fieldErrors.name && (
-          <p className="text-sm text-red-600">{fieldErrors.name}</p>
+        {state.fieldErrors.name && (
+          <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
         )}
       </div>
 
@@ -93,14 +155,14 @@ export function SectionForm({
         <Label htmlFor="academicYear">Academic Year</Label>
         <Input
           id="academicYear"
-          value={formData.academicYear}
-          onChange={(e) =>
-            setFormData({ ...formData, academicYear: e.target.value })
-          }
-          placeholder="e.g. 2026-2027"
+          name="academicYear"
+          placeholder="e.g. 2026/2027"
+          defaultValue={state.values?.academicYear ?? section?.academicYear}
         />
-        {fieldErrors.academicYear && (
-          <p className="text-sm text-red-600">{fieldErrors.academicYear}</p>
+        {state.fieldErrors.academicYear && (
+          <p className="text-sm text-red-600">
+            {state.fieldErrors.academicYear}
+          </p>
         )}
       </div>
 
@@ -109,35 +171,31 @@ export function SectionForm({
         <Input
           id="gradeId"
           type="number"
-          value={formData.gradeId || ''}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              gradeId: parseInt(e.target.value) || 0,
-            })
-          }
+          name="gradeId"
           placeholder="Enter Grade ID"
+          defaultValue={state.values?.gradeId ?? section?.gradeId}
         />
-        {fieldErrors.gradeId && (
-          <p className="text-sm text-red-600">{fieldErrors.gradeId}</p>
+        {state.fieldErrors.gradeId && (
+          <p className="text-sm text-red-600">{state.fieldErrors.gradeId}</p>
         )}
       </div>
 
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {state.formError && (
+        <div className="text-sm text-red-600">{state.formError}</div>
+      )}
 
       <div className="mt-4 flex justify-end gap-2">
         <Button
           type="button"
           variant="secondary"
           onClick={onCancel}
-          disabled={isLoading}
+          disabled={isPending}
         >
           Cancel
         </Button>
 
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Spinner />}
-          {section ? 'Update' : 'Create'}
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <Spinner className="text-black" /> : 'Submit'}
         </Button>
       </div>
     </form>

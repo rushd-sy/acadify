@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import {
   Table,
@@ -31,7 +30,6 @@ export default function SectionsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -91,6 +89,11 @@ export default function SectionsPage() {
     setIsDeleteModalOpen(true);
   };
 
+  const handleCreateSection = (createdSection: SectionDto) => {
+    setSections((previousSections) => [...previousSections, createdSection]);
+    handleCloseSectionModal();
+  };
+
   const handleCloseDeleteModal = () => {
     if (isDeleting) return;
 
@@ -127,6 +130,13 @@ export default function SectionsPage() {
       <PageHeader
         title="Sections"
         description="A list of sections within your institute."
+        action={{
+          label: 'Add Section',
+          onClick: () => {
+            setSelectedSection(null);
+            setIsSectionModalOpen(true);
+          },
+        }}
       />
       <div className="overflow-x-auto">
         <Table>
@@ -163,11 +173,7 @@ export default function SectionsPage() {
               </TableRow>
             ) : (
               sections.map((section) => (
-                <TableRow
-                  key={section.id}
-                  className="h-16 cursor-pointer transition-colors hover:bg-gray-50"
-                  onClick={() => navigate(`/sections/${section.id}`)}
-                >
+                <TableRow key={section.id} className="h-16">
                   <TableCell className="font-medium">{section.name}</TableCell>
 
                   <TableCell>{section.academicYear}</TableCell>
@@ -177,18 +183,15 @@ export default function SectionsPage() {
                   <TableCell className="space-x-2">
                     <Button
                       variant="secondary"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEditSection(section.id);
-                      }}
+                      onClick={() => handleEditSection(section.id)}
                     >
                       Edit
                     </Button>
 
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={(event) => {
+                        event.stopPropagation();
                         handleDeleteClick(section);
                       }}
                       className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
@@ -221,7 +224,8 @@ export default function SectionsPage() {
       <SectionModal
         open={isSectionModalOpen}
         onClose={handleCloseSectionModal}
-        onSuccess={handleSectionUpdateSuccess}
+        onCreateSuccess={handleCreateSection}
+        onUpdateSuccess={handleSectionUpdateSuccess}
         section={selectedSection ?? undefined}
       />
     </div>
