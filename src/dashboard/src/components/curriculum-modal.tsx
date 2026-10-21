@@ -5,14 +5,16 @@ type CurriculumModalProps = {
   open: boolean;
   curriculum?: CurriculumDto;
   onClose: () => void;
-  onSuccess: () => void;
+  onUpdateSuccess: (updateCurriculum: CurriculumDto) => void;
+  onCreateSuccess: (createCurriculum: CurriculumDto) => void;
 };
 
 export default function CurriculumModal({
   open,
   curriculum,
   onClose,
-  onSuccess,
+  onUpdateSuccess,
+  onCreateSuccess,
 }: CurriculumModalProps) {
   if (!open) {
     return null;
@@ -27,8 +29,9 @@ export default function CurriculumModal({
         <CurriculumForm
           key={curriculum ? curriculum.id : -1}
           onCancel={onClose}
-          initialData={curriculum}
-          onSuccess={onSuccess}
+          curriculum={curriculum}
+          onUpdateSuccess={onUpdateSuccess}
+          onCreateSuccess={onCreateSuccess}
         />
       </div>
     </div>
