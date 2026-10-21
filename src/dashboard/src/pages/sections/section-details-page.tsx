@@ -323,7 +323,7 @@ export default function SectionDetailsPage() {
                     &lt;
                   </Button>
                   <Button
-                    variant="default"
+                    variant="outline"
                     size="sm"
                     className="w-8 h-8 p-0 bg-slate-900 text-white"
                   >
