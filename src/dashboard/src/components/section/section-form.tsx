@@ -32,6 +32,22 @@ type SectionFormState = FormState<SectionFormData>;
 
 const initialFormState = createInitialFormState<SectionFormData>();
 
+const ACADEMIC_YEAR_PATTERN = /^(\d{4})\/(\d{4})$/;
+
+const validateAcademicYear = (value: string) => {
+  if (!value) return 'Academic year is required.';
+
+  const match = value.match(ACADEMIC_YEAR_PATTERN);
+  if (!match)
+    return 'Academic year must be in the format YYYY/YYYY (e.g. 2026/2027).';
+
+  const [, start, end] = match.map(Number);
+  if (end !== start + 1)
+    return 'The second year must be one year after the first year.';
+
+  return null;
+};
+
 export function SectionForm({
   onCancel,
   onUpdateSuccess,
@@ -43,23 +59,9 @@ export function SectionForm({
     if (!data.name.trim()) {
       errors.name = 'Section name is required.';
     }
-    const academicYear = data.academicYear.trim();
-
-    if (!academicYear) {
-      errors.academicYear = 'Academic year is required.';
-    } else {
-      const academicYearMatch = academicYear.match(/^(\d{4})\/(\d{4})$/);
-      if (!academicYearMatch) {
-        errors.academicYear =
-          'Academic year must be in the format YYYY/YYYY (e.g. 2026/2027).';
-      } else {
-        const startYear = Number(academicYearMatch[1]);
-        const endYear = Number(academicYearMatch[2]);
-        if (endYear !== startYear + 1) {
-          errors.academicYear =
-            'The second year must be one year after the first year.';
-        }
-      }
+    const academicYearError = validateAcademicYear(data.academicYear);
+    if (academicYearError) {
+      errors.academicYear = academicYearError;
     }
     if (!data.gradeId) {
       errors.gradeId = 'Grade ID is required.';
