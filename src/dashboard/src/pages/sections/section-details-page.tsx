@@ -204,7 +204,7 @@ export default function SectionDetailsPage() {
                 Students ({studentsList.length})
               </h2>
               <div className="flex gap-3">
-                <Button variant="outline" className="flex items-center gap-2">
+                <Button variant="secondary" className="flex items-center gap-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -319,17 +319,16 @@ export default function SectionDetailsPage() {
               <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
                 <span>Showing 1 to {studentsList.length} students</span>
                 <div className="flex gap-1">
-                  <Button variant="outline" size="sm" className="w-8 h-8 p-0">
+                  <Button variant="secondary" className="w-8 h-8 p-0">
                     &lt;
                   </Button>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant="secondary"
                     className="w-8 h-8 p-0 bg-slate-900 text-white"
                   >
                     1
                   </Button>
-                  <Button variant="outline" size="sm" className="w-8 h-8 p-0">
+                  <Button variant="secondary" className="w-8 h-8 p-0">
                     &gt;
                   </Button>
                 </div>
