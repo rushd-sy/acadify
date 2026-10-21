@@ -10,6 +10,7 @@ datasource db {
 model Student {
   userId Int  @id
   user   User @relation(fields: [userId], references: [id])
+  studentSections StudentSection[]
 }
 
 model Teacher {
@@ -52,6 +53,7 @@ model Section {
   gradeId      Int
   grade        Grade  @relation(fields: [gradeId], references: [id])
   sectionCurriculumTeachers SectionCurriculumTeacher[]
+  studentSections StudentSection[]
 }
 
 model Exam {
@@ -70,4 +72,19 @@ model SectionCurriculumTeacher {
   teacher Teacher @relation(fields: [userId], references: [userId])
   curriculum Curriculum @relation(fields: [curriculumId], references: [id])
   section Section @relation(fields: [sectionId], references: [id])
+}
+
+
+
+model StudentSection {
+  id Int @id @default(autoincrement())
+  studentId Int 
+  sectionId Int 
+  startDate DateTime @default(now())
+  endDate DateTime?
+
+  student Student @relation(fields: [studentId], references: [userId])
+  section Section @relation(fields: [sectionId], references: [id])
+
+  @@unique([studentId, sectionId])
 }

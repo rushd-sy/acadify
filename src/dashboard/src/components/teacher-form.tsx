@@ -1,20 +1,32 @@
 import { Field, FieldDescription, FieldGroup, FieldLabel } from './ui/field';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { teacherService } from '@/services/teacher.service';
-import { useState } from 'react';
+import { useActionState } from 'react';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
+import { emailRegex } from '@/forms/validation.util';
 import { Spinner } from './ui/spinner';
+import { getFormString } from '@/forms/form-data.util';
+import { createInitialFormState, type FormState } from '@/forms/state';
 
 type TeacherFormProps = {
   onCancel: () => void;
   teacher?: TeacherDetailsDto;
   onUpdateSuccess: (updatedTeacher: TeacherDetailsDto) => void;
   onCreateSuccess: (createdTeacher: TeacherDto) => void;
+};
+
+type TeacherFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  degree: string;
+  password: string;
 };
 
 const teacherFormFields = [
@@ -26,116 +38,133 @@ const teacherFormFields = [
   'degree',
 ];
 
+type TeacherFormState = FormState<TeacherFormData>;
+
+const initialFormState = createInitialFormState<TeacherFormData>();
+
 export function TeacherForm({
   onCancel,
   teacher,
   onUpdateSuccess,
   onCreateSuccess,
 }: TeacherFormProps) {
-  const [teacherData, setTeacherData] = useState({
-    firstName: teacher?.firstName ?? '',
-    lastName: teacher?.lastName ?? '',
-    email: teacher?.email ?? '',
-    phoneNumber: teacher?.phoneNumber ?? '',
-    degree: teacher?.degree ?? '',
-    password: '',
-  });
+  const validateTeacherForm = (data: TeacherFormData) => {
+    const errors: Record<string, string> = {};
+    if (!data.firstName.trim()) errors.firstName = 'First name is required.';
+    if (!data.lastName.trim()) errors.lastName = 'Last name is required.';
+    if (!data.email.trim()) {
+      errors.email = 'Email is required.';
+    } else if (!emailRegex.test(data.email)) {
+      errors.email = 'Invalid email format.';
+    }
+    if (!data.phoneNumber.trim())
+      errors.phoneNumber = 'Phone number is required.';
+    if (!data.degree.trim()) errors.degree = 'Degree is required.';
+    if (!teacher && !data.password.trim())
+      errors.password = 'Password is required.';
+    return errors;
+  };
 
-  const [formError, setFormError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const teacherAction = async (
+    _prevState: TeacherFormState,
+    formData: FormData,
+  ): Promise<TeacherFormState> => {
+    const teacherData: TeacherFormData = {
+      firstName: getFormString(formData, 'firstName'),
+      lastName: getFormString(formData, 'lastName'),
+      email: getFormString(formData, 'email'),
+      phoneNumber: getFormString(formData, 'phoneNumber'),
+      degree: getFormString(formData, 'degree'),
+      password: getFormString(formData, 'password'),
+    };
 
-  const handleFormError = (error: unknown, fallbackMessage: string) => {
-    setIsSubmitting(false);
-
-    const validationErrors = getApiValidationErrors(error, teacherFormFields);
-
+    const validationErrors = validateTeacherForm(teacherData);
     if (Object.keys(validationErrors).length > 0) {
-      setFieldErrors(validationErrors);
-    } else {
-      const message = getApiErrorMessage(error);
-      setFormError(message ?? fallbackMessage);
+      return {
+        success: false,
+        fieldErrors: validationErrors,
+        formError: null,
+        values: teacherData,
+      };
+    }
+
+    try {
+      if (teacher) {
+        const { password, ...updateData } = teacherData;
+        void password;
+
+        const updatedTeacher = await teacherService.updateTeacherById(
+          teacher.userId,
+          updateData,
+        );
+
+        onUpdateSuccess(updatedTeacher);
+      } else {
+        const { password, ...rest } = teacherData;
+        const createdTeacher = await teacherService.createTeacher({
+          ...rest,
+          hashedPassword: password,
+        });
+        onCreateSuccess(createdTeacher);
+      }
+
+      onCancel();
+      return { success: true, fieldErrors: {}, formError: null };
+    } catch (error: unknown) {
+      console.error('Failed to save teacher:', error);
+
+      const apiFieldErrors = getApiValidationErrors(error, teacherFormFields);
+
+      if (Object.keys(apiFieldErrors).length > 0) {
+        return {
+          success: false,
+          fieldErrors: apiFieldErrors,
+          formError: null,
+          values: teacherData,
+        };
+      }
+
+      return {
+        success: false,
+        fieldErrors: {},
+        formError:
+          getApiErrorMessage(error) ??
+          `Failed to ${teacher ? 'update' : 'create'} teacher. Please try again later.`,
+        values: teacherData,
+      };
     }
   };
+
+  const [state, formAction, isPending] = useActionState(
+    teacherAction,
+    initialFormState,
+  );
   return (
-    <form
-      onSubmit={(event) => {
-        event.preventDefault();
-
-        setFormError(null);
-        setIsSubmitting(true);
-        setFieldErrors({});
-
-        if (teacher) {
-          teacherService
-            .updateTeacherById(teacher.userId, teacherData)
-            .then((updatedTeacher) => {
-              setIsSubmitting(false);
-              onUpdateSuccess(updatedTeacher);
-              onCancel();
-            })
-            .catch((error) => {
-              console.log('Failed to update teacher:', error);
-              handleFormError(
-                error,
-                'Failed to update teacher. Please try again later.',
-              );
-            });
-
-          return;
-        }
-
-        teacherService
-          .createTeacher({
-            firstName: teacherData.firstName,
-            lastName: teacherData.lastName,
-            email: teacherData.email,
-            phoneNumber: teacherData.phoneNumber,
-            hashedPassword: teacherData.password,
-            degree: teacherData.degree,
-          })
-          .then((createdTeacher) => {
-            setIsSubmitting(false);
-            onCreateSuccess(createdTeacher);
-            onCancel();
-          })
-          .catch((error) => {
-            console.log('Failed to create teacher:', error);
-            handleFormError(
-              error,
-              'Failed to create teacher. Please try again later.',
-            );
-          });
-      }}
-    >
+    <form action={formAction}>
       <FieldGroup className="max-w-md">
         <Field>
           <FieldLabel>First Name</FieldLabel>
           <Input
-            className="firstName"
+            name="firstName"
             placeholder="Adel"
-            value={teacherData.firstName}
-            onChange={(data) =>
-              setTeacherData({ ...teacherData, firstName: data.target.value })
-            }
+            defaultValue={state.values?.firstName ?? teacher?.firstName}
           />
-          {fieldErrors.firstName && (
-            <p className="text-sm text-red-600">{fieldErrors.firstName}</p>
+          {state.fieldErrors.firstName && (
+            <p className="text-sm text-red-600">
+              {state.fieldErrors.firstName}
+            </p>
           )}
         </Field>
 
         <Field>
           <FieldLabel>Last Name</FieldLabel>
           <Input
-            className="lastName"
+            name="lastName"
             placeholder="Obaji"
-            value={teacherData.lastName}
-            onChange={(data) =>
-              setTeacherData({ ...teacherData, lastName: data.target.value })
-            }
+            defaultValue={state.values?.lastName ?? teacher?.lastName}
           />
-          {fieldErrors.lastName && (
-            <p className="text-sm text-red-600">{fieldErrors.lastName}</p>
+          {state.fieldErrors.lastName && (
+            <p className="text-sm text-red-600">{state.fieldErrors.lastName}</p>
           )}
         </Field>
 
@@ -145,15 +174,12 @@ export function TeacherForm({
             The primary email used for academic notifications.
           </FieldDescription>
           <Input
-            className="email"
+            name="email"
             placeholder="adelobaji@gmail.com"
-            value={teacherData.email}
-            onChange={(data) =>
-              setTeacherData({ ...teacherData, email: data.target.value })
-            }
+            defaultValue={state.values?.email ?? teacher?.email}
           />
-          {fieldErrors.email && (
-            <p className="text-sm text-red-600">{fieldErrors.email}</p>
+          {state.fieldErrors.email && (
+            <p className="text-sm text-red-600">{state.fieldErrors.email}</p>
           )}
         </Field>
 
@@ -166,13 +192,12 @@ export function TeacherForm({
             type="tel"
             name="phoneNumber"
             placeholder="+963 123 456 789"
-            value={teacherData.phoneNumber}
-            onChange={(data) =>
-              setTeacherData({ ...teacherData, phoneNumber: data.target.value })
-            }
+            defaultValue={state.values?.phoneNumber ?? teacher?.phoneNumber}
           />
-          {fieldErrors.phoneNumber && (
-            <p className="text-sm text-red-600">{fieldErrors.phoneNumber}</p>
+          {state.fieldErrors.phoneNumber && (
+            <p className="text-sm text-red-600">
+              {state.fieldErrors.phoneNumber}
+            </p>
           )}
         </Field>
 
@@ -182,15 +207,12 @@ export function TeacherForm({
             The degree or qualification of the teacher.
           </FieldDescription>
           <Input
-            className="degree"
+            name="degree"
             placeholder="Bachelor's in Computer Science"
-            value={teacherData.degree}
-            onChange={(data) =>
-              setTeacherData({ ...teacherData, degree: data.target.value })
-            }
+            defaultValue={state.values?.degree ?? teacher?.degree}
           />
-          {fieldErrors.degree && (
-            <p className="text-sm text-red-600">{fieldErrors.degree}</p>
+          {state.fieldErrors.degree && (
+            <p className="text-sm text-red-600">{state.fieldErrors.degree}</p>
           )}
         </Field>
 
@@ -199,28 +221,27 @@ export function TeacherForm({
             <FieldLabel>Password</FieldLabel>
             <Input
               type="password"
+              name="password"
               placeholder="Enter password"
-              value={teacherData.password}
-              onChange={(data) =>
-                setTeacherData({
-                  ...teacherData,
-                  password: data.target.value,
-                })
-              }
+              defaultValue={state.values?.password ?? ''}
             />
-            {fieldErrors.password && (
-              <p className="text-sm text-red-600">{fieldErrors.password}</p>
+            {state.fieldErrors.password && (
+              <p className="text-sm text-red-600">
+                {state.fieldErrors.password}
+              </p>
             )}
           </Field>
         )}
 
-        {formError && <p className="text-sm text-red-600">{formError}</p>}
+        {state.formError && (
+          <p className="text-sm text-red-600">{state.formError}</p>
+        )}
         <div className="pt-4 flex justify-end gap-3">
           <Button type="button" variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? <Spinner className="text-white" /> : 'Submit'}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Spinner className="text-black" /> : 'Submit'}
           </Button>
         </div>
       </FieldGroup>

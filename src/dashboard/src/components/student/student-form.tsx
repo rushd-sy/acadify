@@ -9,6 +9,9 @@ import {
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { Spinner } from '../ui/spinner';
+import { emailRegex } from '@/forms/validation.util';
+import { getFormString } from '@/forms/form-data.util';
+import { createInitialFormState, type FormState } from '@/forms/state';
 
 type StudentFormProps = {
   onCancel: () => void;
@@ -25,13 +28,6 @@ type StudentFormData = {
   password: string;
 };
 
-type StudentFormState = {
-  success: boolean;
-  fieldErrors: Record<string, string>;
-  formError: string | null;
-  values?: StudentFormData;
-};
-
 const studentFormFields = [
   'firstName',
   'lastName',
@@ -40,13 +36,9 @@ const studentFormFields = [
   'password',
 ];
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+type StudentFormState = FormState<StudentFormData>;
 
-const initialFormState: StudentFormState = {
-  success: false,
-  fieldErrors: {},
-  formError: null,
-};
+const initialFormState = createInitialFormState<StudentFormData>();
 
 export function StudentForm({
   onCancel,
@@ -56,23 +48,17 @@ export function StudentForm({
 }: StudentFormProps) {
   const validateStudentForm = (data: StudentFormData) => {
     const errors: Record<string, string> = {};
-    if (!data.firstName.trim()) {
-      errors.firstName = 'First name is required.';
-    }
-    if (!data.lastName.trim()) {
-      errors.lastName = 'Last name is required.';
-    }
+    if (!data.firstName.trim()) errors.firstName = 'First name is required.';
+    if (!data.lastName.trim()) errors.lastName = 'Last name is required.';
     if (!data.email.trim()) {
       errors.email = 'Email is required.';
     } else if (!emailRegex.test(data.email)) {
-      errors.email = 'Email must be a valid email address.';
+      errors.email = 'Invalid email format.';
     }
-    if (!data.phoneNumber.trim()) {
+    if (!data.phoneNumber.trim())
       errors.phoneNumber = 'Phone number is required.';
-    }
-    if (!student && !data.password.trim()) {
+    if (!student && !data.password.trim())
       errors.password = 'Password is required.';
-    }
     return errors;
   };
 
@@ -81,11 +67,11 @@ export function StudentForm({
     formData: FormData,
   ): Promise<StudentFormState> => {
     const studentData = {
-      firstName: String(formData.get('firstName') ?? ''),
-      lastName: String(formData.get('lastName') ?? ''),
-      email: String(formData.get('email') ?? ''),
-      phoneNumber: String(formData.get('phoneNumber') ?? ''),
-      password: String(formData.get('password') ?? ''),
+      firstName: getFormString(formData, 'firstName'),
+      lastName: getFormString(formData, 'lastName'),
+      email: getFormString(formData, 'email'),
+      phoneNumber: getFormString(formData, 'phoneNumber'),
+      password: getFormString(formData, 'password'),
     };
     const validationErrors = validateStudentForm(studentData);
 
@@ -100,37 +86,25 @@ export function StudentForm({
 
     try {
       if (student) {
+        const { password, ...useActionState } = studentData;
+        void password;
+
         const updatedStudent = await studentService.updateStudentById(
           student.userId,
-          {
-            firstName: studentData.firstName,
-            lastName: studentData.lastName,
-            email: studentData.email,
-            phoneNumber: studentData.phoneNumber,
-          },
+          useActionState,
         );
-
         onUpdateSuccess(updatedStudent);
       } else {
+        const { password, ...rest } = studentData;
         const createdStudent = await studentService.createStudent({
-          firstName: studentData.firstName,
-          lastName: studentData.lastName,
-          email: studentData.email,
-          phoneNumber: studentData.phoneNumber,
-          hashedPassword: studentData.password,
+          ...rest,
+          hashedPassword: password,
         });
-
         onCreateSuccess(createdStudent);
       }
 
       onCancel();
-
-      return {
-        success: true,
-        fieldErrors: {},
-        formError: null,
-        values: studentData,
-      };
+      return { success: true, fieldErrors: {}, formError: null };
     } catch (error: unknown) {
       console.error('Failed to save student:', error);
 

@@ -6,7 +6,13 @@ import {
 import { SectionRepository } from '../data/section.repository';
 import { SectionDtoMapper } from '../mappers/section.dto.mapper';
 import { SectionDomainMapper } from '../mappers/section.domain.mapper';
-import { CreateSectionDto, SectionDto, UpdateSectionDto } from 'dtos';
+import {
+  CreateSectionDto,
+  SectionCurriculumTeacherDto,
+  SectionDto,
+  SectionStudentDto,
+  UpdateSectionDto,
+} from 'dtos';
 
 @Injectable()
 export class SectionService {
@@ -21,6 +27,7 @@ export class SectionService {
     const assembledData = sections.map((section) => ({
       section,
       teachers: [],
+      students: [],
     }));
 
     return this.dtoMapper.toDtoList(assembledData);
@@ -32,10 +39,22 @@ export class SectionService {
     if (!sectionDomain) {
       throw new NotFoundException(`Section with ID ${id} not found`);
     }
+    const rawTeachersList = await this.repository.getTeachersBySectionId(id);
+    const rawStudentRecords = await this.repository.getStudentsBySectionId(id);
+
+    const teachersList: SectionCurriculumTeacherDto[] = rawTeachersList.map(
+      (teacherData) =>
+        this.dtoMapper.toSectionCurriculumTeacherDto(teacherData),
+    );
+
+    const studentsList: SectionStudentDto[] = rawStudentRecords.map(
+      (studentData) => this.dtoMapper.toSectionStudentDto(studentData),
+    );
 
     return this.dtoMapper.toDto({
       section: sectionDomain,
-      teachers: [],
+      teachers: teachersList,
+      students: studentsList,
     });
   }
 
@@ -58,6 +77,7 @@ export class SectionService {
     return this.dtoMapper.toDto({
       section: createdSection,
       teachers: [],
+      students: [],
     });
   }
 
@@ -91,6 +111,7 @@ export class SectionService {
     return this.dtoMapper.toDto({
       section: updatedSection,
       teachers: [],
+      students: [],
     });
   }
 

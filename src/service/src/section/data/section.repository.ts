@@ -30,6 +30,37 @@ export class SectionRepository {
     return sections.map((section) => this.mapper.toDomain(section));
   }
 
+  async getTeachersBySectionId(sectionId: number) {
+    return await this.prisma.sectionCurriculumTeacher.findMany({
+      where: {
+        sectionId: sectionId,
+      },
+      include: {
+        teacher: {
+          include: {
+            user: true,
+          },
+        },
+        curriculum: true,
+      },
+    });
+  }
+
+  async getStudentsBySectionId(sectionId: number) {
+    return await this.prisma.studentSection.findMany({
+      where: {
+        sectionId: sectionId,
+      },
+      include: {
+        student: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+  }
+
   async existsByName(name: string, excludeId?: number): Promise<boolean> {
     const section = await this.prisma.section.findFirst({
       where: {

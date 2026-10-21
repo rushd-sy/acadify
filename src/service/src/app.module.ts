@@ -1,27 +1,25 @@
 import { Module } from '@nestjs/common';
 import { HealthCheckController } from './HealthCheck.controller';
 import { PrismaService } from './prisma/prisma.service';
-import { StudentService } from './student/services/student.service';
-import { StudentController } from './student/api/student.controller';
-import { StudentMapper } from './student/mappers/student.mapper';
 import { AuthModule } from './auth/auth.module';
-import { StudentRepository } from './student/data/student.repository';
 import { GradeModule } from './grade/grade.module';
 import { CurriculumModule } from './curriculum/curriculum.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { SectionModule } from './section/section.module';
 import { ExamModule } from './exam/exam.module';
+import { StudentModule } from './student/student.module';
 
 @Module({
   imports: [
     AuthModule,
+    StudentModule,
     GradeModule,
     CurriculumModule,
     TeacherModule,
     SectionModule,
     ExamModule,
   ],
-  controllers: [HealthCheckController, StudentController],
-  providers: [StudentService, StudentMapper, PrismaService, StudentRepository],
+  controllers: [HealthCheckController],
+  providers: [PrismaService],
 })
 export class AppModule {}
