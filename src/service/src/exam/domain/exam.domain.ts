@@ -3,6 +3,7 @@ export class ExamDomain {
   examTemplateId?: number;
   title: string;
   date: Date;
+  documentUrl?: string;
   minScore: number;
   maxScore: number;
 
@@ -11,6 +12,7 @@ export class ExamDomain {
     examTemplateId?: number;
     title: string;
     date: Date;
+    documentUrl?: string;
     minScore: number;
     maxScore: number;
   }) {
@@ -18,6 +20,7 @@ export class ExamDomain {
     this.examTemplateId = input.examTemplateId;
     this.title = input.title;
     this.date = input.date;
+    this.documentUrl = input.documentUrl;
     this.minScore = input.minScore;
     this.maxScore = input.maxScore;
   }
@@ -27,6 +30,7 @@ export class ExamDomain {
     examTemplateId?: number;
     title: string;
     date: Date;
+    documentUrl?: string;
     minScore: number;
     maxScore: number;
   }): ExamDomain {

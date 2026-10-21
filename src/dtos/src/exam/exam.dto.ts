@@ -4,7 +4,7 @@ export class ExamDto {
   title!: string;
   date!: Date;
   curriculumId?: number;
-  docuURL?: string;
+  documentUrl?: string;
   minScore!: number;
   maxScore!: number;
 }

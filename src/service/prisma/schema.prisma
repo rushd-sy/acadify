@@ -61,7 +61,7 @@ model Exam {
   title          String
   date           DateTime
   curriculumId   Int?
-  docuURL        String?
+  documentUrl        String?
   minScore       Float
   maxScore       Float
 }

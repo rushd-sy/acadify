@@ -11,6 +11,7 @@ export class ExamMapper {
       examTemplateId: exam.examTemplateId ?? undefined,
       title: exam.title,
       date: exam.date,
+      documentUrl: exam.documentUrl ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
     });
@@ -22,6 +23,7 @@ export class ExamMapper {
       examTemplateId: examDomain.examTemplateId,
       title: examDomain.title,
       date: examDomain.date,
+      documentUrl: examDomain.documentUrl,
       minScore: examDomain.minScore,
       maxScore: examDomain.maxScore,
     };

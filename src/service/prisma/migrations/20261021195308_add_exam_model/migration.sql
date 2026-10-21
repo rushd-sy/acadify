@@ -5,7 +5,7 @@ CREATE TABLE "Exam" (
     "title" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "curriculumId" INTEGER,
-    "docuURL" TEXT,
+    "documentUrl" TEXT,
     "minScore" DOUBLE PRECISION NOT NULL,
     "maxScore" DOUBLE PRECISION NOT NULL,
 
