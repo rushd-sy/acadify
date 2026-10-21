@@ -56,12 +56,18 @@ model Section {
   studentSections StudentSection[]
 }
 
+
 model Exam {
-  UniqueID       Int      @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   examTemplateId Int?
   title          String
   date           DateTime
+  curriculumId   Int?
+  documentUrl        String?
+  minScore       Float
+  maxScore       Float
 }
+
 
 model SectionCurriculumTeacher {
   id Int @id @default(autoincrement())
