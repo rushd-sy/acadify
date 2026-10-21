@@ -5,8 +5,10 @@ import { SectionDomainMapper } from './mappers/section.domain.mapper';
 import { SectionDtoMapper } from './mappers/section.dto.mapper';
 import { SectionPersistenceMapper } from './mappers/section.persistence.mapper';
 import { SectionRepository } from './data/section.repository';
+import { StudentModule } from '../student/student.module';
 
 @Module({
+  imports: [StudentModule],
   controllers: [SectionController],
   providers: [
     SectionDomainMapper,

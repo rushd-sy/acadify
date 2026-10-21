@@ -1,11 +1,9 @@
 import { SectionDomain } from '../domain/section.domain';
+import { SectionCurriculumTeacherDto } from 'dtos';
+import { SectionStudentDto } from 'dtos';
 
 export interface AssembledSectionData {
   section: SectionDomain;
-  teachers: {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    curriculumName: string;
-  }[];
+  teachers: SectionCurriculumTeacherDto[];
+  students: SectionStudentDto[];
 }
