@@ -156,13 +156,13 @@ const seed = async () => {
       where: { id: i + 1 },
       update: {
         name: `Section A - ${grade.name}`,
-        academicYear: '2026-2027',
+        academicYear: '2026/2027',
         gradeId: grade.id,
       },
       create: {
         id: i + 1,
         name: `Section A - ${grade.name}`,
-        academicYear: '2026-2027',
+        academicYear: '2026/2027',
         gradeId: grade.id,
       },
     });
