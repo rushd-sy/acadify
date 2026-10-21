@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { OpenTelemetryModule } from 'nestjs-otel';
 import { HealthCheckController } from './HealthCheck.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { StudentService } from './student/services/student.service';
@@ -14,6 +15,11 @@ import { ExamModule } from './exam/exam.module';
 
 @Module({
   imports: [
+    OpenTelemetryModule.forRoot({
+      metrics: {
+        hostMetrics: true,
+      },
+    }),
     AuthModule,
     GradeModule,
     CurriculumModule,
