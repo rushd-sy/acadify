@@ -287,7 +287,9 @@ export default function SectionDetailsPage() {
                       <TableRow
                         key={student.studentId}
                         className="cursor-pointer transition-colors hover:bg-slate-50"
-                        onClick={() => navigate(`/students/${student.studentId}`)}
+                        onClick={() =>
+                          navigate(`/students/${student.studentId}`)
+                        }
                       >
                         <TableCell className="py-4 font-medium text-slate-900">
                           {student.studentFirstName} {student.studentLastName}
