@@ -100,7 +100,7 @@ export class SectionRepository {
       gradeId: section.gradeId,
     };
 
-    const savedSection =
+    const isUpdate =
       section.id > 0
         ? await tx.section.update({
             where: { id: section.id },
@@ -108,7 +108,7 @@ export class SectionRepository {
           })
         : await tx.section.create({ data: sectionData });
 
-    return savedSection.id;
+    return isUpdate.id;
   }
 
   private async upsertAssignments(
