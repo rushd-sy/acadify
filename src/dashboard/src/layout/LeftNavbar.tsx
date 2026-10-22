@@ -5,6 +5,7 @@ import {
   Users,
   BookOpen,
   Home,
+  FileText,
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -18,6 +19,7 @@ const NAVBAR_ELEMENTS = [
   { name: 'Curriculums', path: '/curriculums', icon: BookOpen },
   { name: 'Sections', path: '/sections', icon: Layers3 },
   { name: 'Grades', path: '/grades', icon: BookOpen },
+  { name: 'Exams', path: '/exams', icon: FileText },
 ];
 
 export default function LeftNavbar() {

@@ -6,6 +6,7 @@ import TeachersPage from '@/pages/teacher/teachers-page';
 import GradePage from '@/pages/grades-page';
 import CurriculumsPage from '@/pages/curriculums-page';
 import SectionsPage from '@/pages/sections/sections-page';
+import ExamsPage from '@/pages/exams/exams-page';
 
 import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
@@ -26,6 +27,7 @@ function App() {
 
         <Route element={<SharedLayout />}>
           <Route path="/home" element={<HomePage />} />
+
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/students/:id" element={<StudentsDetailsPage />} />
 
@@ -33,9 +35,12 @@ function App() {
           <Route path="/teachers/:id" element={<TeachersDetailsPage />} />
 
           <Route path="/curriculums" element={<CurriculumsPage />} />
+
           <Route path="/sections" element={<SectionsPage />} />
           <Route path="/sections/:id" element={<SectionDetailsPage />} />
+
           <Route path="/grades" element={<GradePage />} />
+          <Route path="/exams" element={<ExamsPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
