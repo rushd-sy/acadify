@@ -2,6 +2,6 @@ global:
   scrape_interval: 5s
 
 scrape_configs:
-  - job_name: 'acadify-service'
+  - job_name: 'acadify-backend'
     static_configs:
-      - targets: ['acadify-service:9464']
+      - targets: ['acadify-backend:9464']
