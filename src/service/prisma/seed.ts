@@ -234,6 +234,76 @@ const seed = async () => {
     });
   }
 
+  console.log('Seeding Exams...');
+  const examsData = [
+    {
+      id: 1,
+      examTemplateId: null,
+      title: 'Mathematics - Midterm Exam',
+      date: new Date('2026-10-25T09:00:00.000Z'),
+      curriculumId: 1,
+      documentUrl: null,
+      minScore: 0,
+      maxScore: 100,
+    },
+    {
+      id: 2,
+      examTemplateId: null,
+      title: 'Physics - Final Exam',
+      date: new Date('2026-11-02T09:00:00.000Z'),
+      curriculumId: 2,
+      documentUrl: null,
+      minScore: 0,
+      maxScore: 100,
+    },
+    {
+      id: 3,
+      examTemplateId: null,
+      title: 'Computer Science - Quiz',
+      date: new Date('2026-10-28T09:00:00.000Z'),
+      curriculumId: 3,
+      documentUrl: null,
+      minScore: 0,
+      maxScore: 20,
+    },
+    {
+      id: 4,
+      examTemplateId: null,
+      title: 'Mathematics - Final Exam',
+      date: new Date('2026-11-10T09:00:00.000Z'),
+      curriculumId: 1,
+      documentUrl: null,
+      minScore: 0,
+      maxScore: 100,
+    },
+    {
+      id: 5,
+      examTemplateId: null,
+      title: 'Physics - Midterm Exam',
+      date: new Date('2026-10-30T09:00:00.000Z'),
+      curriculumId: 2,
+      documentUrl: null,
+      minScore: 0,
+      maxScore: 50,
+    },
+  ];
+
+  for (const exam of examsData) {
+    await prisma.exam.upsert({
+      where: { id: exam.id },
+      update: {
+        examTemplateId: exam.examTemplateId,
+        title: exam.title,
+        date: exam.date,
+        curriculumId: exam.curriculumId,
+        documentUrl: exam.documentUrl,
+        minScore: exam.minScore,
+        maxScore: exam.maxScore,
+      },
+      create: exam,
+    });
+  }
+
   const outputPath = path.join(process.cwd(), 'seeded-accounts.json');
   fs.writeFileSync(
     outputPath,
@@ -257,6 +327,9 @@ const seed = async () => {
     `SELECT setval('"Curriculum_id_seq"', (SELECT MAX(id) FROM "Curriculum"));`,
   );
   await prisma.$executeRawUnsafe(
+    `SELECT setval('"Exam_id_seq"', (SELECT MAX(id) FROM "Exam"));`,
+  );
+  await prisma.$executeRawUnsafe(
     `SELECT setval('"StudentSection_id_seq"', (SELECT MAX(id) FROM "StudentSection"));`,
   );
   await prisma.$executeRawUnsafe(
@@ -268,6 +341,7 @@ const seed = async () => {
 const clear = async () => {
   const prisma = new PrismaClient();
 
+  await prisma.exam.deleteMany();
   await prisma.studentSection.deleteMany();
   await prisma.sectionCurriculumTeacher.deleteMany();
 
