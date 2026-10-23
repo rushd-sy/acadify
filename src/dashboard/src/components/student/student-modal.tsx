@@ -1,6 +1,12 @@
 import type { StudentDetailsDto } from 'dtos';
 import { StudentForm } from './student-form';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 type StudentModalProps = {
   open: boolean;
@@ -23,10 +29,18 @@ export default function StudentModal({
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="w-[450px]">
-        <h2 className="mb-6 text-2xl font-semibold">
-          {student ? 'Update Student' : 'Create Student'}
-        </h2>
+      <DialogContent className="sm:max-w-[450px]">
+        <DialogHeader>
+          <DialogTitle>
+            {student ? 'Update Student' : 'Create Student'}
+          </DialogTitle>
+          <DialogDescription>
+            {student
+              ? 'Update the students details and save your changes.'
+              : 'Fill in the details below to add a new student to the system.'}
+          </DialogDescription>
+        </DialogHeader>
+
         <StudentForm
           onCancel={onClose}
           student={student}
