@@ -17,7 +17,6 @@ export default function TeacherModal({
   onCreateSuccess,
   onClose,
 }: TeacherModalProps) {
-
   return (
     <FormDialog
       open={open}
