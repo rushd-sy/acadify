@@ -59,7 +59,7 @@ export function SectionForm({
     if (!data.name.trim()) {
       errors.name = 'Section name is required.';
     }
-    const academicYearError = validateAcademicYear(data.academicYear);
+    const academicYearError = validateAcademicYear(data.academicYear.trim());
     if (academicYearError) {
       errors.academicYear = academicYearError;
     }
