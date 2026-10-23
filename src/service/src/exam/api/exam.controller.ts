@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { ExamService } from '../services/exam.service';
 import { ExamDto } from 'dtos';
 
@@ -9,5 +9,10 @@ export class ExamController {
   @Get()
   findAll(): Promise<ExamDto[]> {
     return this.service.findAll();
+  }
+
+  @Delete(':id')
+  deleteExam(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.service.deleteExam(id);
   }
 }
