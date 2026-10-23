@@ -1,11 +1,11 @@
 import {
+  BookOpen,
+  FileText,
   GraduationCap,
+  Home,
   Layers3,
   LogOut,
   Users,
-  BookOpen,
-  Home,
-  FileText,
 } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -32,42 +32,45 @@ export default function LeftNavbar() {
   };
 
   return (
-    <nav className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
-        <div className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+    <nav className="flex h-full flex-col bg-[#55504A] text-[#F7F3EC]">
+      {/* Brand */}
+      <div className="flex h-16 items-center gap-3 border-b border-[#DCD2C0]/30 px-4">
+        <div className="flex size-9 items-center justify-center rounded-lg bg-[#B5603A] text-white">
           <GraduationCap className="size-5" />
         </div>
 
         <div className="flex flex-col">
-          <span className="text-sm font-semibold">Acadify</span>
-          <span className="text-xs text-sidebar-foreground/60">
-            Academic Management
-          </span>
+          <span className="text-sm font-semibold text-[#F7F3EC]">Acadify</span>
+          <span className="text-xs text-[#F7F3EC]/70">Academic Management</span>
         </div>
       </div>
 
+      {/* Navigation */}
       <div className="flex-1 space-y-6 p-3">
         <div>
-          <p className="mb-2 px-3 text-xs font-medium text-sidebar-foreground/60">
+          <p className="mb-3 px-3 text-xs font-medium text-[#DCD2C0]">
             Platform
           </p>
 
           <div className="space-y-1">
-            {NAVBAR_ELEMENTS.map(({ name, path, icon: Icon }, index) => (
-              <NavLink key={path} to={path} end={path === '/home'}>
+            {NAVBAR_ELEMENTS.map(({ name, path, icon: Icon }) => (
+              <NavLink
+                key={path}
+                to={path}
+                end={path === '/home'}
+                className="block"
+              >
                 {({ isActive }) => (
                   <Button
                     variant="secondary"
-                    className={`${
-                      index > 0 ? 'mt-2 ' : ''
-                    }w-full justify-start gap-3 ${
-                      !isActive
-                        ? 'bg-transparent hover:bg-sidebar-accent'
-                        : '!bg-black/10 hover:!bg-black/10'
+                    className={`w-full justify-start gap-3 border-0 transition-colors ${
+                      isActive
+                        ? 'bg-[#3A3631] font-semibold text-[#F7F3EC] hover:bg-[#3A3631] hover:text-[#F7F3EC]'
+                        : 'bg-transparent text-[#F7F3EC]/80 hover:bg-[#3A3631] hover:text-[#F7F3EC]'
                     }`}
                   >
-                    <Icon className="size-4" />
-                    {name}
+                    <Icon className="size-4 shrink-0" />
+                    <span>{name}</span>
                   </Button>
                 )}
               </NavLink>
@@ -76,14 +79,15 @@ export default function LeftNavbar() {
         </div>
       </div>
 
-      <div className="border-t border-sidebar-border p-3">
+      {/* Logout */}
+      <div className="border-t border-[#DCD2C0]/30 p-3">
         <Button
           variant="secondary"
-          className="w-full justify-start gap-3"
+          className="w-full justify-start gap-3 border-0 bg-transparent text-[#F7F3EC] hover:bg-[#3A3631] hover:text-[#F7F3EC]"
           onClick={handleLogout}
         >
-          <LogOut className="size-4" />
-          Logout
+          <LogOut className="size-4 shrink-0" />
+          <span>Logout</span>
         </Button>
       </div>
     </nav>
