@@ -12,6 +12,7 @@ import { Spinner } from '../ui/spinner';
 import { emailRegex } from '@/forms/validation.util';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
+import { DialogFooter } from '@/components/ui/dialog';
 
 type StudentFormProps = {
   onCancel: () => void;
@@ -48,17 +49,23 @@ export function StudentForm({
 }: StudentFormProps) {
   const validateStudentForm = (data: StudentFormData) => {
     const errors: Record<string, string> = {};
-    if (!data.firstName.trim()) errors.firstName = 'First name is required.';
-    if (!data.lastName.trim()) errors.lastName = 'Last name is required.';
+    if (!data.firstName.trim()) {
+      errors.firstName = 'First name is required.';
+    }
+    if (!data.lastName.trim()) {
+      errors.lastName = 'Last name is required.';
+    }
     if (!data.email.trim()) {
       errors.email = 'Email is required.';
     } else if (!emailRegex.test(data.email)) {
       errors.email = 'Invalid email format.';
     }
-    if (!data.phoneNumber.trim())
+    if (!data.phoneNumber.trim()) {
       errors.phoneNumber = 'Phone number is required.';
-    if (!student && !data.password.trim())
+    }
+    if (!student && !data.password.trim()) {
       errors.password = 'Password is required.';
+    }
     return errors;
   };
 
@@ -105,7 +112,7 @@ export function StudentForm({
 
       onCancel();
       return { success: true, fieldErrors: {}, formError: null };
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Failed to save student:', error);
 
       const apiFieldErrors = getApiValidationErrors(error, studentFormFields);
@@ -136,13 +143,13 @@ export function StudentForm({
   );
 
   return (
-    <form action={formAction}>
-      <FieldGroup className="max-w-md">
+    <form action={formAction} className="flex flex-col gap-4">
+      <FieldGroup>
         <Field>
           <FieldLabel>First Name</FieldLabel>
           <Input
             name="firstName"
-            placeholder="Mohammad"
+            placeholder="Enter student first name"
             defaultValue={state.values?.firstName ?? student?.firstName ?? ''}
           />
           {state.fieldErrors.firstName && (
@@ -156,7 +163,7 @@ export function StudentForm({
           <FieldLabel>Last Name</FieldLabel>
           <Input
             name="lastName"
-            placeholder="Arrata"
+            placeholder="Enter student last name"
             defaultValue={state.values?.lastName ?? student?.lastName ?? ''}
           />
           {state.fieldErrors.lastName && (
@@ -171,7 +178,7 @@ export function StudentForm({
           </FieldDescription>
           <Input
             name="email"
-            placeholder="mohammadarrata@gmail.com"
+            placeholder="test@gmail.com"
             defaultValue={state.values?.email ?? student?.email ?? ''}
           />
           {state.fieldErrors.email && (
@@ -187,7 +194,7 @@ export function StudentForm({
           <Input
             type="tel"
             name="phoneNumber"
-            placeholder="+963 954 220 986"
+            placeholder="+963-xxx-xxx-xxx"
             defaultValue={
               state.values?.phoneNumber ?? student?.phoneNumber ?? ''
             }
@@ -219,15 +226,16 @@ export function StudentForm({
         {state.formError && (
           <p className="text-sm text-red-600">{state.formError}</p>
         )}
-        <div className="pt-4 flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? <Spinner className="text-black" /> : 'Submit'}
-          </Button>
-        </div>
       </FieldGroup>
+
+      <DialogFooter className="pt-2">
+        <Button type="button" variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" variant="secondary" disabled={isPending}>
+          {isPending ? <Spinner className="text-black" /> : 'Submit'}
+        </Button>
+      </DialogFooter>
     </form>
   );
 }
