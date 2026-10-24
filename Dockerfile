@@ -1,6 +1,6 @@
 FROM node:26.7-alpine3.23 As builder 
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.24.0 --activate 
+RUN corepack enable && corepack prepare pnpm@12.15.0 --activate 
 COPY package.json pnpm-lock.yml pnpm-workspace.yml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
@@ -10,7 +10,7 @@ RUN pnpm run build
 
 FROM node:26.7-alpine3.23 As runner 
 WORKDIR /app
-RUN corepack enable && corepack prepare pnpm@11.24.0 --activate 
+RUN corepack enable && corepack prepare pnpm@12.15.0 --activate 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
