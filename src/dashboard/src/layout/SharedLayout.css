@@ -8,7 +8,8 @@
 .shared-layout__sidebar {
   width: 240px;
   flex-shrink: 0;
-  border-right: 1px solid var(--sidebar-border);
+  border-right: 1px solid #dcd2c0;
+  background-color: #55504a;
 }
 
 .shared-layout__main {
