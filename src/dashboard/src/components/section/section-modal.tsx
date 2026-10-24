@@ -1,4 +1,4 @@
-import { DialogContent, Dialog, DialogTitle } from '../ui/dialog';
+import { FormDialog } from '../ui/form-dialog';
 import { SectionForm } from './section-form';
 import type { SectionDto } from 'dtos';
 
@@ -18,18 +18,22 @@ export default function SectionModal({
   section,
 }: SectionModalProps) {
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="w-[450px]">
-        <DialogTitle className="mb-6 text-2xl font-semibold">
-          {section ? 'Edit Section' : 'Create Section'}
-        </DialogTitle>
-        <SectionForm
-          onCancel={onClose}
-          onCreateSuccess={onCreateSuccess}
-          onUpdateSuccess={onUpdateSuccess}
-          section={section}
-        />
-      </DialogContent>
-    </Dialog>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      title={section ? 'Update Secction' : 'Create Section'}
+      description={
+        section
+          ? 'Update the section details and save your changes.'
+          : 'Fill in the details below to add a new section to the system.'
+      }
+    >
+      <SectionForm
+        onCancel={onClose}
+        onCreateSuccess={onCreateSuccess}
+        onUpdateSuccess={onUpdateSuccess}
+        section={section}
+      />
+    </FormDialog>
   );
 }

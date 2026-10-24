@@ -1,6 +1,6 @@
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { TeacherForm } from './teacher-form';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { FormDialog } from './ui/form-dialog';
 
 type TeacherModalProps = {
   open: boolean;
@@ -17,23 +17,23 @@ export default function TeacherModal({
   onCreateSuccess,
   onClose,
 }: TeacherModalProps) {
-  if (!open) {
-    return null;
-  }
-
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="w-[450px]">
-        <h2 className="mb-6 text-2xl font-semibold">
-          {teacher ? 'Update Teacher' : 'Create Teacher'}
-        </h2>
-        <TeacherForm
-          onCancel={onClose}
-          teacher={teacher}
-          onUpdateSuccess={onUpdateSuccess}
-          onCreateSuccess={onCreateSuccess}
-        />
-      </DialogContent>
-    </Dialog>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      title={teacher ? 'Update Teacher' : 'Create Teacher'}
+      description={
+        teacher
+          ? 'Update the teacher details and save your changes.'
+          : 'Fill in the details below to add a new teacher to the system.'
+      }
+    >
+      <TeacherForm
+        onCancel={onClose}
+        teacher={teacher}
+        onUpdateSuccess={onUpdateSuccess}
+        onCreateSuccess={onCreateSuccess}
+      />
+    </FormDialog>
   );
 }
