@@ -1,5 +1,6 @@
 import { CurriculumForm } from './CurriculumForm';
 import type { CurriculumDto } from 'dtos';
+import { FormDialog } from './ui/form-dialog';
 
 type CurriculumModalProps = {
   open: boolean;
@@ -16,24 +17,24 @@ export default function CurriculumModal({
   onUpdateSuccess,
   onCreateSuccess,
 }: CurriculumModalProps) {
-  if (!open) {
-    return null;
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="w-[450px] rounded-xl bg-white p-6 shadow-lg">
-        <h2 className="mb-6 text-2xl font-semibold">
-          {curriculum ? 'Update Curriculum' : 'Create Curriculum'}
-        </h2>
-        <CurriculumForm
-          key={curriculum ? curriculum.id : -1}
-          onCancel={onClose}
-          curriculum={curriculum}
-          onUpdateSuccess={onUpdateSuccess}
-          onCreateSuccess={onCreateSuccess}
-        />
-      </div>
-    </div>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      title={curriculum ? 'Update Curriculum' : 'Create Curriculum'}
+      description={
+        curriculum
+          ? 'Update the curriculum details and save your changes.'
+          : 'Fill in the details below to add a new curriculum to the system.'
+      }
+    >
+      <CurriculumForm
+        key={curriculum ? curriculum.id : -1}
+        onCancel={onClose}
+        curriculum={curriculum}
+        onUpdateSuccess={onUpdateSuccess}
+        onCreateSuccess={onCreateSuccess}
+      />
+    </FormDialog>
   );
 }
