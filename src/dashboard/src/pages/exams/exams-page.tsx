@@ -129,36 +129,42 @@ export default function ExamsPage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-white px-6 py-10 sm:px-8 lg:px-10">
-      <div className="mx-auto w-full max-w-7xl">
+    <div className="min-h-screen w-full min-w-0 bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+      <div className="w-full min-w-0">
         <PageHeader
           title="Exams"
           description="A list of all available exams."
         />
 
-        <div className="mt-8 w-full overflow-x-auto rounded-md">
-          <Table className="w-full min-w-[1050px] table-fixed text-sm">
+        <div className="mt-8 w-full min-w-0 overflow-x-auto rounded-md">
+          <Table className="w-full min-w-[900px] table-auto text-sm">
             <TableHeader>
               <TableRow className="border-b">
-                <TableHead className="h-14 w-[24%] px-4 font-semibold">
+                <TableHead className="h-14 w-[24%] whitespace-nowrap px-4 font-semibold">
                   Title
                 </TableHead>
-                <TableHead className="h-14 w-[14%] px-4 font-semibold">
+
+                <TableHead className="h-14 w-[14%] whitespace-nowrap px-4 font-semibold">
                   Date
                 </TableHead>
-                <TableHead className="h-14 w-[16%] px-4 font-semibold">
+
+                <TableHead className="h-14 w-[16%] whitespace-nowrap px-4 font-semibold">
                   Curriculum ID
                 </TableHead>
-                <TableHead className="h-14 w-[12%] px-4 font-semibold">
+
+                <TableHead className="h-14 w-[12%] whitespace-nowrap px-4 font-semibold">
                   Min Score
                 </TableHead>
-                <TableHead className="h-14 w-[12%] px-4 font-semibold">
+
+                <TableHead className="h-14 w-[12%] whitespace-nowrap px-4 font-semibold">
                   Max Score
                 </TableHead>
-                <TableHead className="h-14 w-[14%] px-4 font-semibold">
+
+                <TableHead className="h-14 w-[14%] whitespace-nowrap px-4 font-semibold">
                   Document
                 </TableHead>
-                <TableHead className="h-14 w-[8%] px-4 text-center font-semibold">
+
+                <TableHead className="h-14 w-[8%] whitespace-nowrap px-4 text-center font-semibold">
                   Actions
                 </TableHead>
               </TableRow>
@@ -205,17 +211,21 @@ export default function ExamsPage() {
                         {exam.title}
                       </TableCell>
 
-                      <TableCell className="px-4">
+                      <TableCell className="whitespace-nowrap px-4">
                         {new Date(exam.date).toLocaleDateString()}
                       </TableCell>
 
-                      <TableCell className="px-4">
+                      <TableCell className="whitespace-nowrap px-4">
                         {exam.curriculumId ?? '—'}
                       </TableCell>
 
-                      <TableCell className="px-4">{exam.minScore}</TableCell>
+                      <TableCell className="whitespace-nowrap px-4">
+                        {exam.minScore}
+                      </TableCell>
 
-                      <TableCell className="px-4">{exam.maxScore}</TableCell>
+                      <TableCell className="whitespace-nowrap px-4">
+                        {exam.maxScore}
+                      </TableCell>
 
                       <TableCell className="px-4">
                         {exam.documentUrl ? (
@@ -223,7 +233,7 @@ export default function ExamsPage() {
                             href={exam.documentUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary underline underline-offset-4"
+                            className="break-all text-primary underline underline-offset-4"
                           >
                             View document
                           </a>
@@ -244,7 +254,7 @@ export default function ExamsPage() {
                             }
                             className="flex h-9 w-9 items-center justify-center rounded-md text-xl text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400"
                           >
-                            <span aria-hidden="true">⋮</span>
+                            <span aria-hidden="true">⋯</span>
                           </button>
                         </div>
                       </TableCell>
