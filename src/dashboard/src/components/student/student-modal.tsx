@@ -1,12 +1,6 @@
 import type { StudentDetailsDto } from 'dtos';
 import { StudentForm } from './student-form';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+import { FormDialog } from '@/components/ui/form-dialog';
 
 type StudentModalProps = {
   open: boolean;
@@ -23,31 +17,24 @@ export default function StudentModal({
   onCreateSuccess,
   onClose,
 }: StudentModalProps) {
-  if (!open) {
-    return null;
-  }
+  const title = student ? 'Update Student' : 'Create Student';
+  const description = student
+    ? 'Update the student details and save your changes.'
+    : 'Fill in the details below to add a new student to the system.';
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="sm:max-w-[450px]">
-        <DialogHeader>
-          <DialogTitle>
-            {student ? 'Update Student' : 'Create Student'}
-          </DialogTitle>
-          <DialogDescription>
-            {student
-              ? 'Update the students details and save your changes.'
-              : 'Fill in the details below to add a new student to the system.'}
-          </DialogDescription>
-        </DialogHeader>
-
-        <StudentForm
-          onCancel={onClose}
-          student={student}
-          onUpdateSuccess={onUpdateSuccess}
-          onCreateSuccess={onCreateSuccess}
-        />
-      </DialogContent>
-    </Dialog>
+    <FormDialog
+      open={open}
+      onClose={onClose}
+      title={title}
+      description={description}
+    >
+      <StudentForm
+        onCancel={onClose}
+        student={student}
+        onUpdateSuccess={onUpdateSuccess}
+        onCreateSuccess={onCreateSuccess}
+      />
+    </FormDialog>
   );
 }

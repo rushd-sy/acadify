@@ -14,7 +14,7 @@ import DeleteModal from '@/components/ui/delete-modal';
 import { teacherService } from '@/services/teacher.service';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { Button } from '@/components/ui/button';
-import TeacherModal from '@/components/teacher-modal';
+import TeacherModal from '@/components/teacher/teacher-modal';
 import { PageHeader } from '@/components/ui/page-header';
 
 export default function TeachersPage() {

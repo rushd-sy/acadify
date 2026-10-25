@@ -1,6 +1,6 @@
-import { CurriculumForm } from './CurriculumForm';
+import { CurriculumForm } from './curriculum- form';
 import type { CurriculumDto } from 'dtos';
-import { FormDialog } from './ui/form-dialog';
+import { FormDialog } from '../ui/form-dialog';
 
 type CurriculumModalProps = {
   open: boolean;

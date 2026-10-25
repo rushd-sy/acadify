@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import DeleteStudentModal from '@/components/delete-student-modal';
+import DeleteStudentModal from '@/components/student/delete-student-modal';
 import StudentModal from '@/components/student/student-modal';
 
 import { studentService } from '@/services/student.service';

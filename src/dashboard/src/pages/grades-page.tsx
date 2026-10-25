@@ -11,8 +11,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import GradeModal from '@/components/grade-modal';
-import DeleteGradeModal from '@/components/delete-grade-modal';
+import GradeModal from '@/components/grade/grade-modal';
+import DeleteGradeModal from '@/components/grade/delete-grade-modal';
 
 import { gradeService } from '@/services/grade.service';
 import type { GradeDto } from 'dtos';
@@ -93,7 +93,7 @@ export default function GradePage() {
 
   return (
     <>
-      <div className="mx-auto mt-20 w-[70%] bg-white p-10">
+      <div className="w-full min-h-screen bg-white p-8">
         <PageHeader
           title="Grades"
           action={{
@@ -153,6 +153,7 @@ export default function GradePage() {
                   <TableCell>
                     <div className="flex gap-2">
                       <Button
+                        variant="secondary"
                         onClick={() => {
                           setGradeToEdit(grade);
                           setIsGradeModalOpen(true);
@@ -162,6 +163,7 @@ export default function GradePage() {
                       </Button>
 
                       <Button
+                        variant="secondary"
                         onClick={() => {
                           setDeleteError(null);
                           setGradeToDelete(grade);
@@ -178,14 +180,14 @@ export default function GradePage() {
       </div>
 
       <GradeModal
-        key={-1}
         open={isGradeModalOpen}
-        grade={gradeToEdit}
+        grade={gradeToEdit ?? undefined}
         onClose={() => {
           setGradeToEdit(null);
           setIsGradeModalOpen(false);
         }}
-        onSaved={handleGradeSaved}
+        onCreateSuccess={handleGradeSaved}
+        onUpdateSuccess={handleGradeSaved}
       />
 
       <DeleteGradeModal

@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import DeleteStudentModal from '@/components/delete-student-modal';
+import DeleteStudentModal from '@/components/student/delete-student-modal';
 import UpdateStudentModal from '@/components/student/student-modal';
 
 import { studentService } from '@/services/student.service';

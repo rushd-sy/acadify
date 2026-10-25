@@ -1,6 +1,6 @@
-import { Field, FieldGroup, FieldLabel } from './ui/field';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { Field, FieldGroup, FieldLabel } from '../ui/field';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { useActionState } from 'react';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
@@ -8,9 +8,10 @@ import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
-import { Spinner } from './ui/spinner';
+import { Spinner } from '../ui/spinner';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
+import { DialogFooter } from '../ui/dialog';
 
 type CurriculumFormProps = {
   onCancel: () => void;
@@ -111,8 +112,8 @@ export function CurriculumForm({
   );
 
   return (
-    <form action={formAction}>
-      <FieldGroup className="max-w-md">
+    <form action={formAction} className="flex flex-col gap-4">
+      <FieldGroup>
         <Field>
           <FieldLabel>Curriculum Name</FieldLabel>
           <Input
@@ -142,15 +143,15 @@ export function CurriculumForm({
         {state.formError && (
           <p className="text-sm text-red-600">{state.formError}</p>
         )}
-        <div className="pt-4 flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? <Spinner className="text-black" /> : 'Submit'}
-          </Button>
-        </div>
       </FieldGroup>
+      <DialogFooter className="pt-2">
+        <Button type="button" variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <Spinner className="text-black" /> : 'Submit'}
+        </Button>
+      </DialogFooter>
     </form>
   );
 }
