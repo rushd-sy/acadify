@@ -12,6 +12,7 @@ import { sectionService } from '@/services/section.service';
 import type { SectionDto } from 'dtos';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
+import { DialogFooter } from '../ui/dialog';
 
 type SectionFormProps = {
   onCancel: () => void;
@@ -184,10 +185,10 @@ export function SectionForm({
         <div className="text-sm text-red-600">{state.formError}</div>
       )}
 
-      <div className="mt-4 flex justify-end gap-2">
+      <DialogFooter className="pt-2">
         <Button
           type="button"
-          variant="secondary"
+          variant="ghost"
           onClick={onCancel}
           disabled={isPending}
         >
@@ -197,7 +198,7 @@ export function SectionForm({
         <Button type="submit" disabled={isPending}>
           {isPending ? <Spinner className="text-black" /> : 'Submit'}
         </Button>
-      </div>
+      </DialogFooter>
     </form>
   );
 }

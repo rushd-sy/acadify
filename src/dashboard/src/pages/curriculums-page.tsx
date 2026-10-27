@@ -9,8 +9,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import DeleteCurriculumModal from '@/components/delete-curriculum-modal';
-import CurriculumModal from '@/components/curriculum-modal';
+import DeleteCurriculumModal from '@/components/curriculum/delete-curriculum-modal';
+import CurriculumModal from '@/components/curriculum/curriculum-modal';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
 import { PageHeader } from '@/components/ui/page-header';

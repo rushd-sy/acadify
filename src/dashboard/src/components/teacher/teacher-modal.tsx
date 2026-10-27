@@ -1,6 +1,6 @@
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { TeacherForm } from './teacher-form';
-import { FormDialog } from './ui/form-dialog';
+import { FormDialog } from '../ui/form-dialog';
 
 type TeacherModalProps = {
   open: boolean;

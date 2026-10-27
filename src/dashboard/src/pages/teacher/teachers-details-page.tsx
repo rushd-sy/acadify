@@ -14,7 +14,7 @@ import {
 import { teacherService } from '@/services/teacher.service';
 import { useNumericParam } from '@/hooks/use-numeric-param';
 import type { TeacherDetailsDto } from 'dtos';
-import TeacherModal from '@/components/teacher-modal';
+import TeacherModal from '@/components/teacher/teacher-modal';
 
 export default function TeachersDetailsPage() {
   const navigate = useNavigate();

@@ -1,17 +1,18 @@
-import { Field, FieldDescription, FieldGroup, FieldLabel } from './ui/field';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '../ui/field';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { teacherService } from '@/services/teacher.service';
 import { useActionState } from 'react';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { emailRegex } from '@/forms/validation.util';
-import { Spinner } from './ui/spinner';
+import { Spinner } from '../ui/spinner';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
+import { DialogFooter } from '../ui/dialog';
 
 type TeacherFormProps = {
   onCancel: () => void;
@@ -140,13 +141,13 @@ export function TeacherForm({
     initialFormState,
   );
   return (
-    <form action={formAction}>
-      <FieldGroup className="max-w-md">
+    <form action={formAction} className="flex flex-col gap-4">
+      <FieldGroup>
         <Field>
           <FieldLabel>First Name</FieldLabel>
           <Input
             name="firstName"
-            placeholder="Adel"
+            placeholder="Enter teacher first name"
             defaultValue={state.values?.firstName ?? teacher?.firstName}
           />
           {state.fieldErrors.firstName && (
@@ -160,7 +161,7 @@ export function TeacherForm({
           <FieldLabel>Last Name</FieldLabel>
           <Input
             name="lastName"
-            placeholder="Obaji"
+            placeholder="Enter teacher last name"
             defaultValue={state.values?.lastName ?? teacher?.lastName}
           />
           {state.fieldErrors.lastName && (
@@ -175,7 +176,7 @@ export function TeacherForm({
           </FieldDescription>
           <Input
             name="email"
-            placeholder="adelobaji@gmail.com"
+            placeholder="test@gmail.com"
             defaultValue={state.values?.email ?? teacher?.email}
           />
           {state.fieldErrors.email && (
@@ -191,7 +192,7 @@ export function TeacherForm({
           <Input
             type="tel"
             name="phoneNumber"
-            placeholder="+963 123 456 789"
+            placeholder="+963-xxx-xxx-xxx"
             defaultValue={state.values?.phoneNumber ?? teacher?.phoneNumber}
           />
           {state.fieldErrors.phoneNumber && (
@@ -232,19 +233,19 @@ export function TeacherForm({
             )}
           </Field>
         )}
-
         {state.formError && (
           <p className="text-sm text-red-600">{state.formError}</p>
         )}
-        <div className="pt-4 flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? <Spinner className="text-black" /> : 'Submit'}
-          </Button>
-        </div>
       </FieldGroup>
+
+      <DialogFooter className="pt-2">
+        <Button type="button" variant="ghost" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? <Spinner className="text-black" /> : 'Submit'}
+        </Button>
+      </DialogFooter>
     </form>
   );
 }
