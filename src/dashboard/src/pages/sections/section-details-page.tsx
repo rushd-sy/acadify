@@ -105,20 +105,69 @@ export default function SectionDetailsPage() {
         <span className="font-semibold text-slate-900">{section.name}</span>
       </div>
 
-      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-8 flex items-start justify-between">
-          <div className="flex flex-col gap-1">
-            <h1 className="text-3xl font-bold text-slate-900">
-              {section.name}
-            </h1>
-            <p className="text-base text-slate-500">
-              Academic Year: {section.academicYear}
-            </p>
+      <div className="mb-8 flex flex-col rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-200 py-6 text-center">
+          <h1 className="text-2xl font-bold text-slate-700">{section.name}</h1>
+        </div>
+
+        <div className="p-8">
+          <div className="mb-8 flex flex-wrap gap-x-24 gap-y-6">
+            <div>
+              <span className="text-sm font-medium text-slate-500">
+                Academic Year
+              </span>
+              <p className="mt-1 text-lg font-semibold text-slate-900">
+                {section.academicYear}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-slate-500">Grade</span>
+              <p className="mt-1 text-lg font-semibold text-slate-900">
+                {section.gradeId}
+              </p>
+            </div>
           </div>
+
+          <div>
+            <span className="mb-4 block text-sm font-medium text-slate-500">
+              Teachers ({teacherCount})
+            </span>
+            {teacherCount > 0 ? (
+              <div className="flex flex-wrap gap-4">
+                {section.teachers!.map((teacher, index) => {
+                  const initials =
+                    `${teacher.teacherFirstName[0]}${teacher.teacherLastName[0]}`.toUpperCase();
+                  return (
+                    <div
+                      key={`${teacher.teacherId}-${index}`}
+                      onClick={() => navigate(`/teachers/${teacher.teacherId}`)}
+                      className="flex cursor-pointer items-center gap-3 rounded-lg border border-transparent bg-slate-50 p-2 pr-6 transition-all hover:border-slate-200 hover:bg-white hover:shadow-sm"
+                    >
+                      <div
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${getAvatarStyle(teacher.teacherFirstName)}`}
+                      >
+                        {initials}
+                      </div>
+                      <span className="text-sm font-medium text-slate-700">
+                        {teacher.teacherFirstName} {teacher.teacherLastName}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">
+                No teachers assigned to this section yet.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 rounded-b-lg border-t border-slate-200 bg-slate-50/30 p-4">
           <Button
             variant="secondary"
             onClick={() => setIsEditModalOpen(true)}
-            className="flex items-center gap-2"
+            className="px-6"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -135,41 +184,6 @@ export default function SectionDetailsPage() {
             </svg>
             Edit Section
           </Button>
-        </div>
-
-        <div className="rounded-xl border border-slate-100 p-5 shadow-sm">
-          <h2 className="mb-4 text-base font-bold text-slate-900">
-            Teachers ({teacherCount})
-          </h2>
-
-          {teacherCount > 0 ? (
-            <div className="flex flex-wrap gap-4">
-              {section.teachers!.map((teacher, index) => {
-                const initials =
-                  `${teacher.teacherFirstName[0]}${teacher.teacherLastName[0]}`.toUpperCase();
-                return (
-                  <div
-                    key={`${teacher.teacherId}-${index}`}
-                    onClick={() => navigate(`/teachers/${teacher.teacherId}`)}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-100 bg-white p-2 pr-6 shadow-sm transition-all hover:border-slate-200 hover:shadow-md"
-                  >
-                    <div
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${getAvatarStyle(teacher.teacherFirstName)}`}
-                    >
-                      {initials}
-                    </div>
-                    <span className="text-sm font-medium text-slate-700">
-                      {teacher.teacherFirstName} {teacher.teacherLastName}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">
-              No teachers assigned to this section yet.
-            </p>
-          )}
         </div>
       </div>
 
@@ -220,7 +234,7 @@ export default function SectionDetailsPage() {
                   </svg>
                   Filter
                 </Button>
-                <Button className="bg-slate-900 text-white hover:bg-slate-800 flex items-center gap-2">
+                <Button className="flex items-center gap-2 bg-slate-900 text-white hover:bg-slate-800">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -240,7 +254,7 @@ export default function SectionDetailsPage() {
               </div>
             </div>
 
-            <div className="mb-6 max-w-md relative">
+            <div className="relative mb-6 max-w-md">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -319,16 +333,16 @@ export default function SectionDetailsPage() {
               <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
                 <span>Showing 1 to {studentsList.length} students</span>
                 <div className="flex gap-1">
-                  <Button variant="secondary" className="w-8 h-8 p-0">
+                  <Button variant="secondary" className="h-8 w-8 p-0">
                     &lt;
                   </Button>
                   <Button
                     variant="secondary"
-                    className="w-8 h-8 p-0 bg-slate-900 text-white"
+                    className="h-8 w-8 bg-slate-900 p-0 text-white"
                   >
                     1
                   </Button>
-                  <Button variant="secondary" className="w-8 h-8 p-0">
+                  <Button variant="secondary" className="h-8 w-8 p-0">
                     &gt;
                   </Button>
                 </div>
