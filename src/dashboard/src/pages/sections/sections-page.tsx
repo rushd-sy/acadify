@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import DeleteModal from '@/components/ui/delete-modal';
 import SectionModal from '@/components/section/section-modal';
 import { sectionService } from '@/services/section.service';
-
 import type { SectionDto } from 'dtos';
 import { PageHeader } from '@/components/ui/page-header';
 
@@ -30,6 +29,7 @@ export default function SectionsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -173,7 +173,11 @@ export default function SectionsPage() {
               </TableRow>
             ) : (
               sections.map((section) => (
-                <TableRow key={section.id} className="h-16">
+                <TableRow
+                  key={section.id}
+                  className="h-16 cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => navigate(`${section.id}`)}
+                >
                   <TableCell className="font-medium">{section.name}</TableCell>
 
                   <TableCell>{section.academicYear}</TableCell>
@@ -183,7 +187,10 @@ export default function SectionsPage() {
                   <TableCell className="space-x-2">
                     <Button
                       variant="secondary"
-                      onClick={() => handleEditSection(section.id)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleEditSection(section.id);
+                      }}
                     >
                       Edit
                     </Button>
