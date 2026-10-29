@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ExamRepository } from '../data/exam.repository';
 import { ExamMapper } from '../mappers/exam.mapper';
-import { ExamDto } from 'dtos';
+import { CreateExamDto, ExamDto } from 'dtos';
 
 @Injectable()
 export class ExamService {
@@ -20,5 +20,11 @@ export class ExamService {
     if (!isDeleted) {
       throw new NotFoundException(`Exam with ID: ${id} not found`);
     }
+  }
+
+  async createExam(createExam: CreateExamDto): Promise<ExamDto> {
+    const examDomain = this.mapper.toDomainCreateData(createExam);
+    const createdExam = await this.repository.create(examDomain);
+    return this.mapper.toDto(createdExam);
   }
 }

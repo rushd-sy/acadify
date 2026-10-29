@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Exam } from '@prisma/client';
-import { ExamDto } from 'dtos';
+import { CreateExamDto, ExamDto } from 'dtos';
 import { ExamDomain } from '../domain/exam.domain';
 
 @Injectable()
@@ -31,5 +31,16 @@ export class ExamMapper {
 
   toDtoList(exams: ExamDomain[]): ExamDto[] {
     return exams.map((exam): ExamDto => this.toDto(exam));
+  }
+
+  toDomainCreateData(createExam: CreateExamDto): ExamDomain {
+    return ExamDomain.create({
+      examTemplateId: createExam.examTemplateId,
+      title: createExam.title,
+      date: new Date(createExam.date),
+      documentUrl: createExam.documentUrl,
+      minScore: createExam.minScore,
+      maxScore: createExam.maxScore,
+    });
   }
 }

@@ -25,6 +25,20 @@ export class ExamDomain {
     this.maxScore = input.maxScore;
   }
 
+  static create(input: {
+    examTemplateId?: number;
+    title: string;
+    date: Date;
+    documentUrl?: string;
+    minScore: number;
+    maxScore: number;
+  }): ExamDomain {
+    return new ExamDomain({
+      id: -1,
+      ...input,
+    });
+  }
+
   static fromPersistence(input: {
     id: number;
     examTemplateId?: number;

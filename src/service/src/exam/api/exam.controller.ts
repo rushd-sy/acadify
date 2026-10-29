@@ -1,6 +1,14 @@
-import { Controller, Get, Delete, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Param,
+  ParseIntPipe,
+  Post,
+  Body,
+} from '@nestjs/common';
 import { ExamService } from '../services/exam.service';
-import { ExamDto } from 'dtos';
+import { CreateExamDto, ExamDto } from 'dtos';
 
 @Controller('api/exams')
 export class ExamController {
@@ -14,5 +22,10 @@ export class ExamController {
   @Delete(':id')
   deleteExam(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.service.deleteExam(id);
+  }
+
+  @Post()
+  createExam(@Body() createExamDto: CreateExamDto): Promise<ExamDto> {
+    return this.service.createExam(createExamDto);
   }
 }

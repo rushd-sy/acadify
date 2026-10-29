@@ -38,4 +38,18 @@ export class ExamRepository {
       throw error;
     }
   }
+
+  async create(examDomain: ExamDomain): Promise<ExamDomain> {
+    const exam = await this.prisma.exam.create({
+      data: {
+        examTemplateId: examDomain.examTemplateId,
+        title: examDomain.title,
+        date: examDomain.date,
+        documentUrl: examDomain.documentUrl,
+        minScore: examDomain.minScore,
+        maxScore: examDomain.maxScore,
+      },
+    });
+    return this.mapper.toDomain(exam);
+  }
 }
