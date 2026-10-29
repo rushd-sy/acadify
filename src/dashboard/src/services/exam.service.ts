@@ -8,6 +8,11 @@ class ExamService {
     const response = await api.get<ExamDto[]>(this.baseUrl);
     return response.data;
   }
+
+  async deleteExamById(id: number): Promise<void> {
+    const response = await api.delete(`${this.baseUrl}/${id}`);
+    return response.data;
+  }
 }
 
 export const examService = new ExamService();

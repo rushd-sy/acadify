@@ -14,7 +14,7 @@ import { PageHeader } from '@/components/ui/page-header';
 
 import { examService } from '@/services/exam.service';
 import type { ExamDto } from 'dtos';
-
+import DeleteExamModal from '@/components/exam/delete-exam-modal';
 interface MenuPosition {
   top: number;
   left: number;
@@ -26,6 +26,9 @@ export default function ExamsPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
+  const [examToDelete, setExamToDelete] = useState<ExamDto | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -125,7 +128,22 @@ export default function ExamsPage() {
   const handleDeleteExam = (exam: ExamDto) => {
     setOpenMenuId(null);
     setMenuPosition(null);
-    console.info('Delete exam selected:', exam.id);
+    setDeleteError(null);
+    setExamToDelete(exam);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!examToDelete) return;
+    try {
+      setIsDeleting(true);
+      await examService.deleteExamById(examToDelete.id);
+      setExams((prev) => prev.filter((exam) => exam.id !== examToDelete.id));
+      setExamToDelete(null);
+    } catch (error) {
+      console.log('Failed to delete:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -316,6 +334,14 @@ export default function ExamsPage() {
           </div>,
           document.body,
         )}
+      <DeleteExamModal
+        open={!!examToDelete}
+        examName={examToDelete?.title || ''}
+        onYes={handleConfirmDelete}
+        onNo={() => setExamToDelete(null)}
+        isLoading={isDeleting}
+        error={deleteError ?? undefined}
+      />
     </div>
   );
 }
