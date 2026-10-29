@@ -12,6 +12,7 @@ export class ExamMapper {
       title: exam.title,
       date: exam.date,
       documentUrl: exam.documentUrl ?? undefined,
+      curriculumId: exam.curriculumId ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
     });
@@ -24,6 +25,7 @@ export class ExamMapper {
       title: examDomain.title,
       date: examDomain.date,
       documentUrl: examDomain.documentUrl,
+      curriculumId: examDomain.curriculumId,
       minScore: examDomain.minScore,
       maxScore: examDomain.maxScore,
     };
@@ -33,12 +35,13 @@ export class ExamMapper {
     return exams.map((exam): ExamDto => this.toDto(exam));
   }
 
-  toDomainCreateData(createExam: CreateExamDto): ExamDomain {
+  toDomainFromCreateDto(createExam: CreateExamDto): ExamDomain {
     return ExamDomain.create({
       examTemplateId: createExam.examTemplateId,
       title: createExam.title,
       date: new Date(createExam.date),
       documentUrl: createExam.documentUrl,
+      curriculumId: createExam.curriculumId,
       minScore: createExam.minScore,
       maxScore: createExam.maxScore,
     });

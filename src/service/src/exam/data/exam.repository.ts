@@ -52,4 +52,20 @@ export class ExamRepository {
     });
     return this.mapper.toDomain(exam);
   }
+
+  async findByTitleCurriculumAndTemplate(
+    title: string,
+    curriculumId?: number,
+    examTemplateId?: number,
+  ): Promise<ExamDomain | null> {
+    const exam = await this.prisma.exam.findFirst({
+      where: {
+        title,
+        curriculumId: curriculumId ?? null,
+        examTemplateId: examTemplateId ?? null,
+      },
+    });
+
+    return exam ? this.mapper.toDomain(exam) : null;
+  }
 }
