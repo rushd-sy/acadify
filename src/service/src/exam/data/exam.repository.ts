@@ -38,4 +38,34 @@ export class ExamRepository {
       throw error;
     }
   }
+
+  async create(examDomain: ExamDomain): Promise<ExamDomain> {
+    const exam = await this.prisma.exam.create({
+      data: {
+        examTemplateId: examDomain.examTemplateId,
+        title: examDomain.title,
+        date: examDomain.date,
+        documentUrl: examDomain.documentUrl,
+        minScore: examDomain.minScore,
+        maxScore: examDomain.maxScore,
+      },
+    });
+    return this.mapper.toDomain(exam);
+  }
+
+  async findByTitleCurriculumAndTemplate(
+    title: string,
+    curriculumId?: number,
+    examTemplateId?: number,
+  ): Promise<ExamDomain | null> {
+    const exam = await this.prisma.exam.findFirst({
+      where: {
+        title,
+        curriculumId: curriculumId ?? null,
+        examTemplateId: examTemplateId ?? null,
+      },
+    });
+
+    return exam ? this.mapper.toDomain(exam) : null;
+  }
 }
