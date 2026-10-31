@@ -78,6 +78,8 @@ model SectionCurriculumTeacher {
   teacher Teacher @relation(fields: [userId], references: [userId])
   curriculum Curriculum @relation(fields: [curriculumId], references: [id])
   section Section @relation(fields: [sectionId], references: [id])
+
+  @@unique([userId, sectionId])
 }
 
 
