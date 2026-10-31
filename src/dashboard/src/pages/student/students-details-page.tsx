@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import DeleteStudentModal from '@/components/student/delete-student-modal';
+import DeleteModal from '@/components/ui/delete-modal';
 import UpdateStudentModal from '@/components/student/student-modal';
 import { studentService } from '@/services/student.service';
 import type { StudentDetailsDto } from 'dtos';
@@ -147,11 +147,17 @@ export default function StudentsDetailsPage() {
         </CardFooter>
       </Card>
 
-      <DeleteStudentModal
+      <DeleteModal
         open={!!studentToDelete}
-        studentName={studentToDelete?.firstName || ''}
-        onYes={handleConfirmDelete}
-        onNo={closeDeleteModal}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete{' '}
+            <span className="font-semibold">{studentToDelete?.firstName}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
         isLoading={isDeleting}
         error={deleteError ?? undefined}
       />

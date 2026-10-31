@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import DeleteStudentModal from '@/components/student/delete-student-modal';
+import DeleteModal from '@/components/ui/delete-modal';
 import StudentModal from '@/components/student/student-modal';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
 
@@ -189,13 +189,19 @@ export default function StudentsPage() {
         </Table>
       </div>
 
-      <DeleteStudentModal
+      <DeleteModal
         open={!!studentToDelete}
-        studentName={studentToDelete?.firstName || ''}
-        onYes={handleConfirmDelete}
-        onNo={closeDeleteModal}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete{' '}
+            <span className="font-semibold">{studentToDelete?.firstName}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
         isLoading={isDeleting}
-        error={deleteError}
+        error={deleteError ?? undefined}
       />
 
       <StudentModal
