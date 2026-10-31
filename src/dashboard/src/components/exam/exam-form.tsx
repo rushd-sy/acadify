@@ -56,6 +56,17 @@ const formatDate = (date?: Date) => {
   return date.toISOString().split('T')[0];
 };
 
+function isValidUrl(value: string): boolean {
+  if (!value.trim()) return true;
+
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const validateScoreRange = (min: number, max: number): ScoreRangeErrors => {
   const errors: ScoreRangeErrors = {};
 
@@ -86,6 +97,9 @@ export function ExamForm({ onCancel, onCreateSuccess, exam }: ExamFormProps) {
     }
     if (isNaN(data.date.getTime())) {
       errors.date = 'Date is required';
+    }
+    if (data.documentUrl && !isValidUrl(data.documentUrl)) {
+      errors.documentUrl = 'Please enter a valid URL';
     }
     const scoreErrors = validateScoreRange(data.minScore, data.maxScore);
     Object.assign(errors, scoreErrors);
@@ -241,7 +255,7 @@ export function ExamForm({ onCancel, onCreateSuccess, exam }: ExamFormProps) {
           <FieldLabel>Document URL</FieldLabel>
           <Input
             name="documentUrl"
-            type="url"
+            placeholder="https://example.com/exam.pdf"
             defaultValue={state.values?.documentUrl ?? exam?.documentUrl}
           />
           {state.fieldErrors.documentUrl && (
