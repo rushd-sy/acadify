@@ -9,11 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import DeleteStudentModal from '@/components/student/delete-student-modal';
+import DeleteModal from '@/components/ui/delete-modal';
 import UpdateStudentModal from '@/components/student/student-modal';
-
 import { studentService } from '@/services/student.service';
 import type { StudentDetailsDto } from 'dtos';
+import { useDeleteModal } from '@/hooks/use-delete-modal';
 
 export default function StudentsDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,14 +22,18 @@ export default function StudentsDetailsPage() {
   const [student, setStudent] = useState<StudentDetailsDto | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
 
   const userId = Number(id);
+
+  const {
+    itemToDelete: studentToDelete,
+    isDeleting,
+    deleteError,
+    openDeleteModal,
+    closeDeleteModal,
+    handleDelete,
+  } = useDeleteModal<StudentDetailsDto>();
   useEffect(() => {
     const fetchStudent = async () => {
       if (!id) {
@@ -62,28 +66,13 @@ export default function StudentsDetailsPage() {
     fetchStudent();
   }, [id, userId]);
 
-  const handleConfirmDelete = async () => {
-    if (!id) {
-      return;
-    }
-
-    try {
-      setIsDeleting(true);
-      setDeleteError(null);
-
-      await studentService.deleteStudentById(userId);
-      navigate('/students');
-    } catch (error) {
-      console.error('Failed to delete student:', error);
-      setDeleteError('Failed to delete the student. Please try again later.');
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleCloseDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setDeleteError(null);
+  const handleConfirmDelete = () => {
+    handleDelete(
+      (student) => studentService.deleteStudentById(student.userId),
+      () => {
+        navigate('/students');
+      },
+    );
   };
 
   if (isLoading) {
@@ -152,22 +141,25 @@ export default function StudentsDetailsPage() {
             Edit
           </Button>
 
-          <Button
-            variant="secondary"
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
+          <Button variant="secondary" onClick={() => openDeleteModal(student)}>
             Delete
           </Button>
         </CardFooter>
       </Card>
 
-      <DeleteStudentModal
-        open={isDeleteModalOpen}
-        studentName={student.firstName}
-        onYes={handleConfirmDelete}
-        onNo={handleCloseDeleteModal}
+      <DeleteModal
+        open={!!studentToDelete}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete{' '}
+            <span className="font-semibold">{studentToDelete?.firstName}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
         isLoading={isDeleting}
-        error={deleteError}
+        error={deleteError ?? undefined}
       />
 
       <UpdateStudentModal
