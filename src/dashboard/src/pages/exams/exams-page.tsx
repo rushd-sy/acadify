@@ -15,6 +15,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { examService } from '@/services/exam.service';
 import type { ExamDto } from 'dtos';
 import DeleteExamModal from '@/components/exam/delete-exam-modal';
+import ExamModal from '@/components/exam/exam-modal';
 interface MenuPosition {
   top: number;
   left: number;
@@ -29,6 +30,7 @@ export default function ExamsPage() {
   const [examToDelete, setExamToDelete] = useState<ExamDto | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -146,12 +148,23 @@ export default function ExamsPage() {
     }
   };
 
+  const handleCreateSuccess = (createdCurriculum: ExamDto) => {
+    setExams((previousCurriculums) => [
+      ...previousCurriculums,
+      createdCurriculum,
+    ]);
+  };
+
   return (
     <div className="min-h-screen w-full min-w-0 bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
       <div className="w-full min-w-0">
         <PageHeader
           title="Exams"
           description="A list of all available exams."
+          action={{
+            label: 'Create Exam',
+            onClick: () => setIsModalOpen(true),
+          }}
         />
 
         <div className="mt-8 w-full min-w-0 overflow-x-auto rounded-md">
@@ -341,6 +354,12 @@ export default function ExamsPage() {
         onNo={() => setExamToDelete(null)}
         isLoading={isDeleting}
         error={deleteError ?? undefined}
+      />
+
+      <ExamModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onCreateSuccess={handleCreateSuccess}
       />
     </div>
   );
