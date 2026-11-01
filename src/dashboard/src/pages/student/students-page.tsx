@@ -36,7 +36,9 @@ export default function StudentsPage() {
     openDeleteModal,
     closeDeleteModal,
     handleDelete,
-  } = useDeleteModal<StudentDto>();
+  } = useDeleteModal<StudentDto>(
+    'Failed to delete the student. Please try again later.',
+  );
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -58,8 +60,8 @@ export default function StudentsPage() {
     fetchStudents();
   }, []);
 
-  const handleConfirmDelete = () => {
-    handleDelete(
+  const handleConfirmDelete = async () => {
+    await handleDelete(
       (student) => studentService.deleteStudentById(student.userId),
       (deletedStudent) => {
         setStudents((prev) =>
@@ -201,7 +203,7 @@ export default function StudentsPage() {
         onConfirm={handleConfirmDelete}
         onClose={closeDeleteModal}
         isLoading={isDeleting}
-        error={deleteError ?? undefined}
+        error={deleteError}
       />
 
       <StudentModal
