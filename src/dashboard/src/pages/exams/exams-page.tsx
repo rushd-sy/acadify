@@ -148,11 +148,8 @@ export default function ExamsPage() {
     }
   };
 
-  const handleCreateSuccess = (createdCurriculum: ExamDto) => {
-    setExams((previousCurriculums) => [
-      ...previousCurriculums,
-      createdCurriculum,
-    ]);
+  const handleCreateSuccess = (createdExam: ExamDto) => {
+    setExams((previousExam) => [...previousExam, createdExam]);
   };
 
   return (
