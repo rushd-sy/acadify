@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import {
@@ -10,26 +9,30 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
 import GradeModal from '@/components/grade/grade-modal';
-import DeleteGradeModal from '@/components/grade/delete-grade-modal';
-
+import DeleteModal from '@/components/ui/delete-modal';
 import { gradeService } from '@/services/grade.service';
 import type { GradeDto } from 'dtos';
 import { PageHeader } from '@/components/ui/page-header';
+import { useDeleteModal } from '@/hooks/use-delete-modal';
 
 export default function GradePage() {
   const [grades, setGrades] = useState<GradeDto[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
   const [gradeToEdit, setGradeToEdit] = useState<GradeDto | null>(null);
-  const [gradeToDelete, setGradeToDelete] = useState<GradeDto | null>(null);
 
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const {
+    itemToDelete: gradeToDelete,
+    isDeleting,
+    deleteError,
+    openDeleteModal,
+    closeDeleteModal,
+    handleDelete,
+  } = useDeleteModal<GradeDto>(
+    'Failed to delet the grade. Please try again later.',
+  );
 
   useEffect(() => {
     const loadGrades = async () => {
@@ -65,28 +68,13 @@ export default function GradePage() {
     setIsGradeModalOpen(false);
   };
 
-  const handleDelete = async () => {
-    if (!gradeToDelete) {
-      return;
-    }
-
-    try {
-      setIsDeleting(true);
-      setDeleteError(null);
-
-      await gradeService.deleteGrade(gradeToDelete.id);
-
-      setGrades((current) =>
-        current.filter((grade) => grade.id !== gradeToDelete.id),
-      );
-
-      setGradeToDelete(null);
-    } catch (error) {
-      console.error('Failed to delete grade:', error);
-      setDeleteError('Failed to delete grade. Please try again.');
-    } finally {
-      setIsDeleting(false);
-    }
+  const handleConfirmDelete = async () => {
+    await handleDelete(
+      (grade) => gradeService.deleteGrade(grade.id),
+      (deletedGrade) => {
+        setGrades((current) => current.filter((g) => g.id !== deletedGrade.id));
+      },
+    );
   };
 
   const showEmptyState = !isLoading && !fetchError && grades.length === 0;
@@ -164,10 +152,7 @@ export default function GradePage() {
 
                       <Button
                         variant="secondary"
-                        onClick={() => {
-                          setDeleteError(null);
-                          setGradeToDelete(grade);
-                        }}
+                        onClick={() => openDeleteModal(grade)}
                       >
                         Delete
                       </Button>
@@ -190,17 +175,18 @@ export default function GradePage() {
         onUpdateSuccess={handleGradeSaved}
       />
 
-      <DeleteGradeModal
+      <DeleteModal
         open={gradeToDelete !== null}
-        gradeName={gradeToDelete?.name ?? ''}
-        onConfirm={handleDelete}
-        onCancel={() => {
-          if (!isDeleting) {
-            setGradeToDelete(null);
-            setDeleteError(null);
-          }
-        }}
-        isDeleting={isDeleting}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete{' '}
+            <span className="font-semibold">{gradeToDelete?.name}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
+        isLoading={isDeleting}
         error={deleteError}
       />
     </>
