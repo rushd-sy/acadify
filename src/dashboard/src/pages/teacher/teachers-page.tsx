@@ -9,30 +9,33 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
 import DeleteModal from '@/components/ui/delete-modal';
 import { teacherService } from '@/services/teacher.service';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { Button } from '@/components/ui/button';
 import TeacherModal from '@/components/teacher/teacher-modal';
 import { PageHeader } from '@/components/ui/page-header';
+import { useDeleteModal } from '@/hooks/use-delete-modal';
 
 export default function TeachersPage() {
   const navigate = useNavigate();
-
   const [teachers, setTeachers] = useState<TeacherDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-
-  const [selectedTeacher, setSelectedTeacher] = useState<TeacherDto | null>(
-    null,
-  );
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [teacherToEditData, setTeacherToEditData] =
     useState<TeacherDetailsDto | null>(null);
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
+
+  const {
+    itemToDelete: teacherToDelete,
+    isDeleting,
+    deleteError,
+    openDeleteModal,
+    closeDeleteModal,
+    handleDelete,
+  } = useDeleteModal<TeacherDto>(
+    'Failed to delete the teacher. Please try again later.',
+  );
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -55,43 +58,15 @@ export default function TeachersPage() {
     fetchTeachers();
   }, []);
 
-  const handleDeleteClick = (teacher: TeacherDto) => {
-    setSelectedTeacher(teacher);
-    setDeleteError(null);
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleCloseDeleteModal = () => {
-    if (isDeleting) return;
-
-    setIsDeleteModalOpen(false);
-    setSelectedTeacher(null);
-    setDeleteError(null);
-  };
-
-  const handleDeleteTeacher = async () => {
-    if (!selectedTeacher) return;
-
-    try {
-      setIsDeleting(true);
-      setDeleteError(null);
-
-      await teacherService.deleteTeacher(selectedTeacher.userId);
-
-      setTeachers((currentTeachers) =>
-        currentTeachers.filter(
-          (teacher) => teacher.userId !== selectedTeacher.userId,
-        ),
-      );
-
-      setIsDeleteModalOpen(false);
-      setSelectedTeacher(null);
-    } catch (error) {
-      console.error('Failed to delete teacher:', error);
-      setDeleteError('Failed to delete teacher. Please try again.');
-    } finally {
-      setIsDeleting(false);
-    }
+  const handleConfirmDelete = async () => {
+    await handleDelete(
+      (teacherToRemove) => teacherService.deleteTeacher(teacherToRemove.userId),
+      (deletedTeacher) => {
+        setTeachers((current) =>
+          current.filter((teacher) => teacher.userId !== deletedTeacher.userId),
+        );
+      },
+    );
   };
 
   const handleUpdateSuccess = (updatedTeacher: TeacherDetailsDto) => {
@@ -195,7 +170,7 @@ export default function TeachersPage() {
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        handleDeleteClick(teacher);
+                        openDeleteModal(teacher);
                       }}
                       className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
                     >
@@ -209,21 +184,21 @@ export default function TeachersPage() {
         </Table>
 
         <DeleteModal
-          open={isDeleteModalOpen}
-          title="Delete Teacher"
+          open={teacherToDelete !== null}
+          title="Confirm Delete"
           message={
             <>
               Are you sure you want to delete{' '}
               <span className="font-semibold">
-                {selectedTeacher?.firstName} {selectedTeacher?.lastName}
+                {teacherToDelete?.firstName} {teacherToDelete?.lastName}
               </span>
               ?
             </>
           }
-          onConfirm={handleDeleteTeacher}
-          onClose={handleCloseDeleteModal}
+          onConfirm={handleConfirmDelete}
+          onClose={closeDeleteModal}
           isLoading={isDeleting}
-          error={deleteError ?? undefined}
+          error={deleteError}
         />
 
         <TeacherModal
