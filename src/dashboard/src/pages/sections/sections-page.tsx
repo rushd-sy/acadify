@@ -20,7 +20,9 @@ export default function SectionsPage() {
   const [sections, setSections] = useState<SectionDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [selectedSection, setSelectedSection] = useState<SectionDto | null>(null);
+  const [selectedSection, setSelectedSection] = useState<SectionDto | null>(
+    null,
+  );
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -31,7 +33,9 @@ export default function SectionsPage() {
     openDeleteModal,
     closeDeleteModal,
     handleDelete,
-  } = useDeleteModal<SectionDto>('Failed to delete the section. Please try again later.');
+  } = useDeleteModal<SectionDto>(
+    'Failed to delete the section. Please try again later.',
+  );
 
   useEffect(() => {
     let isMounted = true;
