@@ -24,19 +24,24 @@ export function useDeleteModal<T>(
     ) => {
       if (itemToDelete === null) return;
 
+      let deleteSuccessful = false;
+
       try {
         setIsDeleting(true);
         setDeleteError(undefined);
 
         await deleteAction(itemToDelete);
-
-        onSuccess?.(itemToDelete);
-        closeDeleteModal();
+        deleteSuccessful = true;
       } catch (error) {
         console.error('Delete action failed:', error);
         setDeleteError(errorMessage);
       } finally {
         setIsDeleting(false);
+      }
+
+      if (deleteSuccessful) {
+        onSuccess?.(itemToDelete);
+        closeDeleteModal();
       }
     },
     [itemToDelete, closeDeleteModal, errorMessage],

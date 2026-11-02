@@ -62,10 +62,11 @@ export default function StudentsPage() {
 
   const handleConfirmDelete = async () => {
     await handleDelete(
-      (student) => studentService.deleteStudentById(student.userId),
+      (studentToRemove) =>
+        studentService.deleteStudentById(studentToRemove.userId),
       (deletedStudent) => {
         setStudents((prev) =>
-          prev.filter((s) => s.userId !== deletedStudent.userId),
+          prev.filter((student) => student.userId !== deletedStudent.userId),
         );
       },
     );
@@ -192,7 +193,7 @@ export default function StudentsPage() {
       </div>
 
       <DeleteModal
-        open={!!studentToDelete}
+        open={studentToDelete !== null}
         title="Confirm Delete"
         message={
           <>
