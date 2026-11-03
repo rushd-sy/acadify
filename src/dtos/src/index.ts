@@ -8,3 +8,4 @@ export * from './section';
 export * from './section-teacher';
 export * from './exam';
 export * from './section-student/section-student.dto';
+export * from './exam-section';
