@@ -8,28 +8,34 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
 import { Button } from '@/components/ui/button';
 import DeleteModal from '@/components/ui/delete-modal';
 import SectionModal from '@/components/section/section-modal';
 import { sectionService } from '@/services/section.service';
 import type { SectionDto } from 'dtos';
 import { PageHeader } from '@/components/ui/page-header';
+import { useDeleteModal } from '@/hooks/use-delete-modal';
 
 export default function SectionsPage() {
   const [sections, setSections] = useState<SectionDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-
   const [selectedSection, setSelectedSection] = useState<SectionDto | null>(
     null,
   );
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
-
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const {
+    itemToDelete: sectionToDelete,
+    isDeleting,
+    deleteError,
+    openDeleteModal,
+    closeDeleteModal,
+    handleDelete,
+  } = useDeleteModal<SectionDto>(
+    'Failed to delete the section. Please try again later.',
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -83,46 +89,20 @@ export default function SectionsPage() {
     handleCloseSectionModal();
   };
 
-  const handleDeleteClick = (section: SectionDto) => {
-    setSelectedSection(section);
-    setDeleteError(null);
-    setIsDeleteModalOpen(true);
-  };
-
   const handleCreateSection = (createdSection: SectionDto) => {
     setSections((previousSections) => [...previousSections, createdSection]);
     handleCloseSectionModal();
   };
 
-  const handleCloseDeleteModal = () => {
-    if (isDeleting) return;
-
-    setIsDeleteModalOpen(false);
-    setSelectedSection(null);
-    setDeleteError(null);
-  };
-
-  const handleDeleteSection = async () => {
-    if (!selectedSection) return;
-
-    try {
-      setIsDeleting(true);
-      setDeleteError(null);
-
-      await sectionService.deleteSection(selectedSection.id);
-
-      setSections((currentSections) =>
-        currentSections.filter((section) => section.id !== selectedSection.id),
-      );
-
-      setIsDeleteModalOpen(false);
-      setSelectedSection(null);
-    } catch (error) {
-      console.error('Failed to delete section:', error);
-      setDeleteError('Failed to delete section. Please try again.');
-    } finally {
-      setIsDeleting(false);
-    }
+  const handleConfirmDelete = async () => {
+    await handleDelete(
+      (sectionToRemove) => sectionService.deleteSection(sectionToRemove.id),
+      (deletedSection) => {
+        setSections((current) =>
+          current.filter((section) => section.id !== deletedSection.id),
+        );
+      },
+    );
   };
 
   return (
@@ -199,7 +179,7 @@ export default function SectionsPage() {
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        handleDeleteClick(section);
+                        openDeleteModal(section);
                       }}
                       className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
                     >
@@ -213,18 +193,18 @@ export default function SectionsPage() {
         </Table>
 
         <DeleteModal
-          open={isDeleteModalOpen}
-          title="Delete Section"
+          open={sectionToDelete !== null}
+          title="Confirm Delete"
           message={
             <>
               Are you sure you want to delete{' '}
-              <span className="font-semibold">{selectedSection?.name}</span>?
+              <span className="font-semibold">{sectionToDelete?.name}</span>?
             </>
           }
-          onConfirm={handleDeleteSection}
-          onClose={handleCloseDeleteModal}
+          onConfirm={handleConfirmDelete}
+          onClose={closeDeleteModal}
           isLoading={isDeleting}
-          error={deleteError ?? undefined}
+          error={deleteError}
         />
       </div>
 

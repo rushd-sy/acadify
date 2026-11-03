@@ -8,24 +8,31 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-
-import DeleteCurriculumModal from '@/components/curriculum/delete-curriculum-modal';
+import DeleteModal from '@/components/ui/delete-modal';
 import CurriculumModal from '@/components/curriculum/curriculum-modal';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
 import { PageHeader } from '@/components/ui/page-header';
+import { useDeleteModal } from '@/hooks/use-delete-modal';
 
 export default function CurriculumsPage() {
   const [curriculums, setCurriculums] = useState<CurriculumDto[]>([]);
-  const [curriculumToDelete, setCurriculumToDelete] =
-    useState<CurriculumDto | null>(null);
   const [curriculumToEdit, setCurriculumToEdit] =
     useState<CurriculumDto | null>(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const {
+    itemToDelete: curriculumToDelete,
+    isDeleting,
+    deleteError,
+    openDeleteModal,
+    closeDeleteModal,
+    handleDelete,
+  } = useDeleteModal<CurriculumDto>(
+    'Failed to delete the curriculum. Please try again later.',
+  );
 
   const fetchCurriculums = async () => {
     try {
@@ -64,19 +71,14 @@ export default function CurriculumsPage() {
   }, []);
 
   const handleConfirmDelete = async () => {
-    if (!curriculumToDelete) return;
-    try {
-      setIsDeleting(true);
-      await curriculumService.deleteCurriculumById(curriculumToDelete.id);
-      setCurriculums((prev) =>
-        prev.filter((curriculum) => curriculum.id !== curriculumToDelete.id),
-      );
-      setCurriculumToDelete(null);
-    } catch (err) {
-      console.error('Failed to delete:', err);
-    } finally {
-      setIsDeleting(false);
-    }
+    await handleDelete(
+      (curriculum) => curriculumService.deleteCurriculumById(curriculum.id),
+      (deletedCurriculum) => {
+        setCurriculums((prev) =>
+          prev.filter((c) => c.id !== deletedCurriculum.id),
+        );
+      },
+    );
   };
 
   const handleFormSuccess = () => {
@@ -153,7 +155,7 @@ export default function CurriculumsPage() {
                       </Button>
                       <Button
                         variant="secondary"
-                        onClick={() => setCurriculumToDelete(curriculum)}
+                        onClick={() => openDeleteModal(curriculum)}
                       >
                         Delete
                       </Button>
@@ -166,12 +168,19 @@ export default function CurriculumsPage() {
         </Table>
       </div>
 
-      <DeleteCurriculumModal
-        open={!!curriculumToDelete}
-        curriculumName={curriculumToDelete?.name || ''}
-        onYes={handleConfirmDelete}
-        onNo={() => setCurriculumToDelete(null)}
+      <DeleteModal
+        open={curriculumToDelete !== null}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete the curriculum{' '}
+            <span className="font-semibold">{curriculumToDelete?.name}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
         isLoading={isDeleting}
+        error={deleteError}
       />
 
       <CurriculumModal

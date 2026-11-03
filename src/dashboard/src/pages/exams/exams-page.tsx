@@ -11,11 +11,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { PageHeader } from '@/components/ui/page-header';
-
 import { examService } from '@/services/exam.service';
 import type { ExamDto } from 'dtos';
-import DeleteExamModal from '@/components/exam/delete-exam-modal';
+import { useDeleteModal } from '@/hooks/use-delete-modal';
+import DeleteModal from '@/components/ui/delete-modal';
 import ExamModal from '@/components/exam/exam-modal';
+
 interface MenuPosition {
   top: number;
   left: number;
@@ -27,10 +28,18 @@ export default function ExamsPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
-  const [examToDelete, setExamToDelete] = useState<ExamDto | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    itemToDelete: examToDelete,
+    isDeleting,
+    deleteError,
+    openDeleteModal,
+    closeDeleteModal,
+    handleDelete,
+  } = useDeleteModal<ExamDto>(
+    'Failed to delete the exam. Please try again later.',
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -130,22 +139,16 @@ export default function ExamsPage() {
   const handleDeleteExam = (exam: ExamDto) => {
     setOpenMenuId(null);
     setMenuPosition(null);
-    setDeleteError(null);
-    setExamToDelete(exam);
+    openDeleteModal(exam);
   };
 
   const handleConfirmDelete = async () => {
-    if (!examToDelete) return;
-    try {
-      setIsDeleting(true);
-      await examService.deleteExamById(examToDelete.id);
-      setExams((prev) => prev.filter((exam) => exam.id !== examToDelete.id));
-      setExamToDelete(null);
-    } catch (error) {
-      console.log('Failed to delete:', error);
-    } finally {
-      setIsDeleting(false);
-    }
+    await handleDelete(
+      (examToRemove) => examService.deleteExamById(examToRemove.id),
+      (deletedExam) => {
+        setExams((prev) => prev.filter((exam) => exam.id !== deletedExam.id));
+      },
+    );
   };
 
   const handleCreateSuccess = (createdExam: ExamDto) => {
@@ -344,13 +347,19 @@ export default function ExamsPage() {
           </div>,
           document.body,
         )}
-      <DeleteExamModal
-        open={!!examToDelete}
-        examName={examToDelete?.title || ''}
-        onYes={handleConfirmDelete}
-        onNo={() => setExamToDelete(null)}
+      <DeleteModal
+        open={examToDelete !== null}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete the exam{' '}
+            <span className="font-semibold">{examToDelete?.title}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
         isLoading={isDeleting}
-        error={deleteError ?? undefined}
+        error={deleteError}
       />
 
       <ExamModal
