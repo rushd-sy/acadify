@@ -7,6 +7,11 @@ export class UserDomain {
   email: string;
   phoneNumber: string;
   hashedPassword: string;
+  createdBy?: number;
+  createAt?: Date;
+  updatedBy?: number;
+  updatedAt?: Date;
+  archivedAt?: Date;
 
   private constructor(input: {
     id: number;
@@ -15,6 +20,11 @@ export class UserDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
+    createdBy?: number;
+    createAt?: Date;
+    updatedBy?: number;
+    updatedAt?: Date;
+    archivedAt?: Date;
   }) {
     this.id = input.id;
     this.firstName = StringUtils.normalizeRequiredText(
@@ -34,6 +44,11 @@ export class UserDomain {
       input.hashedPassword,
       'Password',
     );
+    this.createdBy = input.createdBy;
+    this.createAt = input.createAt;
+    this.updatedBy = input.updatedBy;
+    this.updatedAt = input.updatedAt;
+    this.archivedAt = input.archivedAt;
   }
 
   static create(input: {
