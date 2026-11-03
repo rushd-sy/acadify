@@ -11,6 +11,12 @@ model Student {
   userId Int  @id
   user   User @relation(fields: [userId], references: [id])
   studentSections StudentSection[]
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 model Teacher {
@@ -18,6 +24,12 @@ model Teacher {
   degree String
   user User @relation(fields: [userId], references: [id])
   sectionCurriculumTeachers SectionCurriculumTeacher[]
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 model User {
@@ -27,16 +39,26 @@ model User {
   phoneNumber    String   @unique
   email          String   @unique
   hashedPassword String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
   student        Student?
   teacher        Teacher?
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 model Grade {
   id       Int       @id @default(autoincrement())
   name     String
   sections Section[]
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 model Curriculum {
@@ -44,6 +66,12 @@ model Curriculum {
   name        String
   description String?
   sectionCurriculumTeachers SectionCurriculumTeacher[]
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 model Section {
@@ -54,6 +82,12 @@ model Section {
   grade        Grade  @relation(fields: [gradeId], references: [id])
   sectionCurriculumTeachers SectionCurriculumTeacher[]
   studentSections StudentSection[]
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 
@@ -66,6 +100,12 @@ model Exam {
   documentUrl        String?
   minScore       Float
   maxScore       Float
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 
@@ -78,6 +118,12 @@ model SectionCurriculumTeacher {
   teacher Teacher @relation(fields: [userId], references: [userId])
   curriculum Curriculum @relation(fields: [curriculumId], references: [id])
   section Section @relation(fields: [sectionId], references: [id])
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 }
 
 
@@ -91,6 +137,12 @@ model StudentSection {
 
   student Student @relation(fields: [studentId], references: [userId])
   section Section @relation(fields: [sectionId], references: [id])
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt  DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?
 
   @@unique([studentId, sectionId])
 }

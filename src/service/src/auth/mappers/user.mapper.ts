@@ -57,6 +57,9 @@ export class UserMapper {
       email: user.email,
       phoneNumber: user.phoneNumber,
       hashedPassword: user.hashedPassword,
+      createdBy: user.createdBy ?? null,
+      updatedBy: user.updatedBy ?? null,
+      archivedAt: user.archivedAt ?? null,
     };
   }
 }
