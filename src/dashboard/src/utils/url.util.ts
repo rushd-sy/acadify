@@ -1,9 +1,8 @@
 export function isValidUrl(value: string): boolean {
-  if (!value.trim()) return true;
-
   try {
-    new URL(value);
-    return true;
+    const { protocol } = new URL(value);
+
+    return protocol === 'http:' || protocol === 'https:';
   } catch {
     return false;
   }

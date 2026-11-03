@@ -97,18 +97,32 @@ const validateExamForm = (data: ExamFormData) => {
 
 export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
   const [curriculums, setCurriculums] = useState<CurriculumDto[]>([]);
+  const [curriculumError, setCurriculumError] = useState('');
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchCurriculums = async () => {
       try {
         const data = await curriculumService.getAllCurriculums();
-        setCurriculums(data);
+
+        if (isMounted) {
+          setCurriculums(data);
+        }
       } catch (error) {
         console.error('Failed to fetch curriculums:', error);
+
+        if (isMounted) {
+          setCurriculumError('Failed to load curriculums.');
+        }
       }
     };
 
     fetchCurriculums();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
   const examAction = async (
     _prevState: ExamFormState,
@@ -212,7 +226,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel>Curriculum Id</FieldLabel>
+          <FieldLabel>Curriculum</FieldLabel>
           <Select
             name="curriculumId"
             defaultValue={
@@ -228,15 +242,13 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
             <SelectContent>
               {curriculums.map((curriculum) => (
                 <SelectItem key={curriculum.id} value={String(curriculum.id)}>
-                  {curriculum.id} - {curriculum.name}
+                  {curriculum.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          {state.fieldErrors.curriculumId && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.curriculumId}
-            </p>
+          {curriculumError && (
+            <p className="text-sm text-destructive">{curriculumError}</p>
           )}
         </Field>
 
