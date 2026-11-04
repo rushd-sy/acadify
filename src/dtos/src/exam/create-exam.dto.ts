@@ -27,7 +27,10 @@ export class CreateExamDto {
   curriculumId?: number;
 
   @IsOptional()
-  @IsUrl()
+  @IsUrl({
+    protocols: ['http', 'https'],
+    require_protocol: true,
+  })
   documentUrl?: string;
 
   @IsNotEmpty()
@@ -37,6 +40,5 @@ export class CreateExamDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @Min(1)
   maxScore!: number;
 }
