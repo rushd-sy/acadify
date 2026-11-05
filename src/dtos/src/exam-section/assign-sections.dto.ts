@@ -2,15 +2,30 @@ import {
   IsArray,
   ArrayNotEmpty,
   ArrayUnique,
+  IsDateString,
   IsInt,
   Min,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class AssignSectionDto {
+  @IsInt()
+  @Min(1)
+  sectionId!: number;
+
+  @IsDateString()
+  startAt!: string;
+
+  @IsDateString()
+  endAt!: string;
+}
 
 export class AssignSectionsDto {
   @IsArray()
   @ArrayNotEmpty()
-  @ArrayUnique()
-  @IsInt({ each: true })
-  @Min(1, { each: true })
-  sectionIds!: number[];
+  @ArrayUnique((section: AssignSectionDto) => section.sectionId)
+  @ValidateNested({ each: true })
+  @Type(() => AssignSectionDto)
+  sections!: AssignSectionDto[];
 }
