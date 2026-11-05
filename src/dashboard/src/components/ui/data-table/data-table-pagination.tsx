@@ -45,9 +45,7 @@ export function DataTablePagination({
               key={pageItem}
               type="button"
               onClick={() => onPageChange(pageItem)}
-              aria-current={
-                pageItem === currentPage ? 'page' : undefined
-              }
+              aria-current={pageItem === currentPage ? 'page' : undefined}
               className={cn(
                 'flex h-8 min-w-8 items-center justify-center rounded-md border px-2 transition-colors',
                 pageItem === currentPage

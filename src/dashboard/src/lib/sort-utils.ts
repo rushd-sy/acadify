@@ -1,8 +1,4 @@
-export type SortableValue =
-  | string
-  | number
-  | null
-  | undefined;
+export type SortableValue = string | number | null | undefined;
 
 export function compareValues(
   first: SortableValue,

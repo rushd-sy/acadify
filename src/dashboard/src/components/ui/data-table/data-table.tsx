@@ -1,8 +1,4 @@
-import type {
-  KeyboardEvent,
-  MouseEvent,
-  ReactNode,
-} from 'react';
+import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import { Input } from '@/components/ui/input';
 import {
@@ -18,11 +14,7 @@ import { cn } from '@/lib/utils';
 
 import { DataTablePagination } from './data-table-pagination';
 import { SortableHeader } from './sortable-header';
-import {
-  getCellValue,
-  getDisplayedRows,
-  getRowKey,
-} from './utils';
+import { getCellValue, getDisplayedRows, getRowKey } from './utils';
 import type { DataTableProps } from './types';
 
 function DataTable<T>({
@@ -47,18 +39,14 @@ function DataTable<T>({
   const hasActions = actions !== undefined;
   const columnCount = columns.length + (hasActions ? 1 : 0);
 
-  const {
-    displayedData,
-    pageCount,
-    currentPage,
-    visiblePages,
-  } = getDisplayedRows<T>({
-    data,
-    columns,
-    search,
-    sorting,
-    pagination,
-  });
+  const { displayedData, pageCount, currentPage, visiblePages } =
+    getDisplayedRows<T>({
+      data,
+      columns,
+      search,
+      sorting,
+      pagination,
+    });
 
   const resetPage = () => {
     if (pagination && pagination.page !== 1) {
@@ -66,10 +54,7 @@ function DataTable<T>({
     }
   };
 
-  const renderState = (
-    content: ReactNode,
-    stateClassName?: string,
-  ) => (
+  const renderState = (content: ReactNode, stateClassName?: string) => (
     <TableRow>
       <TableCell
         colSpan={columnCount}
@@ -80,10 +65,7 @@ function DataTable<T>({
     </TableRow>
   );
 
-  const handleRowClick = (
-    event: MouseEvent<HTMLTableRowElement>,
-    row: T,
-  ) => {
+  const handleRowClick = (event: MouseEvent<HTMLTableRowElement>, row: T) => {
     if (!onRowClick) return;
 
     const target = event.target;
@@ -133,12 +115,8 @@ function DataTable<T>({
       )}
 
       <div className="w-full min-w-0 overflow-x-auto rounded-md">
-        <Table
-          className={cn('w-full table-auto text-sm', className)}
-        >
-          {caption && (
-            <TableCaption>{caption}</TableCaption>
-          )}
+        <Table className={cn('w-full table-auto text-sm', className)}>
+          {caption && <TableCaption>{caption}</TableCaption>}
 
           <TableHeader>
             <TableRow className="border-b">
@@ -146,8 +124,7 @@ function DataTable<T>({
                 <TableHead
                   key={column.id}
                   aria-sort={
-                    sorting?.columnId === column.id &&
-                    sorting.direction
+                    sorting?.columnId === column.id && sorting.direction
                       ? sorting.direction === 'asc'
                         ? 'ascending'
                         : 'descending'
@@ -159,8 +136,7 @@ function DataTable<T>({
                     'h-14 whitespace-nowrap px-4 font-semibold',
                     {
                       'text-left':
-                        column.align === undefined ||
-                        column.align === 'left',
+                        column.align === undefined || column.align === 'left',
                       'text-center': column.align === 'center',
                       'text-right': column.align === 'right',
                     },
@@ -186,64 +162,54 @@ function DataTable<T>({
           <TableBody>
             {isLoading
               ? renderState(
-                  <div className="flex justify-center">
-                    {loadingMessage}
-                  </div>,
+                  <div className="flex justify-center">{loadingMessage}</div>,
                 )
               : error
                 ? renderState(error, 'text-red-600')
                 : displayedData.length === 0
                   ? renderState(emptyMessage)
-                  : displayedData.map(
-                      (row: T, index: number) => (
-                        <TableRow
-                          key={getRowKey(row, index, rowKey)}
-                          tabIndex={onRowClick ? 0 : undefined}
-                          className={cn(
-                            'h-[72px]',
-                            onRowClick && 'cursor-pointer',
-                            typeof rowClassName === 'function'
-                              ? rowClassName(row)
-                              : rowClassName,
-                          )}
-                          onClick={(event) =>
-                            handleRowClick(event, row)
-                          }
-                          onKeyDown={(event) =>
-                            handleRowKeyDown(event, row)
-                          }
-                        >
-                          {columns.map((column) => (
-                            <TableCell
-                              key={column.id}
-                              className={cn(
-                                'px-4',
-                                {
-                                  'text-left':
-                                    column.align === undefined ||
-                                    column.align === 'left',
-                                  'text-center':
-                                    column.align === 'center',
-                                  'text-right':
-                                    column.align === 'right',
-                                },
-                                column.className,
-                              )}
-                            >
-                              {getCellValue(row, column)}
-                            </TableCell>
-                          ))}
+                  : displayedData.map((row: T, index: number) => (
+                      <TableRow
+                        key={getRowKey(row, index, rowKey)}
+                        tabIndex={onRowClick ? 0 : undefined}
+                        className={cn(
+                          'h-[72px]',
+                          onRowClick && 'cursor-pointer',
+                          typeof rowClassName === 'function'
+                            ? rowClassName(row)
+                            : rowClassName,
+                        )}
+                        onClick={(event) => handleRowClick(event, row)}
+                        onKeyDown={(event) => handleRowKeyDown(event, row)}
+                      >
+                        {columns.map((column) => (
+                          <TableCell
+                            key={column.id}
+                            className={cn(
+                              'px-4',
+                              {
+                                'text-left':
+                                  column.align === undefined ||
+                                  column.align === 'left',
+                                'text-center': column.align === 'center',
+                                'text-right': column.align === 'right',
+                              },
+                              column.className,
+                            )}
+                          >
+                            {getCellValue(row, column)}
+                          </TableCell>
+                        ))}
 
-                          {hasActions && (
-                            <TableCell className="px-4 text-center">
-                              {typeof actions === 'function'
-                                ? actions(row)
-                                : actions}
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      ),
-                    )}
+                        {hasActions && (
+                          <TableCell className="px-4 text-center">
+                            {typeof actions === 'function'
+                              ? actions(row)
+                              : actions}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))}
           </TableBody>
         </Table>
 
