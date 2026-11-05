@@ -46,6 +46,7 @@ export class ExamRepository {
         title: examDomain.title,
         date: examDomain.date,
         documentUrl: examDomain.documentUrl,
+        curriculumId: examDomain.curriculumId,
         minScore: examDomain.minScore,
         maxScore: examDomain.maxScore,
       },
