@@ -8,11 +8,13 @@ import { SectionDtoMapper } from '../mappers/section.dto.mapper';
 import { SectionDomainMapper } from '../mappers/section.domain.mapper';
 import {
   CreateSectionDto,
+  AddSectionTeacherDto,
   SectionCurriculumTeacherDto,
   SectionDto,
   SectionStudentDto,
   UpdateSectionDto,
 } from 'dtos';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class SectionService {
@@ -121,5 +123,66 @@ export class SectionService {
     if (!isDeleted) {
       throw new NotFoundException(`Section with ID ${id} not found`);
     }
+  }
+
+  async addTeacher(
+    sectionId: number,
+    data: AddSectionTeacherDto,
+  ): Promise<SectionDto> {
+    const section = await this.repository.findById(sectionId);
+    if (!section) {
+      throw new NotFoundException(`Section with ID ${sectionId} not found`);
+    }
+
+    if (
+      section.sectionCurriculumTeachers.some(
+        (assignment) => assignment.teacherId === data.teacherId,
+      )
+    ) {
+      throw new ConflictException(
+        'Teacher is already assigned to this section',
+      );
+    }
+
+    try {
+      await this.repository.assignTeacher(sectionId, data.teacherId);
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        (error.code === 'P2025' || error.code === 'P2003')
+      ) {
+        throw new NotFoundException(
+          `Teacher with ID ${data.teacherId} not found`,
+        );
+      }
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException(
+          'Teacher is already assigned to this section',
+        );
+      }
+      throw error;
+    }
+
+    return this.findById(sectionId);
+  }
+
+  async removeTeacher(
+    sectionId: number,
+    teacherId: number,
+  ): Promise<SectionDto> {
+    const section = await this.repository.findById(sectionId);
+    if (!section) {
+      throw new NotFoundException(`Section with ID ${sectionId} not found`);
+    }
+
+    const removed = await this.repository.removeTeacher(sectionId, teacherId);
+    if (!removed) {
+      throw new NotFoundException('Teacher is not assigned to this section');
+    }
+
+    return this.findById(sectionId);
   }
 }

@@ -11,7 +11,12 @@ import {
 } from '@nestjs/common';
 
 import { SectionService } from '../services/section.service';
-import { CreateSectionDto, SectionDto, UpdateSectionDto } from 'dtos';
+import {
+  AddSectionTeacherDto,
+  CreateSectionDto,
+  SectionDto,
+  UpdateSectionDto,
+} from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -47,5 +52,21 @@ export class SectionController {
   @Delete(':id')
   deleteSection(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.sectionService.deleteSection(id);
+  }
+
+  @Post(':id/teachers')
+  addTeacher(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: AddSectionTeacherDto,
+  ): Promise<SectionDto> {
+    return this.sectionService.addTeacher(id, data);
+  }
+
+  @Delete(':id/teachers/:teacherId')
+  removeTeacher(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('teacherId', ParseIntPipe) teacherId: number,
+  ): Promise<SectionDto> {
+    return this.sectionService.removeTeacher(id, teacherId);
   }
 }

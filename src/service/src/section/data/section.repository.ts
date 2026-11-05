@@ -61,6 +61,33 @@ export class SectionRepository {
     });
   }
 
+  async assignTeacher(sectionId: number, teacherId: number): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      const curriculum =
+        (await tx.curriculum.findFirst({
+          where: { name: { equals: 'Unassigned', mode: 'insensitive' } },
+        })) ??
+        (await tx.curriculum.create({
+          data: { name: 'Unassigned' },
+        }));
+
+      await tx.sectionCurriculumTeacher.create({
+        data: {
+          sectionId,
+          userId: teacherId,
+          curriculumId: curriculum.id,
+        },
+      });
+    });
+  }
+
+  async removeTeacher(sectionId: number, teacherId: number): Promise<boolean> {
+    const result = await this.prisma.sectionCurriculumTeacher.deleteMany({
+      where: { sectionId, userId: teacherId },
+    });
+    return result.count > 0;
+  }
+
   async existsByName(name: string, excludeId?: number): Promise<boolean> {
     const section = await this.prisma.section.findFirst({
       where: {

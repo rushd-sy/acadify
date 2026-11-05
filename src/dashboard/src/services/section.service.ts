@@ -34,6 +34,24 @@ class SectionService {
   async deleteSection(id: number): Promise<void> {
     await api.delete(`${this.baseUrl}/${id}`);
   }
+
+  async addTeacher(sectionId: number, teacherId: number): Promise<SectionDto> {
+    const response = await api.post<SectionDto>(
+      `${this.baseUrl}/${sectionId}/teachers`,
+      { teacherId },
+    );
+    return response.data;
+  }
+
+  async removeTeacher(
+    sectionId: number,
+    teacherId: number,
+  ): Promise<SectionDto> {
+    const response = await api.delete<SectionDto>(
+      `${this.baseUrl}/${sectionId}/teachers/${teacherId}`,
+    );
+    return response.data;
+  }
 }
 
 export const sectionService = new SectionService();
