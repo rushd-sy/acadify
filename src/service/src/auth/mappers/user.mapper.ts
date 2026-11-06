@@ -35,6 +35,11 @@ export class UserMapper {
       email: user.email,
       phoneNumber: user.phoneNumber,
       hashedPassword: user.hashedPassword,
+      createdBy: user.createdBy ?? undefined,
+      createdAt: user.createdAt,
+      updatedBy: user.updatedBy ?? undefined,
+      updatedAt: user.updatedAt,
+      archivedAt: user.archivedAt ?? undefined,
     });
   }
 

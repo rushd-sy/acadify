@@ -1,43 +1,42 @@
 import { UserDomain } from 'src/auth/domain/user.domain';
-import { ITraceable } from 'src/utils/traceable.interface';
+import { TraceableDomain } from '../../utils/traceable.domain';
 
-export class StudentDomain implements ITraceable {
+export class StudentDomain extends TraceableDomain {
   userId: number;
   user: UserDomain;
-  createdBy?: number;
-  createdAt?: Date;
-  upadtedBy?: number;
-  updatedAt?: Date;
-  archivedAt?: Date;
 
   private constructor(input: {
     userId: number;
     user: UserDomain;
     createdBy?: number;
-    createdAt?: Date;
-    upadtedBy?: number;
-    updatedAt?: Date;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt: Date;
     archivedAt?: Date;
   }) {
+    super(input);
     this.userId = input.userId;
     this.user = input.user;
-    this.createdBy = input.createdBy;
-    this.createdAt = input.createdAt;
-    this.upadtedBy = input.upadtedBy;
-    this.updatedAt = input.updatedAt;
-    this.archivedAt = input.archivedAt;
   }
 
-  static create(user: UserDomain): StudentDomain {
+  static create(user: UserDomain, createdBy?: number): StudentDomain {
     return new StudentDomain({
       userId: -1,
       user,
+      createdBy,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
   static fromPersistence(input: {
     userId: number;
     user: UserDomain;
+    createdBy?: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt: Date;
+    archivedAt?: Date;
   }): StudentDomain {
     return new StudentDomain(input);
   }

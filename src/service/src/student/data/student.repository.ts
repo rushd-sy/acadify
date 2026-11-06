@@ -11,6 +11,7 @@ export class StudentRepository {
 
   async createStudentWithUser(
     studentDomain: StudentDomain,
+    actionById?: number,
   ): Promise<StudentWithUser> {
     const hashedPassword = await bcrypt.hash(
       studentDomain.user.hashedPassword,
@@ -24,12 +25,14 @@ export class StudentRepository {
           email: studentDomain.user.email,
           phoneNumber: studentDomain.user.phoneNumber,
           hashedPassword: hashedPassword,
+          createdBy: actionById,
         },
       });
 
       const createdStudent = await tx.student.create({
         data: {
           userId: createdUser.id,
+          createdBy: actionById,
         },
         include: {
           user: true,
@@ -56,15 +59,18 @@ export class StudentRepository {
     });
   }
 
-  async deleteById(userId: number): Promise<void> {
+  async deleteById(userId: number, actionById?: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
       const student = await this.findById(userId);
       if (student) {
-        await tx.student.delete({
+        const now = new Date();
+        await tx.student.update({
           where: { userId },
+          data: { archivedAt: now, updatedBy: actionById },
         });
-        await tx.user.delete({
+        await tx.user.update({
           where: { id: userId },
+          data: { archivedAt: now, updatedBy: actionById },
         });
       }
     });
@@ -73,6 +79,7 @@ export class StudentRepository {
   async updateStudentData(
     userId: number,
     updateData: UpdateStudentDto,
+    actionById?: number,
   ): Promise<StudentWithUser | null> {
     const student = await this.findById(userId);
 
@@ -87,7 +94,13 @@ export class StudentRepository {
         lastName: updateData.lastName ?? student.user.lastName,
         email: updateData.email ?? student.user.email,
         phoneNumber: updateData.phoneNumber ?? student.user.phoneNumber,
+        updatedBy: actionById,
       },
+    });
+
+    await this.prisma.student.update({
+      where: { userId },
+      data: { updatedBy: actionById },
     });
 
     return this.findById(userId);
