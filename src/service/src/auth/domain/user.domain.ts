@@ -1,6 +1,7 @@
 import { StringUtils } from '../../utils/string.util';
+import { TraceableDomain } from 'src/utils/traceable.domain';
 
-export class UserDomain {
+export class UserDomain extends TraceableDomain {
   id: number;
   firstName: string;
   lastName: string;
@@ -15,7 +16,13 @@ export class UserDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
+    createdBy?: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt: Date;
+    archivedAt?: Date;
   }) {
+    super(input);
     this.id = input.id;
     this.firstName = StringUtils.normalizeRequiredText(
       input.firstName,
@@ -42,10 +49,13 @@ export class UserDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
+    createdBy?: number;
   }): UserDomain {
     return new UserDomain({
       id: -1,
       ...input,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
@@ -56,6 +66,11 @@ export class UserDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
+    createdBy?: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt: Date;
+    archivedAt?: Date;
   }): UserDomain {
     return new UserDomain(input);
   }

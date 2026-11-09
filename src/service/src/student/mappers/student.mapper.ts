@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import {
   CreateStudentDto,
   Role,
@@ -7,11 +6,8 @@ import {
   StudentDto,
   UpdateStudentDto,
 } from 'dtos';
-
 import { StudentDomain } from '../domain/student.domain';
-
 import { UserDomain } from '../../auth/domain/user.domain';
-
 import { StudentWithUser } from '../types/student-user.type';
 
 @Injectable()
@@ -23,6 +19,11 @@ export class StudentMapper {
       lastName: student.user.lastName,
       email: student.user.email,
       role: Role.STUDENT,
+      createdBy: student.createdBy ?? undefined,
+      createdAt: student.createdAt,
+      updatedBy: student.updatedBy ?? undefined,
+      updatedAt: student.updatedAt,
+      archivedAt: student.archivedAt ?? undefined,
     };
   }
 
@@ -41,16 +42,20 @@ export class StudentMapper {
     };
   }
 
-  toDomainFromCreateDto(createStudentDto: CreateStudentDto): StudentDomain {
+  toDomainFromCreateDto(
+    createStudentDto: CreateStudentDto,
+    actionById?: number,
+  ): StudentDomain {
     const userDomain = UserDomain.create({
       firstName: createStudentDto.firstName,
       lastName: createStudentDto.lastName,
       email: createStudentDto.email,
       phoneNumber: createStudentDto.phoneNumber,
       hashedPassword: createStudentDto.hashedPassword,
+      createdBy: actionById,
     });
 
-    return StudentDomain.create(userDomain);
+    return StudentDomain.create(userDomain, actionById);
   }
 
   toUpdateUserData(updateStudentDto: UpdateStudentDto): UpdateStudentDto {

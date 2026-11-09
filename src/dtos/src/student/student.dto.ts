@@ -6,4 +6,9 @@ export class StudentDto {
   lastName!: string;
   email!: string;
   role!: Role;
+  createdBy?: number;
+  createdAt?: Date;
+  updatedBy?: number;
+  updatedAt?: Date;
+  archivedAt?: Date;
 }
