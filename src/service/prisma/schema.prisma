@@ -80,9 +80,10 @@ model Section {
   academicYear String
   gradeId      Int
 
-  grade        Grade  @relation(fields: [gradeId], references: [id])
-  sectionCurriculumTeachers SectionCurriculumTeacher[]
-  studentSections StudentSection[]
+  grade                       Grade  @relation(fields: [gradeId], references: [id])
+  sectionCurriculumTeachers   SectionCurriculumTeacher[]
+  studentSections             StudentSection[]
+  examSections                ExamSection[]
 
   createdAt      DateTime @default(now())
   createdBy      Int?
@@ -101,6 +102,8 @@ model Exam {
   documentUrl        String?
   minScore       Float
   maxScore       Float
+
+  examSections   ExamSection[]
 
   createdAt      DateTime @default(now())
   createdBy      Int?
