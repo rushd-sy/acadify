@@ -46,7 +46,7 @@ export class ExamDomain {
   }
 
   private static assertScoreRange(minScore: number, maxScore: number): void {
-    if (minScore <= 0 || maxScore <= 0 || maxScore <= minScore) {
+    if (minScore < 0 || maxScore <= 0 || maxScore <= minScore) {
       throw new InvalidExamScoreRangeError(minScore, maxScore);
     }
   }

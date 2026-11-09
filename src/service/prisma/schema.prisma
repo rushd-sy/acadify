@@ -79,6 +79,7 @@ model Section {
   name         String
   academicYear String
   gradeId      Int
+
   grade        Grade  @relation(fields: [gradeId], references: [id])
   sectionCurriculumTeachers SectionCurriculumTeacher[]
   studentSections StudentSection[]
@@ -145,4 +146,22 @@ model StudentSection {
   archivedAt     DateTime?
 
   @@unique([studentId, sectionId])
+}
+
+model ExamSection {
+  id Int @id @default(autoincrement())
+  examId Int
+  sectionId Int
+
+  exam Exam @relation(fields: [examId], references: [id])
+  section Section @relation(fields: [sectionId], references: [id])
+
+  createdAt      DateTime @default(now())
+  createdBy      Int?
+  updatedAt      DateTime  @default(now()) @updatedAt
+  updatedBy      Int?
+  archivedAt     DateTime?  
+
+  @@unique([examId, sectionId])
+  @@index([sectionId])
 }

@@ -5,6 +5,8 @@ import {
   IsInt,
   IsDateString,
   IsNumber,
+  IsUrl,
+  Min,
 } from 'class-validator';
 
 export class CreateExamDto {
@@ -25,11 +27,15 @@ export class CreateExamDto {
   curriculumId?: number;
 
   @IsOptional()
-  @IsString()
+  @IsUrl({
+    protocols: ['http', 'https'],
+    require_protocol: true,
+  })
   documentUrl?: string;
 
   @IsNotEmpty()
   @IsNumber()
+  @Min(0)
   minScore!: number;
 
   @IsNotEmpty()
