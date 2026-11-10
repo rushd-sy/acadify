@@ -21,11 +21,6 @@ export class GradeMapper {
     return {
       id: gradeDomain.id,
       name: gradeDomain.name,
-      createdBy: gradeDomain.createdBy ?? undefined,
-      createdAt: gradeDomain.createdAt,
-      updatedBy: gradeDomain.updatedBy ?? undefined,
-      updatedAt: gradeDomain.updatedAt,
-      archivedAt: gradeDomain.archivedAt ?? undefined,
     };
   }
 

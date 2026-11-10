@@ -24,11 +24,6 @@ export class CurriculumMapper {
       id: curriculumDomain.id,
       name: curriculumDomain.name,
       description: curriculumDomain.description,
-      createdBy: curriculumDomain.createdBy ?? undefined,
-      createdAt: curriculumDomain.createdAt,
-      updatedBy: curriculumDomain.updatedBy ?? undefined,
-      updatedAt: curriculumDomain.updatedAt,
-      archivedAt: curriculumDomain.archivedAt ?? undefined,
     };
   }
 

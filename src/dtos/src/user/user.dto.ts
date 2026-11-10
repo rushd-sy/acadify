@@ -7,9 +7,4 @@ export class UserDto {
   email!: string;
   phoneNumber!: string;
   role!: Role;
-  createdBy?: number;
-  createdAt?: Date;
-  updatedBy?: number;
-  updatedAt?: Date;
-  archivedAt?: Date;
 }
