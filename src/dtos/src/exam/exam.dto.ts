@@ -7,4 +7,9 @@ export class ExamDto {
   documentUrl?: string;
   minScore!: number;
   maxScore!: number;
+  createdBy?: number;
+  createdAt!: Date;
+  updatedBy?: number;
+  updatedAt!: Date;
+  archivedAt?: Date;
 }

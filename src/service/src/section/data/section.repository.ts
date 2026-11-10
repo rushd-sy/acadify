@@ -22,6 +22,7 @@ export class SectionRepository {
     });
     return section ? this.mapper.toDomain(section) : null;
   }
+
   async findAll(): Promise<SectionDomain[]> {
     const sections = await this.prisma.section.findMany({
       orderBy: { name: 'asc' },
@@ -71,11 +72,18 @@ export class SectionRepository {
     return !!section;
   }
 
-  async save(section: SectionDomain): Promise<SectionDomain> {
+  async save(
+    section: SectionDomain,
+    actionById?: number,
+  ): Promise<SectionDomain> {
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const savedSectionId = await this.upsertSection(tx, section);
-        await this.upsertAssignments(tx, savedSectionId, section);
+        const savedSectionId = await this.upsertSection(
+          tx,
+          section,
+          actionById,
+        );
+        await this.upsertAssignments(tx, savedSectionId, section, actionById);
 
         const completeSection = await tx.section.findUnique({
           where: { id: savedSectionId },
@@ -93,6 +101,7 @@ export class SectionRepository {
   private async upsertSection(
     tx: Prisma.TransactionClient,
     section: SectionDomain,
+    actionById?: number,
   ): Promise<number> {
     const sectionData = {
       name: section.name,
@@ -100,21 +109,33 @@ export class SectionRepository {
       gradeId: section.gradeId,
     };
 
-    const isUpdate =
-      section.id > 0
-        ? await tx.section.update({
-            where: { id: section.id },
-            data: sectionData,
-          })
-        : await tx.section.create({ data: sectionData });
+    const isUpdate = section.id > 0;
 
-    return isUpdate.id;
+    if (isUpdate) {
+      const updated = await tx.section.update({
+        where: { id: section.id },
+        data: {
+          ...sectionData,
+          updatedBy: actionById,
+        },
+      });
+      return updated.id;
+    } else {
+      const created = await tx.section.create({
+        data: {
+          ...sectionData,
+          createdBy: actionById,
+        },
+      });
+      return created.id;
+    }
   }
 
   private async upsertAssignments(
     tx: Prisma.TransactionClient,
     sectionId: number,
     section: SectionDomain,
+    actionById?: number,
   ): Promise<void> {
     const newAssignments = section.sectionCurriculumTeachers.filter(
       (assignment) => assignment.id === null,
@@ -142,6 +163,7 @@ export class SectionRepository {
           sectionId: sectionId,
           userId: assignment.teacherId,
           curriculumId: assignment.curriculumId,
+          createdBy: actionById,
         })),
       });
     }
@@ -159,13 +181,24 @@ export class SectionRepository {
     }
   }
 
-  async deleteById(id: number): Promise<boolean> {
+  async deleteById(id: number, actionById?: number): Promise<boolean> {
     try {
       await this.prisma.$transaction(async (tx) => {
-        await tx.sectionCurriculumTeacher.deleteMany({
+        const now = new Date();
+        await tx.sectionCurriculumTeacher.updateMany({
           where: { sectionId: id },
+          data: {
+            archivedAt: now,
+            updatedBy: actionById,
+          },
         });
-        await tx.section.delete({ where: { id } });
+        await tx.section.update({
+          where: { id },
+          data: {
+            archivedAt: now,
+            updatedBy: actionById,
+          },
+        });
       });
       return true;
     } catch (error) {

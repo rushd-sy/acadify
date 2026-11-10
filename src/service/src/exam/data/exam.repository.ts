@@ -23,10 +23,14 @@ export class ExamRepository {
     return exams.map((exam) => this.mapper.toDomain(exam));
   }
 
-  async deleteById(id: number): Promise<boolean> {
+  async deleteById(id: number, actionById?: number): Promise<boolean> {
     try {
-      await this.prisma.exam.delete({
+      await this.prisma.exam.update({
         where: { id },
+        data: {
+          archivedAt: new Date(),
+          updatedBy: actionById,
+        },
       });
       return true;
     } catch (error) {
@@ -39,7 +43,10 @@ export class ExamRepository {
     }
   }
 
-  async create(examDomain: ExamDomain): Promise<ExamDomain> {
+  async create(
+    examDomain: ExamDomain,
+    actionById?: number,
+  ): Promise<ExamDomain> {
     const exam = await this.prisma.exam.create({
       data: {
         examTemplateId: examDomain.examTemplateId,
@@ -49,6 +56,7 @@ export class ExamRepository {
         curriculumId: examDomain.curriculumId,
         minScore: examDomain.minScore,
         maxScore: examDomain.maxScore,
+        createdBy: actionById,
       },
     });
     return this.mapper.toDomain(exam);

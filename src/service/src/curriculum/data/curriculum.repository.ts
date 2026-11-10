@@ -43,11 +43,15 @@ export class CurriculumRepository {
     return curriculum ? this.mapper.toDomain(curriculum) : null;
   }
 
-  async create(curriculumDomain: CurriculumDomain): Promise<CurriculumDomain> {
+  async create(
+    curriculumDomain: CurriculumDomain,
+    actionById?: number,
+  ): Promise<CurriculumDomain> {
     const curriculum = await this.prisma.curriculum.create({
       data: {
         name: curriculumDomain.name,
         description: curriculumDomain.description,
+        createdBy: actionById,
       },
     });
     return this.mapper.toDomain(curriculum);
@@ -56,15 +60,25 @@ export class CurriculumRepository {
   async update(
     id: number,
     updateData: UpdateCurriculumDto,
+    actionById?: number,
   ): Promise<CurriculumDomain> {
     const curriculum = await this.prisma.curriculum.update({
       where: { id },
-      data: updateData,
+      data: {
+        updateData,
+        updatedBy: actionById,
+      },
     });
     return this.mapper.toDomain(curriculum);
   }
 
-  async delete(id: number): Promise<void> {
-    await this.prisma.curriculum.delete({ where: { id } });
+  async delete(id: number, actionById?: number): Promise<void> {
+    await this.prisma.curriculum.update({
+      where: { id },
+      data: {
+        archivedAt: new Date(),
+        updatedBy: actionById,
+      },
+    });
   }
 }

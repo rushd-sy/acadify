@@ -20,6 +20,11 @@ export class SectionDtoMapper {
       gradeId: assembledData.section.gradeId,
       teachers: assembledData.teachers || [],
       students: assembledData.students || [],
+      createdBy: assembledData.section.createdBy ?? undefined,
+      createdAt: assembledData.section.createdAt,
+      updatedBy: assembledData.section.updatedBy ?? undefined,
+      updatedAt: assembledData.section.updatedAt,
+      archivedAt: assembledData.section.archivedAt ?? undefined,
     };
   }
 
