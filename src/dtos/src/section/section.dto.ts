@@ -8,9 +8,4 @@ export class SectionDto {
   gradeId!: number;
   teachers?: SectionCurriculumTeacherDto[];
   students?: SectionStudentDto[];
-  createdBy?: number;
-  createdAt!: Date;
-  updatedBy?: number;
-  updatedAt!: Date;
-  archivedAt?: Date;
 }
