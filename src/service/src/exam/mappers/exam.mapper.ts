@@ -33,11 +33,6 @@ export class ExamMapper {
       curriculumId: examDomain.curriculumId,
       minScore: examDomain.minScore,
       maxScore: examDomain.maxScore,
-      createdBy: examDomain.createdBy ?? undefined,
-      createdAt: examDomain.createdAt,
-      updatedBy: examDomain.updatedBy ?? undefined,
-      updatedAt: examDomain.updatedAt,
-      archivedAt: examDomain.archivedAt ?? undefined,
     };
   }
 
