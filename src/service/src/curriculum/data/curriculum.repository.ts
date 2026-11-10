@@ -65,7 +65,7 @@ export class CurriculumRepository {
     const curriculum = await this.prisma.curriculum.update({
       where: { id },
       data: {
-        ...updateData,
+        updateData,
         updatedBy: actionById,
       },
     });
