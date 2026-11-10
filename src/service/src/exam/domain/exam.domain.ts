@@ -1,5 +1,7 @@
 import { InvalidExamScoreRangeError } from './exam.errors';
-export class ExamDomain {
+import { TraceableDomain } from 'src/utils/traceable.domain';
+
+export class ExamDomain extends TraceableDomain {
   id: number;
   examTemplateId?: number;
   title: string;
@@ -18,7 +20,13 @@ export class ExamDomain {
     curriculumId?: number;
     minScore: number;
     maxScore: number;
+    createdBy?: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt: Date;
+    archivedAt?: Date;
   }) {
+    super(input);
     this.id = input.id;
     this.examTemplateId = input.examTemplateId;
     this.title = input.title;
@@ -29,19 +37,25 @@ export class ExamDomain {
     this.maxScore = input.maxScore;
   }
 
-  static create(input: {
-    examTemplateId?: number;
-    title: string;
-    date: Date;
-    documentUrl?: string;
-    curriculumId?: number;
-    minScore: number;
-    maxScore: number;
-  }): ExamDomain {
+  static create(
+    input: {
+      examTemplateId?: number;
+      title: string;
+      date: Date;
+      documentUrl?: string;
+      curriculumId?: number;
+      minScore: number;
+      maxScore: number;
+    },
+    createdBy?: number,
+  ): ExamDomain {
     ExamDomain.assertScoreRange(input.minScore, input.maxScore);
     return new ExamDomain({
       id: -1,
       ...input,
+      createdBy,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   }
 
@@ -60,6 +74,11 @@ export class ExamDomain {
     curriculumId?: number;
     minScore: number;
     maxScore: number;
+    createdBy?: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt: Date;
+    archivedAt?: Date;
   }): ExamDomain {
     return new ExamDomain(input);
   }
