@@ -18,11 +18,6 @@ export class TeacherMapper {
       lastName: teacher.user.lastName,
       email: teacher.user.email,
       degree: teacher.degree,
-      createdBy: teacher.createdBy ?? undefined,
-      createdAt: teacher.createdAt,
-      updatedBy: teacher.updatedBy ?? undefined,
-      updatedAt: teacher.updatedAt,
-      archivedAt: teacher.archivedAt ?? undefined,
     };
   }
 
