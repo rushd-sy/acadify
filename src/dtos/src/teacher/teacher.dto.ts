@@ -4,4 +4,9 @@ export class TeacherDto {
   lastName!: string;
   email!: string;
   degree!: string;
+  createdBy?: number;
+  createdAt!: Date;
+  updatedBy?: number;
+  updatedAt!: Date;
+  archivedAt?: Date;
 }
