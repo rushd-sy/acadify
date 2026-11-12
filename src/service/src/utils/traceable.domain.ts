@@ -12,7 +12,7 @@ export abstract class TraceableDomain {
     updatedAt?: Date;
     archivedAt?: Date;
   }) {
-    this.createdBy = input.createdBy ?? new Date();
+    this.createdBy = input.createdBy;
     this.createdAt = input.createdAt ?? new Date();
     this.updatedBy = input.updatedBy ?? undefined;
     this.updatedAt = input.updatedAt ?? undefined;

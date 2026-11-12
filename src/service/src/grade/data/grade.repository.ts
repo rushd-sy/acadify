@@ -50,7 +50,7 @@ export class GradeRepository {
 
   async deleteById(id: number, actionById?: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      const grade = this.findById(id);
+      const grade = await this.findById(id);
       if (grade !== null) {
         const now = new Date();
         await tx.grade.update({
@@ -69,14 +69,14 @@ export class GradeRepository {
     data: UpdateGradeDto,
     actionById?: number,
   ): Promise<GradeDomain | null> {
-    const grade = this.findById(id);
+    const grade = await this.findById(id);
     if (grade === null) {
       return null;
     }
     const newGrade = await this.prisma.grade.update({
       where: { id },
       data: {
-        data,
+        ...data,
         updatedBy: actionById,
       },
     });

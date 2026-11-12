@@ -16,10 +16,10 @@ export class UserDomain extends TraceableDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
     super(input);
@@ -49,7 +49,7 @@ export class UserDomain extends TraceableDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
-    createdBy?: number;
+    createdBy: number;
   }): UserDomain {
     return new UserDomain({
       id: -1,
@@ -66,10 +66,10 @@ export class UserDomain extends TraceableDomain {
     email: string;
     phoneNumber: string;
     hashedPassword: string;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }): UserDomain {
     return new UserDomain(input);
