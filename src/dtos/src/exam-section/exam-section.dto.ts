@@ -3,5 +3,5 @@ export class ExamSectionDto {
   examId!: number;
   sectionId!: number;
   startAt!: Date;
-  endAt!: Date;
+  duration!: number;
 }

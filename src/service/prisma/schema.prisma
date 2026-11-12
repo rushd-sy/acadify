@@ -155,6 +155,8 @@ model ExamSection {
   id Int @id @default(autoincrement())
   examId Int
   sectionId Int
+  startAt DateTime
+  duration Int
 
   exam Exam @relation(fields: [examId], references: [id])
   section Section @relation(fields: [sectionId], references: [id])
