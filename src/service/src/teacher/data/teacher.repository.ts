@@ -90,7 +90,7 @@ export class TeacherRepository {
           where: { userId: userId },
           data: {
             degree: data.degree,
-            updatedBy: actionById,
+            updatedBy: actionById ?? undefined,
           },
         });
       }
@@ -114,7 +114,7 @@ export class TeacherRepository {
           where: { id: teacher.userId },
           data: {
             archivedAt: now,
-            updatedBy: actionById,
+            updatedBy: actionById ?? undefined,
           },
         });
       }
