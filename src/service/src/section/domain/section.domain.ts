@@ -53,7 +53,6 @@ export class SectionDomain extends TraceableDomain {
       assignments: [],
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

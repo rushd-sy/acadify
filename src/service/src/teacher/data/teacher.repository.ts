@@ -4,6 +4,7 @@ import { TeacherDomain } from '../domain/teacher.domain';
 import { TeacherWithUser } from '../types/teacher-user.type';
 import * as bcrypt from 'bcrypt';
 import { UpdateTeacherDto } from 'dtos';
+import { buildArchivedUserData } from '../../utils/soft-delete.util';
 
 @Injectable()
 export class TeacherRepository {
@@ -47,6 +48,10 @@ export class TeacherRepository {
 
   async findAllTeachers(): Promise<TeacherWithUser[]> {
     return this.prisma.teacher.findMany({
+      where: {
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
@@ -54,8 +59,12 @@ export class TeacherRepository {
   }
 
   async findTeacherById(userId: number): Promise<TeacherWithUser | null> {
-    return this.prisma.teacher.findUnique({
-      where: { userId },
+    return this.prisma.teacher.findFirst({
+      where: {
+        userId,
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
@@ -65,7 +74,7 @@ export class TeacherRepository {
   async updateTeacherById(
     userId: number,
     data: UpdateTeacherDto,
-    actionById?: number,
+    actionById: number,
   ): Promise<TeacherWithUser | null> {
     const teacher = await this.findTeacherById(userId);
 
@@ -90,7 +99,7 @@ export class TeacherRepository {
           where: { userId: userId },
           data: {
             degree: data.degree,
-            updatedBy: actionById ?? undefined,
+            updatedBy: actionById,
           },
         });
       }
@@ -98,9 +107,18 @@ export class TeacherRepository {
     return this.findTeacherById(userId);
   }
 
-  async deleteById(id: number, actionById?: number): Promise<void> {
+  async deleteById(id: number, actionById: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      const teacher = await this.findTeacherById(id);
+      const teacher = await tx.teacher.findFirst({
+        where: {
+          userId: id,
+          archivedAt: null,
+          user: { archivedAt: null },
+        },
+        include: {
+          user: true,
+        },
+      });
       if (teacher) {
         const now = new Date();
         await tx.teacher.update({
@@ -112,10 +130,7 @@ export class TeacherRepository {
         });
         await tx.user.update({
           where: { id: teacher.userId },
-          data: {
-            archivedAt: now,
-            updatedBy: actionById ?? undefined,
-          },
+          data: buildArchivedUserData(teacher.user, now, actionById),
         });
       }
     });

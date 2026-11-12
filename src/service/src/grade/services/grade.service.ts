@@ -15,7 +15,10 @@ export class GradeService {
     private readonly mapper: GradeMapper,
   ) {}
 
-  async create(createGradeDto: CreateGradeDto): Promise<GradeDto> {
+  async create(
+    createGradeDto: CreateGradeDto,
+    actionById: number,
+  ): Promise<GradeDto> {
     const existingGrade = await this.repository.findByName(createGradeDto.name);
 
     if (existingGrade) {
@@ -24,11 +27,14 @@ export class GradeService {
       );
     }
 
-    const gradeDomain = GradeDomain.create({
-      name: createGradeDto.name,
-    });
+    const gradeDomain = GradeDomain.create(
+      {
+        name: createGradeDto.name,
+      },
+      actionById,
+    );
 
-    const createdGrade = await this.repository.create(gradeDomain);
+    const createdGrade = await this.repository.create(gradeDomain, actionById);
     return this.mapper.toDto(createdGrade);
   }
 
@@ -47,7 +53,11 @@ export class GradeService {
     return this.mapper.toDtoList(gradesDomain);
   }
 
-  async updateById(id: number, data: UpdateGradeDto): Promise<GradeDto> {
+  async updateById(
+    id: number,
+    data: UpdateGradeDto,
+    actionById: number,
+  ): Promise<GradeDto> {
     const isExisting = await this.repository.findById(id);
 
     if (!isExisting) {
@@ -62,17 +72,23 @@ export class GradeService {
       }
     }
 
-    const updatedDomain = await this.repository.updateById(id, data);
-    return this.mapper.toDto(updatedDomain);
-  }
-
-  async deleteById(id: number): Promise<void> {
-    const isExisting = await this.repository.findById(id);
-
-    if (!isExisting) {
+    const updatedDomain = await this.repository.updateById(
+      id,
+      data,
+      actionById,
+    );
+    if (!updatedDomain) {
       throw new NotFoundException(`Grade with id ${id} not found`);
     }
 
-    await this.repository.deleteById(id);
+    return this.mapper.toDto(updatedDomain);
+  }
+
+  async deleteById(id: number, actionById: number): Promise<void> {
+    const isDeleted = await this.repository.deleteById(id, actionById);
+
+    if (!isDeleted) {
+      throw new NotFoundException(`Grade with id ${id} not found`);
+    }
   }
 }

@@ -4,6 +4,7 @@ import { StudentDomain } from '../domain/student.domain';
 import { StudentWithUser } from '../types/student-user.type';
 import * as bcrypt from 'bcrypt';
 import { UpdateStudentDto } from 'dtos';
+import { buildArchivedUserData } from '../../utils/soft-delete.util';
 
 @Injectable()
 export class StudentRepository {
@@ -44,6 +45,10 @@ export class StudentRepository {
 
   async findAll(): Promise<StudentWithUser[]> {
     return this.prisma.student.findMany({
+      where: {
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
@@ -51,17 +56,30 @@ export class StudentRepository {
   }
 
   async findById(userId: number): Promise<StudentWithUser | null> {
-    return this.prisma.student.findUnique({
-      where: { userId },
+    return this.prisma.student.findFirst({
+      where: {
+        userId,
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
     });
   }
 
-  async deleteById(userId: number, actionById?: number): Promise<void> {
+  async deleteById(userId: number, actionById: number): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      const student = await this.findById(userId);
+      const student = await tx.student.findFirst({
+        where: {
+          userId,
+          archivedAt: null,
+          user: { archivedAt: null },
+        },
+        include: {
+          user: true,
+        },
+      });
       if (student) {
         const now = new Date();
         await tx.student.update({
@@ -70,7 +88,7 @@ export class StudentRepository {
         });
         await tx.user.update({
           where: { id: userId },
-          data: { archivedAt: now, updatedBy: actionById },
+          data: buildArchivedUserData(student.user, now, actionById),
         });
       }
     });
@@ -79,7 +97,7 @@ export class StudentRepository {
   async updateStudentData(
     userId: number,
     updateData: UpdateStudentDto,
-    actionById?: number,
+    actionById: number,
   ): Promise<StudentWithUser | null> {
     const student = await this.findById(userId);
 

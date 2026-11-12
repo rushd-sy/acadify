@@ -25,7 +25,6 @@ export class StudentDomain extends TraceableDomain {
       user,
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

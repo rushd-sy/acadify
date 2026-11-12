@@ -34,7 +34,6 @@ export class CurriculumDomain extends TraceableDomain {
       description: input.description,
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

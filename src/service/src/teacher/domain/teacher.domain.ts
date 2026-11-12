@@ -27,7 +27,6 @@ export class TeacherDomain extends TraceableDomain {
       ...input,
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

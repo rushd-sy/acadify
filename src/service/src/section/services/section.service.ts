@@ -58,7 +58,10 @@ export class SectionService {
     });
   }
 
-  async createSection(createSection: CreateSectionDto): Promise<SectionDto> {
+  async createSection(
+    createSection: CreateSectionDto,
+    actionById: number,
+  ): Promise<SectionDto> {
     const existingSection = await this.repository.existsByName(
       createSection.name,
     );
@@ -69,10 +72,15 @@ export class SectionService {
       );
     }
 
-    const sectionDomain =
-      this.domainMapper.toDomainFromCreateDto(createSection);
+    const sectionDomain = this.domainMapper.toDomainFromCreateDto(
+      createSection,
+      actionById,
+    );
 
-    const createdSection = await this.repository.save(sectionDomain);
+    const createdSection = await this.repository.save(
+      sectionDomain,
+      actionById,
+    );
 
     return this.dtoMapper.toDto({
       section: createdSection,
@@ -84,6 +92,7 @@ export class SectionService {
   async updateSectionById(
     id: number,
     data: UpdateSectionDto,
+    actionById: number,
   ): Promise<SectionDto> {
     const sectionDomain = await this.repository.findById(id);
 
@@ -106,7 +115,10 @@ export class SectionService {
       sectionDomain.changeAcademicYear(data.academicYear);
     }
 
-    const updatedSection = await this.repository.save(sectionDomain);
+    const updatedSection = await this.repository.save(
+      sectionDomain,
+      actionById,
+    );
 
     return this.dtoMapper.toDto({
       section: updatedSection,
@@ -115,8 +127,8 @@ export class SectionService {
     });
   }
 
-  async deleteSection(id: number): Promise<void> {
-    const isDeleted = await this.repository.deleteById(id);
+  async deleteSection(id: number, actionById: number): Promise<void> {
+    const isDeleted = await this.repository.deleteById(id, actionById);
 
     if (!isDeleted) {
       throw new NotFoundException(`Section with ID ${id} not found`);

@@ -55,7 +55,6 @@ export class UserDomain extends TraceableDomain {
       id: -1,
       ...input,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

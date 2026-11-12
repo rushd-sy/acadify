@@ -18,14 +18,18 @@ export class GradeRepository {
           equals: name,
           mode: 'insensitive',
         },
+        archivedAt: null,
       },
     });
     return grade ? this.mapper.toDomain(grade) : null;
   }
 
   async findById(id: number): Promise<GradeDomain | null> {
-    const grade = await this.prisma.grade.findUnique({
-      where: { id },
+    const grade = await this.prisma.grade.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
     });
     return grade ? this.mapper.toDomain(grade) : null;
   }
@@ -44,30 +48,32 @@ export class GradeRepository {
   }
 
   async findAll(): Promise<GradeDomain[]> {
-    const grades = await this.prisma.grade.findMany();
+    const grades = await this.prisma.grade.findMany({
+      where: {
+        archivedAt: null,
+      },
+    });
     return grades.map((grade) => this.mapper.toDomain(grade));
   }
 
-  async deleteById(id: number, actionById?: number): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
-      const grade = await this.findById(id);
-      if (grade !== null) {
-        const now = new Date();
-        await tx.grade.update({
-          where: { id },
-          data: {
-            archivedAt: now,
-            updatedBy: actionById,
-          },
-        });
-      }
+  async deleteById(id: number, actionById: number): Promise<boolean> {
+    const result = await this.prisma.grade.updateMany({
+      where: {
+        id,
+        archivedAt: null,
+      },
+      data: {
+        archivedAt: new Date(),
+        updatedBy: actionById,
+      },
     });
+    return result.count > 0;
   }
 
   async updateById(
     id: number,
     data: UpdateGradeDto,
-    actionById?: number,
+    actionById: number,
   ): Promise<GradeDomain | null> {
     const grade = await this.findById(id);
     if (grade === null) {

@@ -19,14 +19,17 @@ export class ExamService {
     return this.mapper.toDtoList(examsDomain);
   }
 
-  async deleteExam(id: number): Promise<void> {
-    const isDeleted = await this.repository.deleteById(id);
+  async deleteExam(id: number, actionById: number): Promise<void> {
+    const isDeleted = await this.repository.deleteById(id, actionById);
     if (!isDeleted) {
       throw new NotFoundException(`Exam with ID: ${id} not found`);
     }
   }
 
-  async createExam(createExamDto: CreateExamDto): Promise<ExamDto> {
+  async createExam(
+    createExamDto: CreateExamDto,
+    actionById: number,
+  ): Promise<ExamDto> {
     const existingExam = await this.repository.findByTitleCurriculumAndTemplate(
       createExamDto.title,
       createExamDto.curriculumId,
@@ -39,8 +42,11 @@ export class ExamService {
       );
     }
 
-    const examDomain = this.mapper.toDomainFromCreateDto(createExamDto);
-    const createdExam = await this.repository.create(examDomain);
+    const examDomain = this.mapper.toDomainFromCreateDto(
+      createExamDto,
+      actionById,
+    );
+    const createdExam = await this.repository.create(examDomain, actionById);
 
     return this.mapper.toDto(createdExam);
   }

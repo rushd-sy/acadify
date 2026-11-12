@@ -14,7 +14,7 @@ model Student {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -27,7 +27,7 @@ model Teacher {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -44,7 +44,7 @@ model User {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -56,7 +56,7 @@ model Grade {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -69,7 +69,7 @@ model Curriculum {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -87,7 +87,7 @@ model Section {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -107,7 +107,7 @@ model Exam {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -125,7 +125,7 @@ model SectionCurriculumTeacher {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -144,7 +144,7 @@ model StudentSection {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 
@@ -161,7 +161,7 @@ model ExamSection {
 
   createdAt      DateTime @default(now())
   createdBy      Int
-  updatedAt      DateTime?  @default(now()) @updatedAt
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?  
 

@@ -15,11 +15,16 @@ export class TeacherService {
     private mapper: TeacherMapper,
   ) {}
 
-  async createTeacher(data: CreateTeacherDto): Promise<TeacherDto> {
-    const teacherDomain = this.mapper.toDomainFromCreateDto(data);
+  async createTeacher(
+    data: CreateTeacherDto,
+    actionById: number,
+  ): Promise<TeacherDto> {
+    const teacherDomain = this.mapper.toDomainFromCreateDto(data, actionById);
 
-    const createdTeacher =
-      await this.repository.createTeacherWithUser(teacherDomain);
+    const createdTeacher = await this.repository.createTeacherWithUser(
+      teacherDomain,
+      actionById,
+    );
 
     return this.mapper.toTeacherDto(createdTeacher);
   }
@@ -40,10 +45,12 @@ export class TeacherService {
   async updateTeacherById(
     userId: number,
     data: UpdateTeacherDto,
+    actionById: number,
   ): Promise<TeacherDetailsDto> {
     const updatedTeacher = await this.repository.updateTeacherById(
       userId,
       data,
+      actionById,
     );
 
     if (!updatedTeacher) {
@@ -53,7 +60,7 @@ export class TeacherService {
     return this.mapper.toTeacherDetailsDto(updatedTeacher);
   }
 
-  async deleteTeacher(id: number): Promise<void> {
-    await this.repository.deleteById(id);
+  async deleteTeacher(id: number, actionById: number): Promise<void> {
+    await this.repository.deleteById(id, actionById);
   }
 }

@@ -55,7 +55,6 @@ export class ExamDomain extends TraceableDomain {
       ...input,
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

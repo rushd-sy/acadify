@@ -30,24 +30,34 @@ export class CurriculumService {
     return this.mapper.toDto(curriculumDomain);
   }
 
-  async create(createDto: CreateCurriculumDto): Promise<CurriculumDto> {
+  async create(
+    createDto: CreateCurriculumDto,
+    actionById: number,
+  ): Promise<CurriculumDto> {
     const existing = await this.repository.findByName(createDto.name);
     if (existing) {
       throw new ConflictException('Curriculum with this name already exists');
     }
 
-    const newDomain = CurriculumDomain.create({
-      name: createDto.name,
-      description: createDto.description,
-    });
+    const newDomain = CurriculumDomain.create(
+      {
+        name: createDto.name,
+        description: createDto.description,
+      },
+      actionById,
+    );
 
-    const curriculumDomain = await this.repository.create(newDomain);
+    const curriculumDomain = await this.repository.create(
+      newDomain,
+      actionById,
+    );
     return this.mapper.toDto(curriculumDomain);
   }
 
   async update(
     id: number,
     updateDto: UpdateCurriculumDto,
+    actionById: number,
   ): Promise<CurriculumDto> {
     const existing = await this.repository.findById(id);
     if (!existing) {
@@ -63,16 +73,18 @@ export class CurriculumService {
       }
     }
 
-    const updatedDomain = await this.repository.update(id, updateDto);
+    const updatedDomain = await this.repository.update(
+      id,
+      updateDto,
+      actionById,
+    );
     return this.mapper.toDto(updatedDomain);
   }
 
-  async delete(id: number): Promise<void> {
-    const existing = await this.repository.findById(id);
-    if (!existing) {
+  async delete(id: number, actionById: number): Promise<void> {
+    const isDeleted = await this.repository.delete(id, actionById);
+    if (!isDeleted) {
       throw new NotFoundException(`Curriculum with ID ${id} not found`);
     }
-
-    await this.repository.delete(id);
   }
 }

@@ -24,7 +24,6 @@ export class GradeDomain extends TraceableDomain {
       ...input,
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 

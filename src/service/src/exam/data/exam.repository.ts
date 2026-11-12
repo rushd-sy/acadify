@@ -2,9 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ExamDomain } from '../domain/exam.domain';
 import { ExamMapper } from '../mappers/exam.mapper';
-import { Prisma } from '@prisma/client';
-
-const PRISMA_RECORD_NOT_FOUND_ERROR = 'P2025';
 
 @Injectable()
 export class ExamRepository {
@@ -15,6 +12,9 @@ export class ExamRepository {
 
   async findAll(): Promise<ExamDomain[]> {
     const exams = await this.prisma.exam.findMany({
+      where: {
+        archivedAt: null,
+      },
       orderBy: {
         title: 'asc',
       },
@@ -23,24 +23,18 @@ export class ExamRepository {
     return exams.map((exam) => this.mapper.toDomain(exam));
   }
 
-  async deleteById(id: number, actionById?: number): Promise<boolean> {
-    try {
-      await this.prisma.exam.update({
-        where: { id },
-        data: {
-          archivedAt: new Date(),
-          updatedBy: actionById,
-        },
-      });
-      return true;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === PRISMA_RECORD_NOT_FOUND_ERROR) {
-          return false;
-        }
-      }
-      throw error;
-    }
+  async deleteById(id: number, actionById: number): Promise<boolean> {
+    const result = await this.prisma.exam.updateMany({
+      where: {
+        id,
+        archivedAt: null,
+      },
+      data: {
+        archivedAt: new Date(),
+        updatedBy: actionById,
+      },
+    });
+    return result.count > 0;
   }
 
   async create(
@@ -72,6 +66,7 @@ export class ExamRepository {
         title,
         curriculumId: curriculumId ?? null,
         examTemplateId: examTemplateId ?? null,
+        archivedAt: null,
       },
     });
 

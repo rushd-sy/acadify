@@ -28,24 +28,31 @@ export class StudentService {
     return this.mapper.toStudentDetailsDto(student);
   }
 
-  async createStudent(data: CreateStudentDto): Promise<StudentDto> {
-    const studentDomain = this.mapper.toDomainFromCreateDto(data);
-    const createdStudent =
-      await this.repository.createStudentWithUser(studentDomain);
+  async createStudent(
+    data: CreateStudentDto,
+    actionById: number,
+  ): Promise<StudentDto> {
+    const studentDomain = this.mapper.toDomainFromCreateDto(data, actionById);
+    const createdStudent = await this.repository.createStudentWithUser(
+      studentDomain,
+      actionById,
+    );
     return this.mapper.toStudentDto(createdStudent);
   }
 
-  async deleteStudent(id: number): Promise<void> {
-    await this.repository.deleteById(id);
+  async deleteStudent(id: number, actionById: number): Promise<void> {
+    await this.repository.deleteById(id, actionById);
   }
 
   async updateStudent(
     id: number,
     updateData: UpdateStudentDto,
+    actionById: number,
   ): Promise<StudentDetailsDto> {
     const updatedStudent = await this.repository.updateStudentData(
       id,
       updateData,
+      actionById,
     );
     if (!updatedStudent) {
       throw new NotFoundException(`Student with id ${id} not found`);

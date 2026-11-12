@@ -9,24 +9,32 @@ export class UserRepository {
     if (!email) {
       return null;
     }
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: {
         email: email,
+        archivedAt: null,
       },
       include: {
-        student: true,
-        teacher: true,
+        student: {
+          where: { archivedAt: null },
+        },
+        teacher: {
+          where: { archivedAt: null },
+        },
       },
     });
     return user;
   }
   async getUserById(id: number): Promise<User | null> {
-    return this.prisma.user.findUnique({
+    return this.prisma.user.findFirst({
       where: {
         id,
+        archivedAt: null,
       },
       include: {
-        student: true,
+        student: {
+          where: { archivedAt: null },
+        },
       },
     });
   }
