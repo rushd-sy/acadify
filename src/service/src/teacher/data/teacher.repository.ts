@@ -11,7 +11,7 @@ export class TeacherRepository {
 
   async createTeacherWithUser(
     teacherDomain: TeacherDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<TeacherWithUser> {
     const hashedPassword = await bcrypt.hash(
       teacherDomain.user.hashedPassword,

@@ -32,7 +32,7 @@ export class GradeRepository {
 
   async create(
     gradeDomain: GradeDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<GradeDomain> {
     const grade = await this.prisma.grade.create({
       data: {

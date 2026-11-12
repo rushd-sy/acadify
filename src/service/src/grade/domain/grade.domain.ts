@@ -7,10 +7,10 @@ export class GradeDomain extends TraceableDomain {
   private constructor(input: {
     id: number;
     name: string;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
     super(input);
@@ -18,7 +18,7 @@ export class GradeDomain extends TraceableDomain {
     this.name = input.name;
   }
 
-  static create(input: { name: string }, createdBy?: number): GradeDomain {
+  static create(input: { name: string }, createdBy: number): GradeDomain {
     return new GradeDomain({
       id: -1,
       ...input,
@@ -31,10 +31,10 @@ export class GradeDomain extends TraceableDomain {
   static fromPersistence(input: {
     id: number;
     name: string;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }): GradeDomain {
     return new GradeDomain(input);

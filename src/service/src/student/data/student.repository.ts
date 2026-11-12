@@ -11,7 +11,7 @@ export class StudentRepository {
 
   async createStudentWithUser(
     studentDomain: StudentDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<StudentWithUser> {
     const hashedPassword = await bcrypt.hash(
       studentDomain.user.hashedPassword,

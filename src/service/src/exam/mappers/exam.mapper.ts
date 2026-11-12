@@ -15,10 +15,10 @@ export class ExamMapper {
       curriculumId: exam.curriculumId ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
-      createdBy: exam.createdBy ?? undefined,
+      createdBy: exam.createdBy,
       createdAt: exam.createdAt,
       updatedBy: exam.updatedBy ?? undefined,
-      updatedAt: exam.updatedAt,
+      updatedAt: exam.updatedAt ?? undefined,
       archivedAt: exam.archivedAt ?? undefined,
     });
   }
@@ -42,7 +42,7 @@ export class ExamMapper {
 
   toDomainFromCreateDto(
     createExam: CreateExamDto,
-    actionById?: number,
+    actionById: number,
   ): ExamDomain {
     return ExamDomain.create(
       {

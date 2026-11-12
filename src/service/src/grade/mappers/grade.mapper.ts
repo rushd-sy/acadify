@@ -9,10 +9,10 @@ export class GradeMapper {
     return GradeDomain.fromPersistence({
       id: grade.id,
       name: grade.name,
-      createdBy: grade.createdBy ?? undefined,
+      createdBy: grade.createdBy,
       createdAt: grade.createdAt,
       updatedBy: grade.updatedBy ?? undefined,
-      updatedAt: grade.updatedAt,
+      updatedAt: grade.updatedAt ?? undefined,
       archivedAt: grade.archivedAt ?? undefined,
     });
   }
@@ -30,7 +30,7 @@ export class GradeMapper {
 
   toDomainFromCreateDto(
     createGradeDto: CreateGradeDto,
-    actionById?: number,
+    actionById: number,
   ): GradeDomain {
     return GradeDomain.create(
       {

@@ -20,10 +20,10 @@ export class SectionDomain extends TraceableDomain {
     academicYear: string;
     gradeId: number;
     assignments: SectionCurriculumTeacher[];
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
     super(input);
@@ -40,7 +40,7 @@ export class SectionDomain extends TraceableDomain {
       academicYear: string;
       gradeId: number;
     },
-    createdBy?: number,
+    createdBy: number,
   ): SectionDomain {
     const trimmedName = input.name.trim();
     SectionDomain.assertName(trimmedName);
@@ -63,10 +63,10 @@ export class SectionDomain extends TraceableDomain {
     academicYear: string;
     gradeId: number;
     assignments: SectionCurriculumTeacher[];
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }): SectionDomain {
     return new SectionDomain(input);

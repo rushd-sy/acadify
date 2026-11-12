@@ -74,7 +74,7 @@ export class SectionRepository {
 
   async save(
     section: SectionDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<SectionDomain> {
     try {
       return await this.prisma.$transaction(async (tx) => {
@@ -101,7 +101,7 @@ export class SectionRepository {
   private async upsertSection(
     tx: Prisma.TransactionClient,
     section: SectionDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<number> {
     const sectionData = {
       name: section.name,
@@ -135,7 +135,7 @@ export class SectionRepository {
     tx: Prisma.TransactionClient,
     sectionId: number,
     section: SectionDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<void> {
     const newAssignments = section.sectionCurriculumTeachers.filter(
       (assignment) => assignment.id === null,

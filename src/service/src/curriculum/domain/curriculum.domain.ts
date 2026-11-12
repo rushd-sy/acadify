@@ -9,10 +9,10 @@ export class CurriculumDomain extends TraceableDomain {
     id: number;
     name: string;
     description?: string;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
     super(input);
@@ -26,7 +26,7 @@ export class CurriculumDomain extends TraceableDomain {
       name: string;
       description?: string;
     },
-    createdBy?: number,
+    createdBy: number,
   ): CurriculumDomain {
     return new CurriculumDomain({
       id: -1,
@@ -42,10 +42,10 @@ export class CurriculumDomain extends TraceableDomain {
     id: number;
     name: string;
     description?: string;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }): CurriculumDomain {
     return new CurriculumDomain(input);

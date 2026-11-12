@@ -11,10 +11,10 @@ export class CurriculumMapper {
       name: curriculum.name,
       description:
         curriculum.description === null ? undefined : curriculum.description,
-      createdBy: curriculum.createdBy ?? undefined,
+      createdBy: curriculum.createdBy,
       createdAt: curriculum.createdAt,
       updatedBy: curriculum.updatedBy ?? undefined,
-      updatedAt: curriculum.updatedAt,
+      updatedAt: curriculum.updatedAt ?? undefined,
       archivedAt: curriculum.archivedAt ?? undefined,
     });
   }
@@ -33,7 +33,7 @@ export class CurriculumMapper {
 
   toDomainFromCreateDto(
     createCurriculumDto: CreateCurriculumDto,
-    actionById?: number,
+    actionById: number,
   ): CurriculumDomain {
     return CurriculumDomain.create(
       {

@@ -45,7 +45,7 @@ export class CurriculumRepository {
 
   async create(
     curriculumDomain: CurriculumDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<CurriculumDomain> {
     const curriculum = await this.prisma.curriculum.create({
       data: {

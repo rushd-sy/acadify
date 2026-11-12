@@ -38,7 +38,7 @@ export class TeacherMapper {
 
   toDomainFromCreateDto(
     createTeacherDto: CreateTeacherDto,
-    actionById?: number,
+    actionById: number,
   ): TeacherDomain {
     const userDomain = UserDomain.create({
       firstName: createTeacherDto.firstName,

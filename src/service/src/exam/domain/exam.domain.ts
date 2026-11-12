@@ -20,10 +20,10 @@ export class ExamDomain extends TraceableDomain {
     curriculumId?: number;
     minScore: number;
     maxScore: number;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
     super(input);
@@ -47,7 +47,7 @@ export class ExamDomain extends TraceableDomain {
       minScore: number;
       maxScore: number;
     },
-    createdBy?: number,
+    createdBy: number,
   ): ExamDomain {
     ExamDomain.assertScoreRange(input.minScore, input.maxScore);
     return new ExamDomain({
@@ -74,10 +74,10 @@ export class ExamDomain extends TraceableDomain {
     curriculumId?: number;
     minScore: number;
     maxScore: number;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }): ExamDomain {
     return new ExamDomain(input);

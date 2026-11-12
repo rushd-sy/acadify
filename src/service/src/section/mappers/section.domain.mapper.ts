@@ -6,7 +6,7 @@ import { CreateSectionDto } from 'dtos';
 export class SectionDomainMapper {
   toDomainFromCreateDto(
     createDto: CreateSectionDto,
-    actionById?: number,
+    actionById: number,
   ): SectionDomain {
     return SectionDomain.create(
       {

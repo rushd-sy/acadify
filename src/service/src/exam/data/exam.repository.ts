@@ -45,7 +45,7 @@ export class ExamRepository {
 
   async create(
     examDomain: ExamDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<ExamDomain> {
     const exam = await this.prisma.exam.create({
       data: {
