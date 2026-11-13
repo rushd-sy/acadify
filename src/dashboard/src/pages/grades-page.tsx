@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import GradeModal from '@/components/grade/grade-modal';
+
+import { DataTable } from '@/components/ui/data-table';
+import type { DataTableColumn } from '@/components/ui/data-table';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
 import DeleteModal from '@/components/ui/delete-modal';
-import { gradeService } from '@/services/grade.service';
-import type { GradeDto } from 'dtos';
+import GradeModal from '@/components/grade/grade-modal';
 import { PageHeader } from '@/components/ui/page-header';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
+import { gradeService } from '@/services/grade.service';
+import { Spinner } from '@/components/ui/spinner';
+
+import type { GradeDto } from 'dtos';
 
 export default function GradePage() {
   const [grades, setGrades] = useState<GradeDto[]>([]);
@@ -77,13 +73,25 @@ export default function GradePage() {
     );
   };
 
-  const showEmptyState = !isLoading && !fetchError && grades.length === 0;
+  const columns: DataTableColumn<GradeDto>[] = [
+    {
+      id: 'id',
+      header: 'ID',
+      accessorKey: 'id',
+    },
+    {
+      id: 'name',
+      header: 'Grade Name',
+      accessorKey: 'name',
+    },
+  ];
 
   return (
     <>
       <div className="w-full min-h-screen bg-white p-8">
         <PageHeader
           title="Grades"
+          description="A list of available grades."
           action={{
             label: 'Add Grade',
             onClick: () => {
@@ -93,75 +101,33 @@ export default function GradePage() {
           }}
         />
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Grade Name</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {isLoading && (
-              <TableRow>
-                <TableCell colSpan={3}>
-                  <div className="flex justify-center py-8">
-                    <Spinner />
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-
-            {!isLoading && fetchError && (
-              <TableRow>
-                <TableCell
-                  colSpan={3}
-                  className="py-8 text-center text-red-600"
-                >
-                  {fetchError}
-                </TableCell>
-              </TableRow>
-            )}
-
-            {showEmptyState && (
-              <TableRow>
-                <TableCell colSpan={3} className="py-8 text-center">
-                  No grades available.
-                </TableCell>
-              </TableRow>
-            )}
-
-            {!isLoading &&
-              !fetchError &&
-              grades.map((grade) => (
-                <TableRow key={grade.id}>
-                  <TableCell>{grade.id}</TableCell>
-                  <TableCell>{grade.name}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="secondary"
-                        onClick={() => {
-                          setGradeToEdit(grade);
-                          setIsGradeModalOpen(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-
-                      <Button
-                        variant="secondary"
-                        onClick={() => openDeleteModal(grade)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
+        <DataTable
+          columns={columns}
+          data={grades}
+          rowKey="id"
+          isLoading={isLoading}
+          loadingMessage={<Spinner />}
+          error={fetchError ?? undefined}
+          emptyMessage="No grades available."
+          actions={(grade) => (
+            <DropdownMenu
+              items={[
+                {
+                  label: 'Edit',
+                  onSelect: () => {
+                    setGradeToEdit(grade);
+                    setIsGradeModalOpen(true);
+                  },
+                },
+                {
+                  label: 'Delete',
+                  variant: 'destructive',
+                  onSelect: () => openDeleteModal(grade),
+                },
+              ]}
+            />
+          )}
+        />
       </div>
 
       <GradeModal
