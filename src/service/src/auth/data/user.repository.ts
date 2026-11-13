@@ -15,12 +15,8 @@ export class UserRepository {
         archivedAt: null,
       },
       include: {
-        student: {
-          where: { archivedAt: null },
-        },
-        teacher: {
-          where: { archivedAt: null },
-        },
+        student: true,
+        teacher: true,
       },
     });
     return user;
@@ -32,9 +28,7 @@ export class UserRepository {
         archivedAt: null,
       },
       include: {
-        student: {
-          where: { archivedAt: null },
-        },
+        student: true,
       },
     });
   }

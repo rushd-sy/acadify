@@ -4,7 +4,6 @@ import { StudentDomain } from '../domain/student.domain';
 import { StudentWithUser } from '../types/student-user.type';
 import * as bcrypt from 'bcrypt';
 import { UpdateStudentDto } from 'dtos';
-import { buildArchivedUserData } from '../../utils/soft-delete.util';
 
 @Injectable()
 export class StudentRepository {
@@ -68,29 +67,28 @@ export class StudentRepository {
     });
   }
 
-  async deleteById(userId: number, actionById: number): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
+  async deleteById(userId: number, actionById: number): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
       const student = await tx.student.findFirst({
         where: {
           userId,
           archivedAt: null,
           user: { archivedAt: null },
         },
-        include: {
-          user: true,
-        },
       });
-      if (student) {
-        const now = new Date();
-        await tx.student.update({
-          where: { userId },
-          data: { archivedAt: now, updatedBy: actionById },
-        });
-        await tx.user.update({
-          where: { id: userId },
-          data: buildArchivedUserData(student.user, now, actionById),
-        });
+      if (!student) {
+        return false;
       }
+      const now = new Date();
+      await tx.student.update({
+        where: { userId },
+        data: { archivedAt: now, updatedBy: actionById },
+      });
+      await tx.user.update({
+        where: { id: userId },
+        data: { archivedAt: now, updatedBy: actionById },
+      });
+      return true;
     });
   }
 

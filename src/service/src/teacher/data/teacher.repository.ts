@@ -4,7 +4,6 @@ import { TeacherDomain } from '../domain/teacher.domain';
 import { TeacherWithUser } from '../types/teacher-user.type';
 import * as bcrypt from 'bcrypt';
 import { UpdateTeacherDto } from 'dtos';
-import { buildArchivedUserData } from '../../utils/soft-delete.util';
 
 @Injectable()
 export class TeacherRepository {
@@ -107,32 +106,34 @@ export class TeacherRepository {
     return this.findTeacherById(userId);
   }
 
-  async deleteById(id: number, actionById: number): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
+  async deleteById(id: number, actionById: number): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
       const teacher = await tx.teacher.findFirst({
         where: {
           userId: id,
           archivedAt: null,
           user: { archivedAt: null },
         },
-        include: {
-          user: true,
+      });
+      if (!teacher) {
+        return false;
+      }
+      const now = new Date();
+      await tx.teacher.update({
+        where: { userId: id },
+        data: {
+          archivedAt: now,
+          updatedBy: actionById,
         },
       });
-      if (teacher) {
-        const now = new Date();
-        await tx.teacher.update({
-          where: { userId: id },
-          data: {
-            archivedAt: now,
-            updatedBy: actionById,
-          },
-        });
-        await tx.user.update({
-          where: { id: teacher.userId },
-          data: buildArchivedUserData(teacher.user, now, actionById),
-        });
-      }
+      await tx.user.update({
+        where: { id },
+        data: {
+          archivedAt: now,
+          updatedBy: actionById,
+        },
+      });
+      return true;
     });
   }
 }
