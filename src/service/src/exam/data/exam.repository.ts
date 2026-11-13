@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { ExamDomain } from '../domain/exam.domain';
 import { ExamMapper } from '../mappers/exam.mapper';
+import { UpdateExamDto } from 'dtos';
 
 @Injectable()
 export class ExamRepository {
@@ -21,6 +22,17 @@ export class ExamRepository {
     });
 
     return exams.map((exam) => this.mapper.toDomain(exam));
+  }
+
+  async findById(id: number): Promise<ExamDomain | null> {
+    const exam = await this.prisma.exam.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
+    });
+
+    return exam ? this.mapper.toDomain(exam) : null;
   }
 
   async deleteById(id: number, actionById: number): Promise<boolean> {
@@ -53,6 +65,24 @@ export class ExamRepository {
         createdBy: actionById,
       },
     });
+    return this.mapper.toDomain(exam);
+  }
+
+  async update(
+    id: number,
+    data: UpdateExamDto,
+    actionById: number,
+  ): Promise<ExamDomain> {
+    const { date, ...rest } = data;
+    const exam = await this.prisma.exam.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(date !== undefined ? { date: new Date(date) } : {}),
+        updatedBy: actionById,
+      },
+    });
+
     return this.mapper.toDomain(exam);
   }
 
