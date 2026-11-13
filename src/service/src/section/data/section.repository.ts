@@ -6,7 +6,6 @@ import { SectionNameTakenError } from '../domain/section.errors';
 import { Prisma } from '@prisma/client';
 
 const PRISMA_UNIQUE_CONSTRAINT_ERROR = 'P2002';
-const PRISMA_RECORD_NOT_FOUND_ERROR = 'P2025';
 
 @Injectable()
 export class SectionRepository {
@@ -16,16 +15,29 @@ export class SectionRepository {
   ) {}
 
   async findById(id: number): Promise<SectionDomain | null> {
-    const section = await this.prisma.section.findUnique({
-      where: { id },
-      include: { sectionCurriculumTeachers: true },
+    const section = await this.prisma.section.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
+      include: {
+        sectionCurriculumTeachers: {
+          where: { archivedAt: null },
+        },
+      },
     });
     return section ? this.mapper.toDomain(section) : null;
   }
+
   async findAll(): Promise<SectionDomain[]> {
     const sections = await this.prisma.section.findMany({
+      where: { archivedAt: null },
       orderBy: { name: 'asc' },
-      include: { sectionCurriculumTeachers: true },
+      include: {
+        sectionCurriculumTeachers: {
+          where: { archivedAt: null },
+        },
+      },
     });
     return sections.map((section) => this.mapper.toDomain(section));
   }
@@ -34,6 +46,13 @@ export class SectionRepository {
     return await this.prisma.sectionCurriculumTeacher.findMany({
       where: {
         sectionId: sectionId,
+        archivedAt: null,
+        section: { archivedAt: null },
+        teacher: {
+          archivedAt: null,
+          user: { archivedAt: null },
+        },
+        curriculum: { archivedAt: null },
       },
       include: {
         teacher: {
@@ -50,6 +69,12 @@ export class SectionRepository {
     return await this.prisma.studentSection.findMany({
       where: {
         sectionId: sectionId,
+        archivedAt: null,
+        section: { archivedAt: null },
+        student: {
+          archivedAt: null,
+          user: { archivedAt: null },
+        },
       },
       include: {
         student: {
@@ -66,20 +91,32 @@ export class SectionRepository {
       where: {
         name: { equals: name, mode: 'insensitive' },
         id: excludeId ? { not: excludeId } : undefined,
+        archivedAt: null,
       },
     });
     return !!section;
   }
 
-  async save(section: SectionDomain): Promise<SectionDomain> {
+  async save(
+    section: SectionDomain,
+    actionById: number,
+  ): Promise<SectionDomain> {
     try {
       return await this.prisma.$transaction(async (tx) => {
-        const savedSectionId = await this.upsertSection(tx, section);
-        await this.upsertAssignments(tx, savedSectionId, section);
+        const savedSectionId = await this.upsertSection(
+          tx,
+          section,
+          actionById,
+        );
+        await this.upsertAssignments(tx, savedSectionId, section, actionById);
 
         const completeSection = await tx.section.findUnique({
           where: { id: savedSectionId },
-          include: { sectionCurriculumTeachers: true },
+          include: {
+            sectionCurriculumTeachers: {
+              where: { archivedAt: null },
+            },
+          },
         });
 
         return this.mapper.toDomain(completeSection!);
@@ -93,6 +130,7 @@ export class SectionRepository {
   private async upsertSection(
     tx: Prisma.TransactionClient,
     section: SectionDomain,
+    actionById: number,
   ): Promise<number> {
     const sectionData = {
       name: section.name,
@@ -100,21 +138,33 @@ export class SectionRepository {
       gradeId: section.gradeId,
     };
 
-    const isUpdate =
-      section.id > 0
-        ? await tx.section.update({
-            where: { id: section.id },
-            data: sectionData,
-          })
-        : await tx.section.create({ data: sectionData });
+    const isUpdate = section.id > 0;
 
-    return isUpdate.id;
+    if (isUpdate) {
+      const updated = await tx.section.update({
+        where: { id: section.id },
+        data: {
+          ...sectionData,
+          updatedBy: actionById,
+        },
+      });
+      return updated.id;
+    } else {
+      const created = await tx.section.create({
+        data: {
+          ...sectionData,
+          createdBy: actionById,
+        },
+      });
+      return created.id;
+    }
   }
 
   private async upsertAssignments(
     tx: Prisma.TransactionClient,
     sectionId: number,
     section: SectionDomain,
+    actionById: number,
   ): Promise<void> {
     const newAssignments = section.sectionCurriculumTeachers.filter(
       (assignment) => assignment.id === null,
@@ -142,6 +192,7 @@ export class SectionRepository {
           sectionId: sectionId,
           userId: assignment.teacherId,
           curriculumId: assignment.curriculumId,
+          createdBy: actionById,
         })),
       });
     }
@@ -159,22 +210,36 @@ export class SectionRepository {
     }
   }
 
-  async deleteById(id: number): Promise<boolean> {
-    try {
-      await this.prisma.$transaction(async (tx) => {
-        await tx.sectionCurriculumTeacher.deleteMany({
-          where: { sectionId: id },
-        });
-        await tx.section.delete({ where: { id } });
+  async deleteById(id: number, actionById: number): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const updatedSection = await tx.section.updateMany({
+        where: {
+          id,
+          archivedAt: null,
+        },
+        data: {
+          archivedAt: now,
+          updatedBy: actionById,
+        },
       });
-      return true;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === PRISMA_RECORD_NOT_FOUND_ERROR) {
-          return false;
-        }
+
+      if (updatedSection.count === 0) {
+        return false;
       }
-      throw error;
-    }
+
+      await tx.sectionCurriculumTeacher.updateMany({
+        where: {
+          sectionId: id,
+          archivedAt: null,
+        },
+        data: {
+          archivedAt: now,
+          updatedBy: actionById,
+        },
+      });
+
+      return true;
+    });
   }
 }

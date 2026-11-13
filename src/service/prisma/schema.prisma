@@ -13,8 +13,8 @@ model Student {
   studentSections StudentSection[]
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -26,8 +26,8 @@ model Teacher {
   sectionCurriculumTeachers SectionCurriculumTeacher[]
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -36,15 +36,15 @@ model User {
   id             Int      @id @default(autoincrement())
   firstName      String
   lastName       String
-  phoneNumber    String   @unique
-  email          String   @unique
+  phoneNumber    String
+  email          String
   hashedPassword String
   student        Student?
   teacher        Teacher?
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -55,8 +55,8 @@ model Grade {
   sections Section[]
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -68,8 +68,8 @@ model Curriculum {
   sectionCurriculumTeachers SectionCurriculumTeacher[]
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -86,8 +86,8 @@ model Section {
   examSections                ExamSection[]
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -106,8 +106,8 @@ model Exam {
   examSections   ExamSection[]
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -124,8 +124,8 @@ model SectionCurriculumTeacher {
   section Section @relation(fields: [sectionId], references: [id])
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 }
@@ -143,8 +143,8 @@ model StudentSection {
   section Section @relation(fields: [sectionId], references: [id])
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?
 
@@ -160,8 +160,8 @@ model ExamSection {
   section Section @relation(fields: [sectionId], references: [id])
 
   createdAt      DateTime @default(now())
-  createdBy      Int?
-  updatedAt      DateTime  @default(now()) @updatedAt
+  createdBy      Int
+  updatedAt      DateTime?  @updatedAt
   updatedBy      Int?
   archivedAt     DateTime?  
 

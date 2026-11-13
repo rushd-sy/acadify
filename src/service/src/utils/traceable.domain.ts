@@ -1,21 +1,21 @@
 export abstract class TraceableDomain {
-  createdBy?: number;
+  createdBy: number;
   createdAt: Date;
   updatedBy?: number;
-  updatedAt: Date;
+  updatedAt?: Date;
   archivedAt?: Date;
 
   constructor(input: {
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
-    this.createdBy = input.createdBy ?? undefined;
+    this.createdBy = input.createdBy;
     this.createdAt = input.createdAt ?? new Date();
     this.updatedBy = input.updatedBy ?? undefined;
-    this.updatedAt = input.updatedAt ?? new Date();
+    this.updatedAt = input.updatedAt ?? undefined;
     this.archivedAt = input.archivedAt ?? undefined;
   }
 }

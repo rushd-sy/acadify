@@ -31,9 +31,9 @@ export class AuthService {
 
     let role = Role.USER;
 
-    if (user.student) {
+    if (user.student && !user.student.archivedAt) {
       role = Role.STUDENT;
-    } else if (user.teacher) {
+    } else if (user.teacher && !user.teacher.archivedAt) {
       role = Role.TEACHER;
     }
     const payload: JwtPayload = {

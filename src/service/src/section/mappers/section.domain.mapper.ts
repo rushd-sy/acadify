@@ -4,11 +4,17 @@ import { CreateSectionDto } from 'dtos';
 
 @Injectable()
 export class SectionDomainMapper {
-  toDomainFromCreateDto(createDto: CreateSectionDto): SectionDomain {
-    return SectionDomain.create({
-      name: createDto.name,
-      academicYear: createDto.academicYear,
-      gradeId: createDto.gradeId,
-    });
+  toDomainFromCreateDto(
+    createDto: CreateSectionDto,
+    actionById: number,
+  ): SectionDomain {
+    return SectionDomain.create(
+      {
+        name: createDto.name,
+        academicYear: createDto.academicYear,
+        gradeId: createDto.gradeId,
+      },
+      actionById,
+    );
   }
 }

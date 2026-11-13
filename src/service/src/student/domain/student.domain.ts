@@ -8,10 +8,10 @@ export class StudentDomain extends TraceableDomain {
   private constructor(input: {
     userId: number;
     user: UserDomain;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }) {
     super(input);
@@ -19,23 +19,22 @@ export class StudentDomain extends TraceableDomain {
     this.user = input.user;
   }
 
-  static create(user: UserDomain, createdBy?: number): StudentDomain {
+  static create(user: UserDomain, createdBy: number): StudentDomain {
     return new StudentDomain({
       userId: -1,
       user,
       createdBy,
       createdAt: new Date(),
-      updatedAt: new Date(),
     });
   }
 
   static fromPersistence(input: {
     userId: number;
     user: UserDomain;
-    createdBy?: number;
+    createdBy: number;
     createdAt: Date;
     updatedBy?: number;
-    updatedAt: Date;
+    updatedAt?: Date;
     archivedAt?: Date;
   }): StudentDomain {
     return new StudentDomain(input);

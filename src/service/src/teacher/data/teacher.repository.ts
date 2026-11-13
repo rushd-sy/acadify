@@ -11,6 +11,7 @@ export class TeacherRepository {
 
   async createTeacherWithUser(
     teacherDomain: TeacherDomain,
+    actionById: number,
   ): Promise<TeacherWithUser> {
     const hashedPassword = await bcrypt.hash(
       teacherDomain.user.hashedPassword,
@@ -25,6 +26,7 @@ export class TeacherRepository {
           email: teacherDomain.user.email,
           phoneNumber: teacherDomain.user.phoneNumber,
           hashedPassword,
+          createdBy: actionById,
         },
       });
 
@@ -32,6 +34,7 @@ export class TeacherRepository {
         data: {
           userId: createdUser.id,
           degree: teacherDomain.degree,
+          createdBy: actionById,
         },
         include: {
           user: true,
@@ -44,6 +47,10 @@ export class TeacherRepository {
 
   async findAllTeachers(): Promise<TeacherWithUser[]> {
     return this.prisma.teacher.findMany({
+      where: {
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
@@ -51,8 +58,12 @@ export class TeacherRepository {
   }
 
   async findTeacherById(userId: number): Promise<TeacherWithUser | null> {
-    return this.prisma.teacher.findUnique({
-      where: { userId },
+    return this.prisma.teacher.findFirst({
+      where: {
+        userId,
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
@@ -62,6 +73,7 @@ export class TeacherRepository {
   async updateTeacherById(
     userId: number,
     data: UpdateTeacherDto,
+    actionById: number,
   ): Promise<TeacherWithUser | null> {
     const teacher = await this.findTeacherById(userId);
 
@@ -77,6 +89,7 @@ export class TeacherRepository {
           lastName: data.lastName ?? teacher.user.lastName,
           email: data.email ?? teacher.user.email,
           phoneNumber: data.phoneNumber ?? teacher.user.phoneNumber,
+          updatedBy: actionById,
         },
       });
 
@@ -85,6 +98,7 @@ export class TeacherRepository {
           where: { userId: userId },
           data: {
             degree: data.degree,
+            updatedBy: actionById,
           },
         });
       }
@@ -92,13 +106,34 @@ export class TeacherRepository {
     return this.findTeacherById(userId);
   }
 
-  async deleteById(id: number): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
-      const teacher = await this.findTeacherById(id);
-      if (teacher) {
-        await tx.teacher.delete({ where: { userId: id } });
-        await tx.user.delete({ where: { id: teacher.userId } });
+  async deleteById(id: number, actionById: number): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      const teacher = await tx.teacher.findFirst({
+        where: {
+          userId: id,
+          archivedAt: null,
+          user: { archivedAt: null },
+        },
+      });
+      if (!teacher) {
+        return false;
       }
+      const now = new Date();
+      await tx.teacher.update({
+        where: { userId: id },
+        data: {
+          archivedAt: now,
+          updatedBy: actionById,
+        },
+      });
+      await tx.user.update({
+        where: { id },
+        data: {
+          archivedAt: now,
+          updatedBy: actionById,
+        },
+      });
+      return true;
     });
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Grade } from '@prisma/client';
 import { GradeDomain } from '../domain/grade.domain';
-import { GradeDto } from 'dtos';
+import { CreateGradeDto, GradeDto } from 'dtos';
 
 @Injectable()
 export class GradeMapper {
@@ -9,6 +9,11 @@ export class GradeMapper {
     return GradeDomain.fromPersistence({
       id: grade.id,
       name: grade.name,
+      createdBy: grade.createdBy,
+      createdAt: grade.createdAt,
+      updatedBy: grade.updatedBy ?? undefined,
+      updatedAt: grade.updatedAt ?? undefined,
+      archivedAt: grade.archivedAt ?? undefined,
     });
   }
 
@@ -21,5 +26,17 @@ export class GradeMapper {
 
   toDtoList(grades: GradeDomain[]): GradeDto[] {
     return grades.map((grade): GradeDto => this.toDto(grade));
+  }
+
+  toDomainFromCreateDto(
+    createGradeDto: CreateGradeDto,
+    actionById: number,
+  ): GradeDomain {
+    return GradeDomain.create(
+      {
+        name: createGradeDto.name,
+      },
+      actionById,
+    );
   }
 }

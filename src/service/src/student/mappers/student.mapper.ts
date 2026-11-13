@@ -19,11 +19,6 @@ export class StudentMapper {
       lastName: student.user.lastName,
       email: student.user.email,
       role: Role.STUDENT,
-      createdBy: student.createdBy ?? undefined,
-      createdAt: student.createdAt,
-      updatedBy: student.updatedBy ?? undefined,
-      updatedAt: student.updatedAt,
-      archivedAt: student.archivedAt ?? undefined,
     };
   }
 
@@ -44,7 +39,7 @@ export class StudentMapper {
 
   toDomainFromCreateDto(
     createStudentDto: CreateStudentDto,
-    actionById?: number,
+    actionById: number,
   ): StudentDomain {
     const userDomain = UserDomain.create({
       firstName: createStudentDto.firstName,

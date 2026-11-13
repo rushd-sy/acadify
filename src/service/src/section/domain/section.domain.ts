@@ -1,3 +1,4 @@
+import { TraceableDomain } from 'src/utils/traceable.domain';
 import { SectionCurriculumTeacher } from './section-teaching-assignment.entity';
 import {
   InvalidAcademicYearError,
@@ -6,7 +7,7 @@ import {
   AssignmentNotFoundError,
 } from './section.errors';
 
-export class SectionDomain {
+export class SectionDomain extends TraceableDomain {
   id!: number;
   name!: string;
   academicYear!: string;
@@ -19,7 +20,13 @@ export class SectionDomain {
     academicYear: string;
     gradeId: number;
     assignments: SectionCurriculumTeacher[];
+    createdBy: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt?: Date;
+    archivedAt?: Date;
   }) {
+    super(input);
     this.id = input.id;
     this.name = input.name;
     this.academicYear = input.academicYear;
@@ -27,11 +34,14 @@ export class SectionDomain {
     this.sectionCurriculumTeachers = input.assignments;
   }
 
-  static create(input: {
-    name: string;
-    academicYear: string;
-    gradeId: number;
-  }): SectionDomain {
+  static create(
+    input: {
+      name: string;
+      academicYear: string;
+      gradeId: number;
+    },
+    createdBy: number,
+  ): SectionDomain {
     const trimmedName = input.name.trim();
     SectionDomain.assertName(trimmedName);
     SectionDomain.assertAcademicYear(input.academicYear);
@@ -41,6 +51,8 @@ export class SectionDomain {
       academicYear: input.academicYear,
       gradeId: input.gradeId,
       assignments: [],
+      createdBy,
+      createdAt: new Date(),
     });
   }
 
@@ -50,6 +62,11 @@ export class SectionDomain {
     academicYear: string;
     gradeId: number;
     assignments: SectionCurriculumTeacher[];
+    createdBy: number;
+    createdAt: Date;
+    updatedBy?: number;
+    updatedAt?: Date;
+    archivedAt?: Date;
   }): SectionDomain {
     return new SectionDomain(input);
   }

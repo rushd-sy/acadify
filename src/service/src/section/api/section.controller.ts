@@ -8,11 +8,13 @@ import {
   Post,
   Put,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { SectionService } from '../services/section.service';
 import { CreateSectionDto, SectionDto, UpdateSectionDto } from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../../auth/api/types/authenticated-request.type';
 
 @UseGuards(JwtAuthGuard)
 @Controller('api/sections')
@@ -32,20 +34,29 @@ export class SectionController {
   @Post()
   createSection(
     @Body() createSectionDto: CreateSectionDto,
+    @Req() req: AuthenticatedRequest,
   ): Promise<SectionDto> {
-    return this.sectionService.createSection(createSectionDto);
+    return this.sectionService.createSection(createSectionDto, req.user.id);
   }
 
   @Put(':id')
   updateSectionById(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSection: UpdateSectionDto,
+    @Req() req: AuthenticatedRequest,
   ): Promise<SectionDto> {
-    return this.sectionService.updateSectionById(id, updateSection);
+    return this.sectionService.updateSectionById(
+      id,
+      updateSection,
+      req.user.id,
+    );
   }
 
   @Delete(':id')
-  deleteSection(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.sectionService.deleteSection(id);
+  deleteSection(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<void> {
+    return this.sectionService.deleteSection(id, req.user.id);
   }
 }

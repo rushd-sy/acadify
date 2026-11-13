@@ -11,7 +11,7 @@ export class StudentRepository {
 
   async createStudentWithUser(
     studentDomain: StudentDomain,
-    actionById?: number,
+    actionById: number,
   ): Promise<StudentWithUser> {
     const hashedPassword = await bcrypt.hash(
       studentDomain.user.hashedPassword,
@@ -44,6 +44,10 @@ export class StudentRepository {
 
   async findAll(): Promise<StudentWithUser[]> {
     return this.prisma.student.findMany({
+      where: {
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
@@ -51,35 +55,47 @@ export class StudentRepository {
   }
 
   async findById(userId: number): Promise<StudentWithUser | null> {
-    return this.prisma.student.findUnique({
-      where: { userId },
+    return this.prisma.student.findFirst({
+      where: {
+        userId,
+        archivedAt: null,
+        user: { archivedAt: null },
+      },
       include: {
         user: true,
       },
     });
   }
 
-  async deleteById(userId: number, actionById?: number): Promise<void> {
-    await this.prisma.$transaction(async (tx) => {
-      const student = await this.findById(userId);
-      if (student) {
-        const now = new Date();
-        await tx.student.update({
-          where: { userId },
-          data: { archivedAt: now, updatedBy: actionById },
-        });
-        await tx.user.update({
-          where: { id: userId },
-          data: { archivedAt: now, updatedBy: actionById },
-        });
+  async deleteById(userId: number, actionById: number): Promise<boolean> {
+    return this.prisma.$transaction(async (tx) => {
+      const student = await tx.student.findFirst({
+        where: {
+          userId,
+          archivedAt: null,
+          user: { archivedAt: null },
+        },
+      });
+      if (!student) {
+        return false;
       }
+      const now = new Date();
+      await tx.student.update({
+        where: { userId },
+        data: { archivedAt: now, updatedBy: actionById },
+      });
+      await tx.user.update({
+        where: { id: userId },
+        data: { archivedAt: now, updatedBy: actionById },
+      });
+      return true;
     });
   }
 
   async updateStudentData(
     userId: number,
     updateData: UpdateStudentDto,
-    actionById?: number,
+    actionById: number,
   ): Promise<StudentWithUser | null> {
     const student = await this.findById(userId);
 

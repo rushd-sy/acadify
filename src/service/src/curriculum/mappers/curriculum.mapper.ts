@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Curriculum } from '@prisma/client';
 import { CurriculumDomain } from '../domain/curriculum.domain';
-import { CurriculumDto } from 'dtos';
+import { CreateCurriculumDto, CurriculumDto } from 'dtos';
 
 @Injectable()
 export class CurriculumMapper {
@@ -11,6 +11,11 @@ export class CurriculumMapper {
       name: curriculum.name,
       description:
         curriculum.description === null ? undefined : curriculum.description,
+      createdBy: curriculum.createdBy,
+      createdAt: curriculum.createdAt,
+      updatedBy: curriculum.updatedBy ?? undefined,
+      updatedAt: curriculum.updatedAt ?? undefined,
+      archivedAt: curriculum.archivedAt ?? undefined,
     });
   }
 
@@ -24,5 +29,18 @@ export class CurriculumMapper {
 
   toDtoList(curriculums: CurriculumDomain[]): CurriculumDto[] {
     return curriculums.map((curriculum) => this.toDto(curriculum));
+  }
+
+  toDomainFromCreateDto(
+    createCurriculumDto: CreateCurriculumDto,
+    actionById: number,
+  ): CurriculumDomain {
+    return CurriculumDomain.create(
+      {
+        name: createCurriculumDto.name,
+        description: createCurriculumDto.description,
+      },
+      actionById,
+    );
   }
 }

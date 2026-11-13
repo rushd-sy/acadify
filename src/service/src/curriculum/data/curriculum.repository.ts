@@ -14,6 +14,9 @@ export class CurriculumRepository {
 
   async findAll(): Promise<CurriculumDomain[]> {
     const curriculums = await this.prisma.curriculum.findMany({
+      where: {
+        archivedAt: null,
+      },
       orderBy: {
         id: 'asc',
       },
@@ -25,8 +28,11 @@ export class CurriculumRepository {
   }
 
   async findById(id: number): Promise<CurriculumDomain | null> {
-    const curriculum = await this.prisma.curriculum.findUnique({
-      where: { id },
+    const curriculum = await this.prisma.curriculum.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
     });
     return curriculum ? this.mapper.toDomain(curriculum) : null;
   }
@@ -38,16 +44,21 @@ export class CurriculumRepository {
           equals: name,
           mode: 'insensitive',
         },
+        archivedAt: null,
       },
     });
     return curriculum ? this.mapper.toDomain(curriculum) : null;
   }
 
-  async create(curriculumDomain: CurriculumDomain): Promise<CurriculumDomain> {
+  async create(
+    curriculumDomain: CurriculumDomain,
+    actionById: number,
+  ): Promise<CurriculumDomain> {
     const curriculum = await this.prisma.curriculum.create({
       data: {
         name: curriculumDomain.name,
         description: curriculumDomain.description,
+        createdBy: actionById,
       },
     });
     return this.mapper.toDomain(curriculum);
@@ -56,15 +67,29 @@ export class CurriculumRepository {
   async update(
     id: number,
     updateData: UpdateCurriculumDto,
+    actionById: number,
   ): Promise<CurriculumDomain> {
     const curriculum = await this.prisma.curriculum.update({
       where: { id },
-      data: updateData,
+      data: {
+        ...updateData,
+        updatedBy: actionById,
+      },
     });
     return this.mapper.toDomain(curriculum);
   }
 
-  async delete(id: number): Promise<void> {
-    await this.prisma.curriculum.delete({ where: { id } });
+  async delete(id: number, actionById: number): Promise<boolean> {
+    const result = await this.prisma.curriculum.updateMany({
+      where: {
+        id,
+        archivedAt: null,
+      },
+      data: {
+        archivedAt: new Date(),
+        updatedBy: actionById,
+      },
+    });
+    return result.count > 0;
   }
 }

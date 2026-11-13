@@ -35,21 +35,25 @@ export class UserMapper {
       email: user.email,
       phoneNumber: user.phoneNumber,
       hashedPassword: user.hashedPassword,
-      createdBy: user.createdBy ?? undefined,
+      createdBy: user.createdBy,
       createdAt: user.createdAt,
       updatedBy: user.updatedBy ?? undefined,
-      updatedAt: user.updatedAt,
+      updatedAt: user.updatedAt ?? undefined,
       archivedAt: user.archivedAt ?? undefined,
     });
   }
 
-  toDomainFromCreateDto(createUserDto: CreateUserDto): UserDomain {
+  toDomainFromCreateDto(
+    createUserDto: CreateUserDto,
+    actionById: number,
+  ): UserDomain {
     return UserDomain.create({
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
       email: createUserDto.email,
       phoneNumber: createUserDto.phoneNumber,
       hashedPassword: createUserDto.hashedPassword,
+      createdBy: actionById,
     });
   }
 
@@ -62,7 +66,7 @@ export class UserMapper {
       email: user.email,
       phoneNumber: user.phoneNumber,
       hashedPassword: user.hashedPassword,
-      createdBy: user.createdBy ?? null,
+      createdBy: user.createdBy,
       updatedBy: user.updatedBy ?? null,
       archivedAt: user.archivedAt ?? null,
     };

@@ -9,6 +9,7 @@ const program = new Command();
 
 const seed = async () => {
   const prisma = new PrismaClient();
+  const SEED_USER_ID = 0;
   const generatedAccounts: { Role: string; Email: string; Password: string }[] =
     [];
 
@@ -35,6 +36,7 @@ const seed = async () => {
         phoneNumber: phoneNumber,
         email: email,
         hashedPassword: hashedPassword,
+        createdBy: SEED_USER_ID,
       },
     });
 
@@ -70,6 +72,7 @@ const seed = async () => {
         phoneNumber: phoneNumber,
         email: email,
         hashedPassword: hashedPassword,
+        createdBy: SEED_USER_ID,
       },
     });
 
@@ -80,6 +83,7 @@ const seed = async () => {
       },
       create: {
         userId: userId,
+        createdBy: SEED_USER_ID,
       },
     });
 
@@ -123,6 +127,7 @@ const seed = async () => {
         phoneNumber: phoneNumber,
         email: email,
         hashedPassword: hashedPassword,
+        createdBy: SEED_USER_ID,
       },
     });
 
@@ -134,6 +139,7 @@ const seed = async () => {
       create: {
         userId: userId,
         degree: degree,
+        createdBy: SEED_USER_ID,
       },
     });
 
@@ -149,7 +155,7 @@ const seed = async () => {
     const grade = await prisma.grade.upsert({
       where: { id: i + 1 },
       update: { name: gradesData[i] },
-      create: { id: i + 1, name: gradesData[i] },
+      create: { id: i + 1, name: gradesData[i], createdBy: SEED_USER_ID },
     });
 
     await prisma.section.upsert({
@@ -164,6 +170,7 @@ const seed = async () => {
         name: `Section A - ${grade.name}`,
         academicYear: '2026/2027',
         gradeId: grade.id,
+        createdBy: SEED_USER_ID,
       },
     });
   }
@@ -189,6 +196,7 @@ const seed = async () => {
         id: i + 1,
         name: curriculumsData[i].name,
         description: curriculumsData[i].description,
+        createdBy: SEED_USER_ID,
       },
     });
   }
@@ -208,6 +216,7 @@ const seed = async () => {
         id: i + 1,
         studentId: studentId,
         sectionId: sectionId,
+        createdBy: SEED_USER_ID,
       },
     });
   }
@@ -230,6 +239,7 @@ const seed = async () => {
         userId: teacherId,
         sectionId: sectionId,
         curriculumId: curriculumId,
+        createdBy: SEED_USER_ID,
       },
     });
   }
@@ -300,7 +310,10 @@ const seed = async () => {
         minScore: exam.minScore,
         maxScore: exam.maxScore,
       },
-      create: exam,
+      create: {
+        ...exam,
+        createdBy: SEED_USER_ID,
+      },
     });
   }
 

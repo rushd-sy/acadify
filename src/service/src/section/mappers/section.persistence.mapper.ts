@@ -20,6 +20,11 @@ export class SectionPersistenceMapper {
             }),
           )
         : [],
+      createdBy: prismaSection.createdBy,
+      createdAt: prismaSection.createdAt,
+      updatedBy: prismaSection.updatedBy ?? undefined,
+      updatedAt: prismaSection.updatedAt ?? undefined,
+      archivedAt: prismaSection.archivedAt ?? undefined,
     });
   }
 }

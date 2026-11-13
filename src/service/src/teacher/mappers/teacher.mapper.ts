@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-
 import {
   CreateTeacherDto,
   TeacherDetailsDto,
   TeacherDto,
   UpdateTeacherDto,
 } from 'dtos';
-
 import { TeacherDomain } from '../domain/teacher.domain';
 import { UserDomain } from '../../auth/domain/user.domain';
 import { TeacherWithUser } from '../types/teacher-user.type';
@@ -38,19 +36,26 @@ export class TeacherMapper {
     };
   }
 
-  toDomainFromCreateDto(createTeacherDto: CreateTeacherDto): TeacherDomain {
+  toDomainFromCreateDto(
+    createTeacherDto: CreateTeacherDto,
+    actionById: number,
+  ): TeacherDomain {
     const userDomain = UserDomain.create({
       firstName: createTeacherDto.firstName,
       lastName: createTeacherDto.lastName,
       email: createTeacherDto.email,
       phoneNumber: createTeacherDto.phoneNumber,
       hashedPassword: createTeacherDto.hashedPassword,
+      createdBy: actionById,
     });
 
-    return TeacherDomain.create({
-      user: userDomain,
-      degree: createTeacherDto.degree,
-    });
+    return TeacherDomain.create(
+      {
+        user: userDomain,
+        degree: createTeacherDto.degree,
+      },
+      actionById,
+    );
   }
 
   toUpdateUserData(updateTeacherDto: UpdateTeacherDto): UpdateTeacherDto {
