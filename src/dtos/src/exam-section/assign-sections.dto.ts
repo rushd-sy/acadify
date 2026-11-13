@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class AssignSectionDto {
+export class AssignSectionDto {
   @IsInt()
   @Min(1)
   sectionId!: number;
@@ -17,8 +17,9 @@ class AssignSectionDto {
   @IsDateString()
   startAt!: string;
 
-  @IsDateString()
-  endAt!: string;
+  @IsInt()
+  @Min(1)
+  duration!: number;
 }
 
 export class AssignSectionsDto {
