@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+
 import DeleteModal from '@/components/ui/delete-modal';
-import SectionModal from '@/components/section/section-modal';
-import { sectionService } from '@/services/section.service';
-import type { SectionDto } from 'dtos';
+import { DataTable } from '@/components/ui/data-table';
+import type { DataTableColumn } from '@/components/ui/data-table';
+import { DropdownMenu } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/ui/page-header';
+import SectionModal from '@/components/section/section-modal';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
+import { sectionService } from '@/services/section.service';
+
+import type { SectionDto } from 'dtos';
 
 export default function SectionsPage() {
   const [sections, setSections] = useState<SectionDto[]>([]);
@@ -24,6 +20,7 @@ export default function SectionsPage() {
     null,
   );
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const {
@@ -105,6 +102,24 @@ export default function SectionsPage() {
     );
   };
 
+  const columns: DataTableColumn<SectionDto>[] = [
+    {
+      id: 'name',
+      header: 'Name',
+      accessorKey: 'name',
+    },
+    {
+      id: 'academicYear',
+      header: 'Academic Year',
+      accessorKey: 'academicYear',
+    },
+    {
+      id: 'gradeId',
+      header: 'Grade',
+      accessorKey: 'gradeId',
+    },
+  ];
+
   return (
     <div className="w-full min-h-screen bg-white p-8">
       <PageHeader
@@ -118,95 +133,47 @@ export default function SectionsPage() {
           },
         }}
       />
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="text-base">
-              <TableHead className="py-5">Name</TableHead>
-              <TableHead className="py-5">Academic Year</TableHead>
-              <TableHead className="py-5">Grade</TableHead>
-              <TableHead className="py-5">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
 
-          <TableBody className="text-base">
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={4} className="py-10 text-center">
-                  Loading sections...
-                </TableCell>
-              </TableRow>
-            ) : fetchError ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="py-10 text-center text-red-600"
-                >
-                  {fetchError}
-                </TableCell>
-              </TableRow>
-            ) : sections.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="py-10 text-center">
-                  No sections available.
-                </TableCell>
-              </TableRow>
-            ) : (
-              sections.map((section) => (
-                <TableRow
-                  key={section.id}
-                  className="h-16 cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => navigate(`${section.id}`)}
-                >
-                  <TableCell className="font-medium">{section.name}</TableCell>
+      <DataTable
+        columns={columns}
+        data={sections}
+        rowKey="id"
+        isLoading={isLoading}
+        loadingMessage="Loading sections..."
+        error={fetchError ?? undefined}
+        emptyMessage="No sections available."
+        onRowClick={(section) => navigate(`${section.id}`)}
+        actions={(section) => (
+          <DropdownMenu
+            items={[
+              {
+                label: 'Edit',
+                onSelect: () => handleEditSection(section.id),
+              },
+              {
+                label: 'Delete',
+                variant: 'destructive',
+                onSelect: () => openDeleteModal(section),
+              },
+            ]}
+          />
+        )}
+      />
 
-                  <TableCell>{section.academicYear}</TableCell>
-
-                  <TableCell>{section.gradeId}</TableCell>
-
-                  <TableCell className="space-x-2">
-                    <Button
-                      variant="secondary"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleEditSection(section.id);
-                      }}
-                    >
-                      Edit
-                    </Button>
-
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        openDeleteModal(section);
-                      }}
-                      className="rounded-lg bg-red-500 px-3 py-2 text-sm text-white hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-
-        <DeleteModal
-          open={sectionToDelete !== null}
-          title="Confirm Delete"
-          message={
-            <>
-              Are you sure you want to delete{' '}
-              <span className="font-semibold">{sectionToDelete?.name}</span>?
-            </>
-          }
-          onConfirm={handleConfirmDelete}
-          onClose={closeDeleteModal}
-          isLoading={isDeleting}
-          error={deleteError}
-        />
-      </div>
+      <DeleteModal
+        open={sectionToDelete !== null}
+        title="Confirm Delete"
+        message={
+          <>
+            Are you sure you want to delete{' '}
+            <span className="font-semibold">{sectionToDelete?.name}</span>?
+          </>
+        }
+        onConfirm={handleConfirmDelete}
+        onClose={closeDeleteModal}
+        isLoading={isDeleting}
+        error={deleteError}
+      />
 
       <SectionModal
         open={isSectionModalOpen}
