@@ -7,6 +7,7 @@ import {
   IsNumber,
   IsUrl,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateExamDto {
@@ -14,12 +15,12 @@ export class UpdateExamDto {
   @IsInt()
   examTemplateId?: number;
 
-  @IsOptional()
+  @ValidateIf((object, value) => value !== undefined)
   @IsNotEmpty()
   @IsString()
   title?: string;
 
-  @IsOptional()
+  @ValidateIf((object, value) => value !== undefined)
   @IsNotEmpty()
   @IsDateString()
   date?: string;
@@ -35,13 +36,13 @@ export class UpdateExamDto {
   })
   documentUrl?: string;
 
-  @IsOptional()
+  @ValidateIf((object, value) => value !== undefined)
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
   minScore?: number;
 
-  @IsOptional()
+  @ValidateIf((object, value) => value !== undefined)
   @IsNotEmpty()
   @IsNumber()
   maxScore?: number;
