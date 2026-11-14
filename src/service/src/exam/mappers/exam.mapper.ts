@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Exam } from '@prisma/client';
-import { CreateExamDto, ExamDto } from 'dtos';
+import { AssignSectionsDto, CreateExamDto, ExamDto } from 'dtos';
 import { ExamDomain } from '../domain/exam.domain';
+import { ExamSection } from '../domain/exam-section.entity';
 
 @Injectable()
 export class ExamMapper {
@@ -15,6 +16,7 @@ export class ExamMapper {
       curriculumId: exam.curriculumId ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
+      examSections: [],
       createdBy: exam.createdBy,
       createdAt: exam.createdAt,
       updatedBy: exam.updatedBy ?? undefined,
@@ -55,6 +57,22 @@ export class ExamMapper {
         maxScore: createExam.maxScore,
       },
       actionById,
+    );
+  }
+
+  toExamSectionsFromAssignDto(
+    examId: number,
+    assignSectionsDto: AssignSectionsDto,
+    actionById: number,
+  ): ExamSection[] {
+    return assignSectionsDto.sections.map((section) =>
+      ExamSection.create({
+        examId,
+        sectionId: section.sectionId,
+        startAt: new Date(section.startAt),
+        duration: section.duration,
+        createdBy: actionById,
+      }),
     );
   }
 }
