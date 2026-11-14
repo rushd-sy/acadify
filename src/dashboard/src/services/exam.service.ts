@@ -1,5 +1,5 @@
 import { api } from '../lib/api-client';
-import type { ExamDto, CreateExamDto } from 'dtos';
+import type { ExamDto, CreateExamDto, UpdateExamDto } from 'dtos';
 
 class ExamService {
   private readonly baseUrl = '/api/exams';
@@ -9,13 +9,23 @@ class ExamService {
     return response.data;
   }
 
-  async deleteExamById(id: number): Promise<void> {
-    const response = await api.delete(`${this.baseUrl}/${id}`);
+  async getExamById(id: number): Promise<ExamDto> {
+    const response = await api.get<ExamDto>(`${this.baseUrl}/${id}`);
     return response.data;
   }
 
   async createExam(data: CreateExamDto): Promise<ExamDto> {
     const response = await api.post<ExamDto>(this.baseUrl, data);
+    return response.data;
+  }
+
+  async updateExamById(id: number, data: UpdateExamDto): Promise<ExamDto> {
+    const response = await api.put<ExamDto>(`${this.baseUrl}/${id}`, data);
+    return response.data;
+  }
+
+  async deleteExamById(id: number): Promise<void> {
+    const response = await api.delete(`${this.baseUrl}/${id}`);
     return response.data;
   }
 }

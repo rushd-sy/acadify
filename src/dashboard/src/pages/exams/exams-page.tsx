@@ -29,6 +29,7 @@ export default function ExamsPage() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [examToEdit, setExamToEdit] = useState<ExamDto | null>(null);
 
   const {
     itemToDelete: examToDelete,
@@ -130,10 +131,18 @@ export default function ExamsPage() {
     setOpenMenuId(examId);
   };
 
-  const handleEditExam = (exam: ExamDto) => {
+  const handleEditExam = async (exam: ExamDto) => {
     setOpenMenuId(null);
     setMenuPosition(null);
-    console.info('Edit exam selected:', exam.id);
+    try {
+      const examDetails = await examService.getById(exam.id);
+      setExamToEdit(examDetails);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('Failed to fetch exam details:', error);
+      setExamToEdit(exam);
+      setIsModalOpen(true);
+    }
   };
 
   const handleDeleteExam = (exam: ExamDto) => {
@@ -155,6 +164,17 @@ export default function ExamsPage() {
     setExams((previousExam) => [...previousExam, createdExam]);
   };
 
+  const handleUpdateSuccess = (updatedExam: ExamDto) => {
+    setExams((prev) =>
+      prev.map((exam) => (exam.id === updatedExam.id ? updatedExam : exam)),
+    );
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setExamToEdit(null);
+  };
+
   return (
     <div className="min-h-screen w-full min-w-0 bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
       <div className="w-full min-w-0">
@@ -163,7 +183,10 @@ export default function ExamsPage() {
           description="A list of all available exams."
           action={{
             label: 'Create Exam',
-            onClick: () => setIsModalOpen(true),
+            onClick: () => {
+              setExamToEdit(null);
+              setIsModalOpen(true);
+            },
           }}
         />
 
@@ -364,8 +387,10 @@ export default function ExamsPage() {
 
       <ExamModal
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        exam={examToEdit ?? undefined}
+        onUpdateSuccess={handleUpdateSuccess}
         onCreateSuccess={handleCreateSuccess}
+        onClose={handleCloseModal}
       />
     </div>
   );

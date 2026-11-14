@@ -24,9 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+
 type ExamFormProps = {
   onCancel: () => void;
-  onCreateSuccess: (createExam: ExamDto) => void;
+  exam?: ExamDto;
+  onUpdateSuccess: (updatedExam: ExamDto) => void;
+  onCreateSuccess: (createdExam: ExamDto) => void;
 };
 
 type ExamFormData = {
@@ -95,7 +98,12 @@ const validateExamForm = (data: ExamFormData) => {
   return errors;
 };
 
-export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
+export function ExamForm({
+  onCancel,
+  exam,
+  onUpdateSuccess,
+  onCreateSuccess,
+}: ExamFormProps) {
   const [curriculums, setCurriculums] = useState<CurriculumDto[]>([]);
   const [curriculumError, setCurriculumError] = useState('');
 
@@ -124,16 +132,14 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
       isMounted = false;
     };
   }, []);
+
   const examAction = async (
     _prevState: ExamFormState,
     formData: FormData,
   ): Promise<ExamFormState> => {
     const curriculumId = getOptionalNumber(formData, 'curriculumId');
-
     const documentUrlValue = getFormString(formData, 'documentUrl').trim();
-
     const documentUrl = documentUrlValue ? documentUrlValue : undefined;
-
     const dateValue = getFormString(formData, 'date').trim();
     const date = new Date(dateValue);
 
@@ -142,6 +148,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
 
     const minScoreValue = getFormString(formData, 'minScore').trim();
     const minScore = minScoreValue ? Number(minScoreValue) : NaN;
+
     const examData = {
       title: getFormString(formData, 'title').trim(),
       date,
@@ -162,16 +169,24 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
     }
 
     try {
-      const createExam = await examService.createExam({
-        ...examData,
-        date: examData.date.toISOString(),
-      });
-      onCreateSuccess(createExam);
+      if (exam) {
+        const updatedExam = await examService.updateExamById(exam.id, {
+          ...examData,
+          date: examData.date.toISOString(),
+        });
+        onUpdateSuccess(updatedExam);
+      } else {
+        const createdExam = await examService.createExam({
+          ...examData,
+          date: examData.date.toISOString(),
+        });
+        onCreateSuccess(createdExam);
+      }
 
       onCancel();
       return { success: true, fieldErrors: {}, formError: null };
     } catch (error: unknown) {
-      console.error('Failed to save exam:', error);
+      console.error(`Failed to ${exam ? 'update' : 'create'} exam:`, error);
       const apiFieldErrors = getApiValidationErrors(error, examFormFields);
       if (Object.keys(apiFieldErrors).length > 0) {
         return {
@@ -186,7 +201,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
         fieldErrors: {},
         formError:
           getApiErrorMessage(error) ??
-          `Failed to create exam. Please try again later.`,
+          `Failed to ${exam ? 'update' : 'create'} exam. Please try again later.`,
         values: examData,
       };
     }
@@ -206,7 +221,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
             name="title"
             type="text"
             placeholder="e.g. Mathematics - Midterm Exam"
-            defaultValue={state.values?.title}
+            defaultValue={state.values?.title ?? exam?.title}
           />
           {state.fieldErrors.title && (
             <p className="text-sm text-red-600">{state.fieldErrors.title}</p>
@@ -218,7 +233,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
           <Input
             name="date"
             type="date"
-            defaultValue={formatDateForInput(state.values?.date)}
+            defaultValue={formatDateForInput(state.values?.date ?? exam?.date)}
           />
           {state.fieldErrors.date && (
             <p className="text-sm text-red-600">{state.fieldErrors.date}</p>
@@ -232,7 +247,9 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
             defaultValue={
               state.values?.curriculumId != null
                 ? String(state.values.curriculumId)
-                : ''
+                : exam?.curriculumId != null
+                  ? String(exam.curriculumId)
+                  : ''
             }
           >
             <SelectTrigger className="w-full">
@@ -257,7 +274,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
           <Input
             name="documentUrl"
             placeholder="https://example.com/exam.pdf"
-            defaultValue={state.values?.documentUrl}
+            defaultValue={state.values?.documentUrl ?? exam?.documentUrl}
           />
           {state.fieldErrors.documentUrl && (
             <p className="text-sm text-red-600">
@@ -272,7 +289,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
             name="minScore"
             type="number"
             placeholder="e.g. 20"
-            defaultValue={state.values?.minScore}
+            defaultValue={state.values?.minScore ?? exam?.minScore}
           />
           {state.fieldErrors.minScore && (
             <p className="text-sm text-red-600">{state.fieldErrors.minScore}</p>
@@ -285,7 +302,7 @@ export function ExamForm({ onCancel, onCreateSuccess }: ExamFormProps) {
             name="maxScore"
             type="number"
             placeholder="e.g. 100"
-            defaultValue={state.values?.maxScore}
+            defaultValue={state.values?.maxScore ?? exam?.maxScore}
           />
           {state.fieldErrors.maxScore && (
             <p className="text-sm text-red-600">{state.fieldErrors.maxScore}</p>
