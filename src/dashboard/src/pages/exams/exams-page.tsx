@@ -29,6 +29,9 @@ export default function ExamsPage() {
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [examToEdit, setExamToEdit] = useState<ExamDto | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const {
     itemToDelete: examToDelete,
@@ -130,10 +133,23 @@ export default function ExamsPage() {
     setOpenMenuId(examId);
   };
 
-  const handleEditExam = (exam: ExamDto) => {
+  const handleEditExam = async (exam: ExamDto) => {
+    if (isFetchingDetails) return;
     setOpenMenuId(null);
     setMenuPosition(null);
-    console.info('Edit exam selected:', exam.id);
+    setActionError(null);
+
+    try {
+      setIsFetchingDetails(true);
+      const examDetails = await examService.getExamById(exam.id);
+      setExamToEdit(examDetails);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error('Failed to fetch exam details:', error);
+      setActionError('Failed to load exam details. Please try again.');
+    } finally {
+      setIsFetchingDetails(false);
+    }
   };
 
   const handleDeleteExam = (exam: ExamDto) => {
@@ -155,6 +171,17 @@ export default function ExamsPage() {
     setExams((previousExam) => [...previousExam, createdExam]);
   };
 
+  const handleUpdateSuccess = (updatedExam: ExamDto) => {
+    setExams((prev) =>
+      prev.map((exam) => (exam.id === updatedExam.id ? updatedExam : exam)),
+    );
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setExamToEdit(null);
+  };
+
   return (
     <div className="min-h-screen w-full min-w-0 bg-white px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
       <div className="w-full min-w-0">
@@ -163,9 +190,25 @@ export default function ExamsPage() {
           description="A list of all available exams."
           action={{
             label: 'Create Exam',
-            onClick: () => setIsModalOpen(true),
+            onClick: () => {
+              setExamToEdit(null);
+              setIsModalOpen(true);
+            },
           }}
         />
+
+        {actionError && (
+          <div className="mt-4 flex items-center justify-between rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            <span>{actionError}</span>
+            <button
+              type="button"
+              onClick={() => setActionError(null)}
+              className="ml-4 font-semibold text-red-500 hover:text-red-700"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         <div className="mt-8 w-full min-w-0 overflow-x-auto rounded-md">
           <Table className="w-full min-w-[900px] table-auto text-sm">
@@ -364,8 +407,10 @@ export default function ExamsPage() {
 
       <ExamModal
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        exam={examToEdit ?? undefined}
+        onUpdateSuccess={handleUpdateSuccess}
         onCreateSuccess={handleCreateSuccess}
+        onClose={handleCloseModal}
       />
     </div>
   );
