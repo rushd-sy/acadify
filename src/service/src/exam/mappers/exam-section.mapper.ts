@@ -36,7 +36,7 @@ export class ExamSectionMapper {
 
   toDto(examSection: ExamSection): ExamSectionDto {
     return {
-      id: examSection.id!,
+      id: examSection.id,
       examId: examSection.examId,
       sectionId: examSection.sectionId,
       startAt: examSection.startAt,

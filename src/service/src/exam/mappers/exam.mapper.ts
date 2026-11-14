@@ -16,7 +16,7 @@ export class ExamMapper {
       curriculumId: exam.curriculumId ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
-      examSections: [],
+      examSections: [], // TODO: Load exam sections from persistence.
       createdBy: exam.createdBy,
       createdAt: exam.createdAt,
       updatedBy: exam.updatedBy ?? undefined,

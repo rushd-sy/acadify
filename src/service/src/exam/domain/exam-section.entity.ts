@@ -1,14 +1,14 @@
 import { TraceableDomain } from 'src/utils/traceable.domain';
 
 export class ExamSection extends TraceableDomain {
-  id?: number;
+  id: number;
   examId!: number;
   sectionId!: number;
   startAt!: Date;
   duration!: number;
 
   private constructor(input: {
-    id?: number;
+    id: number;
     examId: number;
     sectionId: number;
     startAt: Date;

@@ -106,8 +106,7 @@ export class ExamRepository {
     return exam ? this.mapper.toDomain(exam) : null;
   }
 
-  assignSections(sections: ExamSection[]): void {
-    void sections;
-    // TODO: Implement section assignment persistence
+  assignSections(_sections: ExamSection[]): void {
+    throw new Error('Not implemented');
   }
 }
