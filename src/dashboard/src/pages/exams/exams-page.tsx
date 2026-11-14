@@ -30,6 +30,7 @@ export default function ExamsPage() {
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [examToEdit, setExamToEdit] = useState<ExamDto | null>(null);
+  const [isFetchingDetails, setIsFetchingDetails] = useState(false);
 
   const {
     itemToDelete: examToDelete,
@@ -132,16 +133,20 @@ export default function ExamsPage() {
   };
 
   const handleEditExam = async (exam: ExamDto) => {
+    if (isFetchingDetails) return;
     setOpenMenuId(null);
     setMenuPosition(null);
+
     try {
+      setIsFetchingDetails(true);
       const examDetails = await examService.getExamById(exam.id);
       setExamToEdit(examDetails);
       setIsModalOpen(true);
     } catch (error) {
       console.error('Failed to fetch exam details:', error);
-      setExamToEdit(exam);
-      setIsModalOpen(true);
+      setFetchError('Failed to load exam details. Please try again.');
+    } finally {
+      setIsFetchingDetails(false);
     }
   };
 

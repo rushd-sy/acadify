@@ -29,6 +29,7 @@ export default function ExamModal({
       }
     >
       <ExamForm
+        key={exam?.id ?? 'new'}
         onCancel={onClose}
         exam={exam}
         onUpdateSuccess={onUpdateSuccess}

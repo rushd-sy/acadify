@@ -34,7 +34,7 @@ export class UpdateExamDto {
     protocols: ['http', 'https'],
     require_protocol: true,
   })
-  documentUrl?: string;
+  documentUrl?: string | null;
 
   @ValidateIf((object, value) => value !== undefined)
   @IsNotEmpty()

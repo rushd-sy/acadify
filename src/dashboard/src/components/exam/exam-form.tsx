@@ -139,7 +139,7 @@ export function ExamForm({
   ): Promise<ExamFormState> => {
     const curriculumId = getOptionalNumber(formData, 'curriculumId');
     const documentUrlValue = getFormString(formData, 'documentUrl').trim();
-    const documentUrl = documentUrlValue ? documentUrlValue : undefined;
+    const documentUrl = documentUrlValue ? documentUrlValue : null;
     const dateValue = getFormString(formData, 'date').trim();
     const date = new Date(dateValue);
 
@@ -168,25 +168,26 @@ export function ExamForm({
       };
     }
 
+    const action = exam ? 'update' : 'create';
+
     try {
+      const payload = {
+        ...examData,
+        date: examData.date.toISOString(),
+      };
+
       if (exam) {
-        const updatedExam = await examService.updateExamById(exam.id, {
-          ...examData,
-          date: examData.date.toISOString(),
-        });
+        const updatedExam = await examService.updateExamById(exam.id, payload);
         onUpdateSuccess(updatedExam);
       } else {
-        const createdExam = await examService.createExam({
-          ...examData,
-          date: examData.date.toISOString(),
-        });
+        const createdExam = await examService.createExam(payload);
         onCreateSuccess(createdExam);
       }
 
       onCancel();
       return { success: true, fieldErrors: {}, formError: null };
     } catch (error: unknown) {
-      console.error(`Failed to ${exam ? 'update' : 'create'} exam:`, error);
+      console.error(`Failed to ${action} exam:`, error);
       const apiFieldErrors = getApiValidationErrors(error, examFormFields);
       if (Object.keys(apiFieldErrors).length > 0) {
         return {
@@ -201,7 +202,7 @@ export function ExamForm({
         fieldErrors: {},
         formError:
           getApiErrorMessage(error) ??
-          `Failed to ${exam ? 'update' : 'create'} exam. Please try again later.`,
+          `Failed to ${action} exam. Please try again later.`,
         values: examData,
       };
     }
