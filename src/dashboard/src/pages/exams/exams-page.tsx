@@ -31,6 +31,7 @@ export default function ExamsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [examToEdit, setExamToEdit] = useState<ExamDto | null>(null);
   const [isFetchingDetails, setIsFetchingDetails] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const {
     itemToDelete: examToDelete,
@@ -136,6 +137,7 @@ export default function ExamsPage() {
     if (isFetchingDetails) return;
     setOpenMenuId(null);
     setMenuPosition(null);
+    setActionError(null);
 
     try {
       setIsFetchingDetails(true);
@@ -144,7 +146,7 @@ export default function ExamsPage() {
       setIsModalOpen(true);
     } catch (error) {
       console.error('Failed to fetch exam details:', error);
-      setFetchError('Failed to load exam details. Please try again.');
+      setActionError('Failed to load exam details. Please try again.');
     } finally {
       setIsFetchingDetails(false);
     }
@@ -194,6 +196,19 @@ export default function ExamsPage() {
             },
           }}
         />
+
+        {actionError && (
+          <div className="mt-4 flex items-center justify-between rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            <span>{actionError}</span>
+            <button
+              type="button"
+              onClick={() => setActionError(null)}
+              className="ml-4 font-semibold text-red-500 hover:text-red-700"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         <div className="mt-8 w-full min-w-0 overflow-x-auto rounded-md">
           <Table className="w-full min-w-[900px] table-auto text-sm">

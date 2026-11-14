@@ -36,7 +36,7 @@ type ExamFormData = {
   title: string;
   date: Date;
   documentUrl?: string | null;
-  curriculumId?: number;
+  curriculumId?: number | null;
   minScore: number;
   maxScore: number;
 };
@@ -137,7 +137,8 @@ export function ExamForm({
     _prevState: ExamFormState,
     formData: FormData,
   ): Promise<ExamFormState> => {
-    const curriculumId = getOptionalNumber(formData, 'curriculumId');
+    const rawCurriculumId = getOptionalNumber(formData, 'curriculumId');
+    const curriculumId = rawCurriculumId !== undefined ? rawCurriculumId : null;
     const documentUrlValue = getFormString(formData, 'documentUrl').trim();
     const documentUrl = documentUrlValue ? documentUrlValue : null;
     const dateValue = getFormString(formData, 'date').trim();
@@ -183,6 +184,7 @@ export function ExamForm({
         const createdExam = await examService.createExam({
           ...payload,
           documentUrl: payload.documentUrl ?? undefined,
+          curriculumId: payload.curriculumId ?? undefined,
         });
         onCreateSuccess(createdExam);
       }

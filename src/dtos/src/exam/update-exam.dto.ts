@@ -27,7 +27,7 @@ export class UpdateExamDto {
 
   @IsOptional()
   @IsInt()
-  curriculumId?: number;
+  curriculumId?: number | null;
 
   @IsOptional()
   @IsUrl({
