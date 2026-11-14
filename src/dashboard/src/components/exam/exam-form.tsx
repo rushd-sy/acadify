@@ -35,7 +35,7 @@ type ExamFormProps = {
 type ExamFormData = {
   title: string;
   date: Date;
-  documentUrl?: string;
+  documentUrl?: string | null;
   curriculumId?: number;
   minScore: number;
   maxScore: number;
@@ -180,7 +180,10 @@ export function ExamForm({
         const updatedExam = await examService.updateExamById(exam.id, payload);
         onUpdateSuccess(updatedExam);
       } else {
-        const createdExam = await examService.createExam(payload);
+        const createdExam = await examService.createExam({
+          ...payload,
+          documentUrl: payload.documentUrl ?? undefined,
+        });
         onCreateSuccess(createdExam);
       }
 
