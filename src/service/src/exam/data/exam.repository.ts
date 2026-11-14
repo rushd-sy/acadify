@@ -89,7 +89,7 @@ export class ExamRepository {
   async findByTitleCurriculumAndTemplate(
     title: string,
     curriculumId?: number | null,
-    examTemplateId?: number | null,
+    examTemplateId?: number,
   ): Promise<ExamDomain | null> {
     const exam = await this.prisma.exam.findFirst({
       where: {
