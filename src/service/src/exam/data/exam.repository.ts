@@ -3,12 +3,15 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { ExamDomain } from '../domain/exam.domain';
 import { ExamMapper } from '../mappers/exam.mapper';
 import { UpdateExamDto } from 'dtos';
+import { ExamSectionMapper } from '../mappers/exam-section.mapper';
+import { ExamSection } from '../domain/exam-section.entity';
 
 @Injectable()
 export class ExamRepository {
   constructor(
     private readonly prisma: PrismaService,
     private readonly mapper: ExamMapper,
+    private readonly examSectionMapper: ExamSectionMapper,
   ) {}
 
   async findAll(): Promise<ExamDomain[]> {
@@ -101,5 +104,10 @@ export class ExamRepository {
     });
 
     return exam ? this.mapper.toDomain(exam) : null;
+  }
+
+  assignSections(sections: ExamSection[]): void {
+    void sections;
+    // TODO: Implement section assignment persistence
   }
 }

@@ -1,5 +1,6 @@
 import { InvalidExamScoreRangeError } from './exam.errors';
 import { TraceableDomain } from 'src/utils/traceable.domain';
+import { ExamSection } from './exam-section.entity';
 
 export class ExamDomain extends TraceableDomain {
   id: number;
@@ -10,6 +11,7 @@ export class ExamDomain extends TraceableDomain {
   curriculumId?: number;
   minScore: number;
   maxScore: number;
+  examSections: ExamSection[];
 
   private constructor(input: {
     id: number;
@@ -20,6 +22,7 @@ export class ExamDomain extends TraceableDomain {
     curriculumId?: number;
     minScore: number;
     maxScore: number;
+    examSections: ExamSection[];
     createdBy: number;
     createdAt: Date;
     updatedBy?: number;
@@ -35,6 +38,7 @@ export class ExamDomain extends TraceableDomain {
     this.curriculumId = input.curriculumId;
     this.minScore = input.minScore;
     this.maxScore = input.maxScore;
+    this.examSections = input.examSections;
   }
 
   static create(
@@ -53,6 +57,7 @@ export class ExamDomain extends TraceableDomain {
     return new ExamDomain({
       id: -1,
       ...input,
+      examSections: [],
       createdBy,
       createdAt: new Date(),
     });
@@ -73,6 +78,7 @@ export class ExamDomain extends TraceableDomain {
     curriculumId?: number;
     minScore: number;
     maxScore: number;
+    examSections: ExamSection[];
     createdBy: number;
     createdAt: Date;
     updatedBy?: number;
@@ -80,5 +86,10 @@ export class ExamDomain extends TraceableDomain {
     archivedAt?: Date;
   }): ExamDomain {
     return new ExamDomain(input);
+  }
+
+  assignSections(sections: ExamSection[]): void {
+    void sections;
+    // TODO: Implement assignment logic
   }
 }
