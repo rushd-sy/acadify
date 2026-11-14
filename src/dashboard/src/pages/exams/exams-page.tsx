@@ -135,7 +135,7 @@ export default function ExamsPage() {
     setOpenMenuId(null);
     setMenuPosition(null);
     try {
-      const examDetails = await examService.getById(exam.id);
+      const examDetails = await examService.getExamById(exam.id);
       setExamToEdit(examDetails);
       setIsModalOpen(true);
     } catch (error) {
