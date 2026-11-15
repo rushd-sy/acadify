@@ -107,7 +107,6 @@ export class ExamRepository {
   }
 
   assignSections(_sections: ExamSection[]): void {
-    void _sections;
     throw new Error('Not implemented');
   }
 }

@@ -1,7 +1,6 @@
 import { InvalidExamScoreRangeError } from './exam.errors';
 import { TraceableDomain } from 'src/utils/traceable.domain';
 import { ExamSection } from './exam-section.entity';
-import { AssignSectionsDto } from 'dtos/dist/src/exam-section/assign-sections.dto';
 
 export class ExamDomain extends TraceableDomain {
   id: number;
@@ -89,8 +88,7 @@ export class ExamDomain extends TraceableDomain {
     return new ExamDomain(input);
   }
 
-  assignSections(_sections: AssignSectionsDto): void {
-    void _sections;
+  assignSections(_sections: ExamSection[]): void {
     throw new Error('Not implemented');
   }
 }
