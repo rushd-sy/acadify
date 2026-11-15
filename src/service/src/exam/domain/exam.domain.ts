@@ -90,6 +90,7 @@ export class ExamDomain extends TraceableDomain {
   }
 
   assignSections(_sections: AssignSectionsDto): void {
+    void _sections;
     throw new Error('Not implemented');
   }
 }
