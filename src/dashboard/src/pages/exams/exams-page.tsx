@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { DataTable } from '@/components/ui/data-table';
 import type { DataTableColumn } from '@/components/ui/data-table';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { RowActionsMenu } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/ui/page-header';
 import DeleteModal from '@/components/ui/delete-modal';
 import ExamModal from '@/components/exam/exam-modal';
@@ -59,10 +59,6 @@ export default function ExamsPage() {
       isMounted = false;
     };
   }, []);
-
-  const handleEditExam = (exam: ExamDto) => {
-    console.info('Edit exam selected:', exam.id);
-  };
 
   const handleConfirmDelete = async () => {
     await handleDelete(
@@ -153,12 +149,9 @@ export default function ExamsPage() {
             error={fetchError}
             emptyMessage="No exams available."
             actions={(exam) => (
-              <DropdownMenu
+              <RowActionsMenu
+                label={`Actions for ${exam.title}`}
                 items={[
-                  {
-                    label: 'Edit',
-                    onSelect: () => handleEditExam(exam),
-                  },
                   {
                     label: 'Delete',
                     variant: 'destructive',

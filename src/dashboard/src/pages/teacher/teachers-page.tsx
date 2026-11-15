@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import DeleteModal from '@/components/ui/delete-modal';
 import { DataTable } from '@/components/ui/data-table';
 import type { DataTableColumn } from '@/components/ui/data-table';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { RowActionsMenu } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/ui/page-header';
 import TeacherModal from '@/components/teacher/teacher-modal';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
@@ -123,7 +123,8 @@ export default function TeachersPage() {
         emptyMessage="No teachers available."
         onRowClick={(teacher) => navigate(`/teachers/${teacher.userId}`)}
         actions={(teacher) => (
-          <DropdownMenu
+          <RowActionsMenu
+            label={`Actions for ${teacher.firstName} ${teacher.lastName}`}
             items={[
               {
                 label: 'Edit',

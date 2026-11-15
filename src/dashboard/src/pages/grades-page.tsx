@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { DataTable } from '@/components/ui/data-table';
 import type { DataTableColumn } from '@/components/ui/data-table';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { RowActionsMenu } from '@/components/ui/dropdown-menu';
 import DeleteModal from '@/components/ui/delete-modal';
 import GradeModal from '@/components/grade/grade-modal';
 import { PageHeader } from '@/components/ui/page-header';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
 import { gradeService } from '@/services/grade.service';
-import { Spinner } from '@/components/ui/spinner';
 
 import type { GradeDto } from 'dtos';
 
@@ -106,11 +105,12 @@ export default function GradePage() {
           data={grades}
           rowKey="id"
           isLoading={isLoading}
-          loadingMessage={<Spinner />}
+          loadingMessage="Loading grades..."
           error={fetchError ?? undefined}
           emptyMessage="No grades available."
           actions={(grade) => (
-            <DropdownMenu
+            <RowActionsMenu
+              label={`Actions for ${grade.name}`}
               items={[
                 {
                   label: 'Edit',

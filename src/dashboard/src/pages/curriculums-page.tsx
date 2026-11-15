@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { DataTable } from '@/components/ui/data-table';
 import type { DataTableColumn } from '@/components/ui/data-table';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { RowActionsMenu } from '@/components/ui/dropdown-menu';
 import DeleteModal from '@/components/ui/delete-modal';
 import CurriculumModal from '@/components/curriculum/curriculum-modal';
 import { PageHeader } from '@/components/ui/page-header';
@@ -123,7 +123,8 @@ export default function CurriculumsPage() {
         error={error ?? undefined}
         emptyMessage="No curriculums found."
         actions={(curriculum) => (
-          <DropdownMenu
+          <RowActionsMenu
+            label={`Actions for ${curriculum.name}`}
             items={[
               {
                 label: 'Edit',

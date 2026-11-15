@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import DeleteModal from '@/components/ui/delete-modal';
 import { DataTable } from '@/components/ui/data-table';
 import type { DataTableColumn } from '@/components/ui/data-table';
-import { DropdownMenu } from '@/components/ui/dropdown-menu';
+import { RowActionsMenu } from '@/components/ui/dropdown-menu';
 import { PageHeader } from '@/components/ui/page-header';
 import SectionModal from '@/components/section/section-modal';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
@@ -144,7 +144,8 @@ export default function SectionsPage() {
         emptyMessage="No sections available."
         onRowClick={(section) => navigate(`${section.id}`)}
         actions={(section) => (
-          <DropdownMenu
+          <RowActionsMenu
+            label={`Actions for ${section.name}`}
             items={[
               {
                 label: 'Edit',
