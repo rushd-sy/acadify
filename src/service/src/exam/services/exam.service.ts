@@ -6,13 +6,15 @@ import {
 } from '@nestjs/common';
 import { ExamRepository } from '../data/exam.repository';
 import { ExamMapper } from '../mappers/exam.mapper';
-import { CreateExamDto, ExamDto, UpdateExamDto } from 'dtos';
+import { ExamSectionMapper } from '../mappers/exam-section.mapper';
+import { CreateExamDto, ExamDto, ExamSectionDto, UpdateExamDto } from 'dtos';
 
 @Injectable()
 export class ExamService {
   constructor(
     private readonly repository: ExamRepository,
     private readonly mapper: ExamMapper,
+    private readonly examSectionMapper: ExamSectionMapper,
   ) {}
 
   async findAll(): Promise<ExamDto[]> {
@@ -107,5 +109,17 @@ export class ExamService {
       actionById,
     );
     return this.mapper.toDto(updatedExam);
+  }
+
+  async getAssignedSections(examId: number): Promise<ExamSectionDto[]> {
+    const examDomain = await this.repository.findById(examId);
+    if (!examDomain) {
+      throw new NotFoundException(`Exam with ID: ${examId} not found`);
+    }
+
+    const assignedSections =
+      await this.repository.findAssignedSectionsByExamId(examId);
+
+    return this.examSectionMapper.toDtoList(assignedSections);
   }
 }
