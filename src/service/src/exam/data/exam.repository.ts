@@ -118,11 +118,11 @@ export class ExamRepository {
       include: {
         section: true,
       },
-      orderBy: {
-        section: {
-          name: 'asc',
-        },
-      },
+      orderBy: [
+        { section: { name: 'asc' } },
+        { section: { academicYear: 'asc' } },
+        { id: 'asc' },
+      ],
     });
 
     return examSections.map((examSection) =>

@@ -4,7 +4,7 @@ import { ExamSectionDto } from 'dtos';
 import { ExamSection } from '../domain/exam-section.entity';
 
 export type PrismaExamSectionWithSection = PrismaExamSection & {
-  section?: {
+  section: {
     name: string;
     academicYear: string;
     gradeId: number;
@@ -20,9 +20,9 @@ export class ExamSectionMapper {
       sectionId: examSection.sectionId,
       startAt: examSection.startAt,
       duration: examSection.duration,
-      sectionName: examSection.section?.name,
-      academicYear: examSection.section?.academicYear,
-      gradeId: examSection.section?.gradeId,
+      sectionName: examSection.section.name,
+      academicYear: examSection.section.academicYear,
+      gradeId: examSection.section.gradeId,
       createdAt: examSection.createdAt,
       createdBy: examSection.createdBy,
       updatedAt: examSection.updatedAt ?? undefined,

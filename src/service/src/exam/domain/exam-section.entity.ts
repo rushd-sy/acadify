@@ -49,9 +49,6 @@ export class ExamSection extends TraceableDomain {
     startAt: Date;
     duration: number;
     createdBy: number;
-    sectionName?: string;
-    academicYear?: string;
-    gradeId?: number;
   }): ExamSection {
     const now = new Date();
 
