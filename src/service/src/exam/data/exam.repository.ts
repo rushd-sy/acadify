@@ -112,6 +112,9 @@ export class ExamRepository {
         sections.map((section) =>
           tx.examSection.create({
             data: this.examSectionMapper.toPersistence(section),
+            include: {
+              section: true,
+            },
           }),
         ),
       );
@@ -120,5 +123,29 @@ export class ExamRepository {
         this.examSectionMapper.toDomain(section),
       );
     });
+  }
+
+  async findAssignedSectionsByExamId(examId: number): Promise<ExamSection[]> {
+    const examSections = await this.prisma.examSection.findMany({
+      where: {
+        examId,
+        archivedAt: null,
+        section: {
+          archivedAt: null,
+        },
+      },
+      include: {
+        section: true,
+      },
+      orderBy: [
+        { section: { name: 'asc' } },
+        { section: { academicYear: 'asc' } },
+        { id: 'asc' },
+      ],
+    });
+
+    return examSections.map((examSection) =>
+      this.examSectionMapper.toDomain(examSection),
+    );
   }
 }

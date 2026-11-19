@@ -36,6 +36,13 @@ export class ExamController {
     return this.service.getById(id);
   }
 
+  @Get(':id/sections')
+  getAssignedSections(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ExamSectionDto[]> {
+    return this.service.getAssignedSections(id);
+  }
+
   @Post()
   createExam(
     @Body() createExamDto: CreateExamDto,

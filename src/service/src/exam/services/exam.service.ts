@@ -118,6 +118,7 @@ export class ExamService {
     );
     return this.mapper.toDto(updatedExam);
   }
+
   async assignSections(
     examId: number,
     assignSectionsDto: AssignSectionsDto,
@@ -144,10 +145,25 @@ export class ExamService {
       assignSectionsDto,
       actionById,
     );
+
     const createdExamSections =
       await this.repository.addSectionsToExam(examSections);
+
     return createdExamSections.map((examSection) =>
       this.examSectionMapper.toDto(examSection),
     );
+  }
+
+  async getAssignedSections(examId: number): Promise<ExamSectionDto[]> {
+    const examDomain = await this.repository.findById(examId);
+
+    if (!examDomain) {
+      throw new NotFoundException(`Exam with ID: ${examId} not found`);
+    }
+
+    const assignedSections =
+      await this.repository.findAssignedSectionsByExamId(examId);
+
+    return this.examSectionMapper.toDtoList(assignedSections);
   }
 }
