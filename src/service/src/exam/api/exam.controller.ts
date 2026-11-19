@@ -11,7 +11,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ExamService } from '../services/exam.service';
-import { CreateExamDto, ExamDto, UpdateExamDto } from 'dtos';
+import { CreateExamDto, ExamDto, ExamSectionDto, UpdateExamDto } from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../../auth/api/types/authenticated-request.type';
 
@@ -28,6 +28,13 @@ export class ExamController {
   @Get(':id')
   findById(@Param('id', ParseIntPipe) id: number): Promise<ExamDto> {
     return this.service.getById(id);
+  }
+
+  @Get(':id/sections')
+  getAssignedSections(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ExamSectionDto[]> {
+    return this.service.getAssignedSections(id);
   }
 
   @Post()

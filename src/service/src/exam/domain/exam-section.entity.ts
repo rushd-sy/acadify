@@ -6,6 +6,9 @@ export class ExamSection extends TraceableDomain {
   sectionId!: number;
   startAt!: Date;
   duration!: number;
+  sectionName?: string;
+  academicYear?: string;
+  gradeId?: number;
 
   private constructor(input: {
     id: number;
@@ -13,6 +16,9 @@ export class ExamSection extends TraceableDomain {
     sectionId: number;
     startAt: Date;
     duration: number;
+    sectionName?: string;
+    academicYear?: string;
+    gradeId?: number;
     createdBy: number;
     createdAt: Date;
     updatedBy?: number;
@@ -32,6 +38,9 @@ export class ExamSection extends TraceableDomain {
     this.sectionId = input.sectionId;
     this.startAt = input.startAt;
     this.duration = input.duration;
+    this.sectionName = input.sectionName;
+    this.academicYear = input.academicYear;
+    this.gradeId = input.gradeId;
   }
 
   static create(input: {
@@ -56,6 +65,9 @@ export class ExamSection extends TraceableDomain {
     sectionId: number;
     startAt: Date;
     duration: number;
+    sectionName?: string;
+    academicYear?: string;
+    gradeId?: number;
     createdBy: number;
     createdAt: Date;
     updatedBy?: number;
