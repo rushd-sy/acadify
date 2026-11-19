@@ -1,4 +1,5 @@
 import { TraceableDomain } from 'src/utils/traceable.domain';
+import { InvalidExamSectionDurationError } from './exam.errors';
 
 export class ExamSection extends TraceableDomain {
   id: number;
@@ -50,6 +51,7 @@ export class ExamSection extends TraceableDomain {
     duration: number;
     createdBy: number;
   }): ExamSection {
+    ExamSection.assertValidDuration(input.duration);
     const now = new Date();
 
     return new ExamSection({
@@ -57,6 +59,12 @@ export class ExamSection extends TraceableDomain {
       ...input,
       createdAt: now,
     });
+  }
+
+  private static assertValidDuration(duration: number): void {
+    if (duration <= 0) {
+      throw new InvalidExamSectionDurationError(duration);
+    }
   }
 
   static fromPersistence(input: {

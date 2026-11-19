@@ -29,6 +29,24 @@ export class SectionRepository {
     return section ? this.mapper.toDomain(section) : null;
   }
 
+  async findByIds(ids: number[]): Promise<SectionDomain[]> {
+    const sections = await this.prisma.section.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+        archivedAt: null,
+      },
+      include: {
+        sectionCurriculumTeachers: {
+          where: { archivedAt: null },
+        },
+      },
+    });
+
+    return sections.map((section) => this.mapper.toDomain(section));
+  }
+
   async findAll(): Promise<SectionDomain[]> {
     const sections = await this.prisma.section.findMany({
       where: { archivedAt: null },

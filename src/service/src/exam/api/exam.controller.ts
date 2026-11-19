@@ -11,7 +11,13 @@ import {
   Req,
 } from '@nestjs/common';
 import { ExamService } from '../services/exam.service';
-import { CreateExamDto, ExamDto, ExamSectionDto, UpdateExamDto } from 'dtos';
+import {
+  CreateExamDto,
+  ExamDto,
+  UpdateExamDto,
+  AssignSectionsDto,
+  ExamSectionDto,
+} from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../../auth/api/types/authenticated-request.type';
 
@@ -60,5 +66,14 @@ export class ExamController {
     @Req() req: AuthenticatedRequest,
   ): Promise<void> {
     return this.service.deleteExam(id, req.user.id);
+  }
+
+  @Post(':id/sections')
+  assignSections(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() assignSectionsDto: AssignSectionsDto,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<ExamSectionDto[]> {
+    return this.service.assignSections(id, assignSectionsDto, req.user.id);
   }
 }

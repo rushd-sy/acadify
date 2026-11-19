@@ -106,6 +106,25 @@ export class ExamRepository {
     return exam ? this.mapper.toDomain(exam) : null;
   }
 
+  async addSectionsToExam(sections: ExamSection[]): Promise<ExamSection[]> {
+    return this.prisma.$transaction(async (tx) => {
+      const createdSections = await Promise.all(
+        sections.map((section) =>
+          tx.examSection.create({
+            data: this.examSectionMapper.toPersistence(section),
+            include: {
+              section: true,
+            },
+          }),
+        ),
+      );
+
+      return createdSections.map((section) =>
+        this.examSectionMapper.toDomain(section),
+      );
+    });
+  }
+
   async findAssignedSectionsByExamId(examId: number): Promise<ExamSection[]> {
     const examSections = await this.prisma.examSection.findMany({
       where: {
@@ -128,9 +147,5 @@ export class ExamRepository {
     return examSections.map((examSection) =>
       this.examSectionMapper.toDomain(examSection),
     );
-  }
-
-  assignSections(_sections: ExamSection[]): void {
-    throw new Error('Not implemented');
   }
 }
