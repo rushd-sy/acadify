@@ -6,13 +6,23 @@ import {
 } from '@nestjs/common';
 import { ExamRepository } from '../data/exam.repository';
 import { ExamMapper } from '../mappers/exam.mapper';
-import { CreateExamDto, ExamDto, UpdateExamDto } from 'dtos';
+import {
+  CreateExamDto,
+  ExamDto,
+  UpdateExamDto,
+  AssignSectionsDto,
+  ExamSectionDto,
+} from 'dtos';
+import { ExamSectionMapper } from '../mappers/exam-section.mapper';
+import { SectionRepository } from '../../section/data/section.repository';
 
 @Injectable()
 export class ExamService {
   constructor(
     private readonly repository: ExamRepository,
     private readonly mapper: ExamMapper,
+    private readonly examSectionMapper: ExamSectionMapper,
+    private readonly sectionRepository: SectionRepository,
   ) {}
 
   async findAll(): Promise<ExamDto[]> {
@@ -107,5 +117,37 @@ export class ExamService {
       actionById,
     );
     return this.mapper.toDto(updatedExam);
+  }
+  async assignSections(
+    examId: number,
+    assignSectionsDto: AssignSectionsDto,
+    actionById: number,
+  ): Promise<ExamSectionDto[]> {
+    const exam = await this.repository.findById(examId);
+
+    if (!exam) {
+      throw new NotFoundException(`Exam with ID: ${examId} not found`);
+    }
+
+    const sectionIds = assignSectionsDto.sections.map(
+      (section) => section.sectionId,
+    );
+
+    const existingSections = await this.sectionRepository.findByIds(sectionIds);
+
+    if (existingSections.length !== sectionIds.length) {
+      throw new NotFoundException('One or more sections were not found');
+    }
+
+    const examSections = this.mapper.toExamSectionsFromAssignDto(
+      examId,
+      assignSectionsDto,
+      actionById,
+    );
+    const createdExamSections =
+      await this.repository.addSectionsToExam(examSections);
+    return createdExamSections.map((examSection) =>
+      this.examSectionMapper.toDto(examSection),
+    );
   }
 }

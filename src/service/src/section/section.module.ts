@@ -17,5 +17,6 @@ import { StudentModule } from '../student/student.module';
     SectionRepository,
     SectionService,
   ],
+  exports: [SectionRepository],
 })
 export class SectionModule {}

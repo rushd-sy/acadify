@@ -106,7 +106,19 @@ export class ExamRepository {
     return exam ? this.mapper.toDomain(exam) : null;
   }
 
-  assignSections(_sections: ExamSection[]): void {
-    throw new Error('Not implemented');
+  async addSectionsToExam(sections: ExamSection[]): Promise<ExamSection[]> {
+    return this.prisma.$transaction(async (tx) => {
+      const createdSections = await Promise.all(
+        sections.map((section) =>
+          tx.examSection.create({
+            data: this.examSectionMapper.toPersistence(section),
+          }),
+        ),
+      );
+
+      return createdSections.map((section) =>
+        this.examSectionMapper.toDomain(section),
+      );
+    });
   }
 }
