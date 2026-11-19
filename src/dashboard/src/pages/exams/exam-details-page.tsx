@@ -156,7 +156,9 @@ export default function ExamDetailsPage() {
     if (!query) return assignedSections;
 
     return assignedSections.filter((s) => {
-      const sectionName = (s.sectionName ?? `Section #${s.sectionId}`).toLowerCase();
+      const sectionName = (
+        s.sectionName ?? `Section #${s.sectionId}`
+      ).toLowerCase();
       const academicYear = (s.academicYear ?? '').toLowerCase();
       const grade = s.gradeId !== undefined ? `grade ${s.gradeId}` : '';
       const gradeNumber = s.gradeId !== undefined ? String(s.gradeId) : '';
