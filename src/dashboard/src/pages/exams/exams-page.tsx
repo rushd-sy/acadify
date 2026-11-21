@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { DataTable } from '@/components/ui/data-table';
 import type { DataTableColumn } from '@/components/ui/data-table';
@@ -11,6 +12,7 @@ import { examService } from '@/services/exam.service';
 import type { ExamDto } from 'dtos';
 
 export default function ExamsPage() {
+  const navigate = useNavigate();
   const [exams, setExams] = useState<ExamDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -195,10 +197,15 @@ export default function ExamsPage() {
             loadingMessage="Loading exams..."
             error={fetchError}
             emptyMessage="No exams available."
+            onRowClick={(exam) => navigate(`/exams/${exam.id}`)}
             actions={(exam) => (
               <RowActionsMenu
                 label={`Actions for ${exam.title}`}
                 items={[
+                  {
+                    label: 'View Details',
+                    onSelect: () => navigate(`/exams/${exam.id}`),
+                  },
                   {
                     label: 'Edit',
                     onSelect: () => handleEditExam(exam),

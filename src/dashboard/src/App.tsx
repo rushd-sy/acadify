@@ -7,6 +7,7 @@ import GradePage from '@/pages/grades-page';
 import CurriculumsPage from '@/pages/curriculums-page';
 import SectionsPage from '@/pages/sections/sections-page';
 import ExamsPage from '@/pages/exams/exams-page';
+import ExamDetailsPage from '@/pages/exams/exam-details-page';
 
 import ErrorPage from './pages/error-page';
 import SharedLayout from './layout/SharedLayout';
@@ -41,6 +42,7 @@ function App() {
 
           <Route path="/grades" element={<GradePage />} />
           <Route path="/exams" element={<ExamsPage />} />
+          <Route path="/exams/:id" element={<ExamDetailsPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/login" replace />} />
