@@ -21,7 +21,7 @@ export default function SectionModal({
     <FormDialog
       open={open}
       onClose={onClose}
-      title={section ? 'Update Secction' : 'Create Section'}
+      title={section ? 'Update Section' : 'Create Section'}
       description={
         section
           ? 'Update the section details and save your changes.'
