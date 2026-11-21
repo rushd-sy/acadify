@@ -6,7 +6,7 @@ import { ExamSection } from '../domain/exam-section.entity';
 
 @Injectable()
 export class ExamMapper {
-  toDomain(exam: Exam): ExamDomain {
+  toDomain(exam: Exam, examSections: ExamSection[] = []): ExamDomain {
     return ExamDomain.fromPersistence({
       id: exam.id,
       examTemplateId: exam.examTemplateId ?? undefined,
@@ -16,7 +16,7 @@ export class ExamMapper {
       curriculumId: exam.curriculumId ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
-      examSections: [], // TODO: Load exam sections from persistence.
+      examSections,
       createdBy: exam.createdBy,
       createdAt: exam.createdAt,
       updatedBy: exam.updatedBy ?? undefined,

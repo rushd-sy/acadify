@@ -62,11 +62,10 @@ export class ExamSection extends TraceableDomain {
   }
 
   private static assertValidDuration(duration: number): void {
-    if (duration <= 0) {
+    if (!Number.isInteger(duration) || duration < 1) {
       throw new InvalidExamSectionDurationError(duration);
     }
   }
-
   static fromPersistence(input: {
     id: number;
     examId: number;

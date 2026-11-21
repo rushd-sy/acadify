@@ -20,8 +20,11 @@ import {
 } from 'dtos';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from '../../auth/api/types/authenticated-request.type';
+import { UseFilters } from '@nestjs/common';
+import { ExamDomainExceptionFilter } from '../filters/exam-domain-exception.filter';
 
 @UseGuards(JwtAuthGuard)
+@UseFilters(ExamDomainExceptionFilter)
 @Controller('api/exams')
 export class ExamController {
   constructor(private readonly service: ExamService) {}
