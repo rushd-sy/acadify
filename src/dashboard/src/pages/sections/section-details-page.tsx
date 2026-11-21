@@ -15,15 +15,20 @@ import type { SectionDto } from 'dtos';
 type SectionTeacher = NonNullable<SectionDto['teachers']>[number];
 type SectionStudent = NonNullable<SectionDto['students']>[number];
 
-const getAvatarStyle = (name: string) => {
+const getStudentNumber = (student: SectionStudent) =>
+  `202300${student.studentId}`;
+
+const getAvatarStyle = (name?: string) => {
   const styles = [
     'bg-[var(--brand-sand)] text-[var(--brand-graphite)]',
     'bg-[var(--brand-terracotta)] text-white',
     'bg-[var(--brand-paper)] text-[var(--brand-deep-stone)] border border-[var(--brand-sand)]',
     'bg-[var(--brand-graphite)] text-white',
+    'bg-[var(--brand-deep-stone)] text-white',
+    'bg-white text-[var(--brand-terracotta)] border border-[var(--brand-sand)]',
   ];
 
-  return styles[name.length % styles.length];
+  return styles[(name?.length ?? 0) % styles.length];
 };
 
 export default function SectionDetailsPage() {
@@ -98,7 +103,7 @@ export default function SectionDetailsPage() {
         .toLowerCase()
         .includes(searchValue) ||
       student.email.toLowerCase().includes(searchValue) ||
-      `202300${student.studentId}`.includes(searchValue)
+      getStudentNumber(student).includes(searchValue)
     );
   });
 
@@ -140,7 +145,7 @@ export default function SectionDetailsPage() {
     {
       id: 'number',
       header: 'Number',
-      cell: (student) => `202300${student.studentId}`,
+      cell: (student) => getStudentNumber(student),
     },
     {
       id: 'email',
@@ -151,108 +156,142 @@ export default function SectionDetailsPage() {
 
   return (
     <div className="min-h-screen w-full bg-white p-8">
-      {/* Section Information */}
-      <section className="mb-8 border-b border-border">
-        <div className="border-b border-border py-6">
-          <h1 className="text-center text-2xl font-bold text-foreground">
-            {section.name}
-          </h1>
+      {/* Section Header */}
+      <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{section.name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Overview and members of this section.
+          </p>
         </div>
 
-        <div className="space-y-8 py-8">
-          {/* Academic Information */}
-          <div className="flex flex-wrap gap-x-24 gap-y-6">
-            <div>
-              <span className="text-sm font-medium text-muted-foreground">
-                Academic Year
-              </span>
+        <Button
+          variant="secondary"
+          onClick={() => setIsEditModalOpen(true)}
+          className="shrink-0 gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+          </svg>
+          Edit Section
+        </Button>
+      </header>
 
-              <p className="mt-1 text-lg font-semibold text-foreground">
-                {section.academicYear}
-              </p>
-            </div>
+      {/* Section Overview */}
+      <section className="mb-8 border-b border-border pb-8">
+        <h2 className="mb-4 text-lg font-semibold text-foreground">
+          Section Overview
+        </h2>
 
-            <div>
-              <span className="text-sm font-medium text-muted-foreground">
-                Grade
-              </span>
-
-              <p className="mt-1 text-lg font-semibold text-foreground">
-                {section.gradeId}
-              </p>
-            </div>
-          </div>
-
-          {/* Teachers */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-              <h2 className="text-lg font-semibold text-foreground">
-                Teachers ({teachersList.length})
-              </h2>
+            <span className="text-sm font-medium text-muted-foreground">
+              Academic Year
+            </span>
+            <p className="mt-1 text-lg font-semibold text-foreground">
+              {section.academicYear}
+            </p>
+          </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Input
-                  type="search"
-                  value={teacherSearch}
-                  onChange={(event) => setTeacherSearch(event.target.value)}
-                  placeholder="Search teachers by name..."
-                  className="w-full sm:w-80"
-                />
+          <div>
+            <span className="text-sm font-medium text-muted-foreground">
+              Grade
+            </span>
+            <p className="mt-1 text-lg font-semibold text-foreground">
+              {section.gradeId}
+            </p>
+          </div>
 
-                <Button
-                  variant="secondary"
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="shrink-0 gap-2 px-6"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                  </svg>
-                  Edit Section
-                </Button>
-              </div>
-            </div>
+          <div>
+            <span className="text-sm font-medium text-muted-foreground">
+              Teachers
+            </span>
+            <p className="mt-1 text-lg font-semibold text-foreground">
+              {teachersList.length}
+            </p>
+          </div>
 
-            <DataTable
-              columns={teacherColumns}
-              data={filteredTeachers}
-              rowKey="teacherId"
-              emptyMessage="No teachers assigned to this section yet."
-              onRowClick={(teacher) =>
-                navigate(`/teachers/${teacher.teacherId}`)
-              }
-              actions={(teacher) => (
-                <RowActionsMenu
-                  label={`Actions for ${teacher.teacherFirstName} ${teacher.teacherLastName}`}
-                  items={[
-                    {
-                      label: 'View Profile',
-                      onSelect: () =>
-                        navigate(`/teachers/${teacher.teacherId}`),
-                    },
-                  ]}
-                />
-              )}
-            />
+          <div>
+            <span className="text-sm font-medium text-muted-foreground">
+              Students
+            </span>
+            <p className="mt-1 text-lg font-semibold text-foreground">
+              {studentsList.length}
+            </p>
           </div>
         </div>
+      </section>
+
+      {/* Teachers */}
+      <section className="mb-8">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold text-foreground">Teachers</h2>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Input
+              type="search"
+              value={teacherSearch}
+              onChange={(event) => setTeacherSearch(event.target.value)}
+              placeholder="Search teachers by name..."
+              className="w-full sm:w-80"
+            />
+
+            <Button type="button" className="shrink-0 gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Teacher
+            </Button>
+          </div>
+        </div>
+
+        <DataTable
+          columns={teacherColumns}
+          data={filteredTeachers}
+          rowKey={(teacher, index) => `${teacher.teacherId}-${index}`}
+          emptyMessage="No teachers assigned to this section yet."
+          onRowClick={(teacher) => navigate(`/teachers/${teacher.teacherId}`)}
+          actions={(teacher) => (
+            <div className="flex w-full justify-end">
+              <RowActionsMenu
+                label={`Actions for ${teacher.teacherFirstName} ${teacher.teacherLastName}`}
+                items={[
+                  {
+                    label: 'View Profile',
+                    onSelect: () => navigate(`/teachers/${teacher.teacherId}`),
+                  },
+                ]}
+              />
+            </div>
+          )}
+        />
       </section>
 
       {/* Students */}
       <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-xl font-bold text-foreground">
-            Students ({studentsList.length})
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground">Students</h2>
 
           <div className="flex flex-wrap items-center gap-3">
             <Input
@@ -290,15 +329,17 @@ export default function SectionDetailsPage() {
           emptyMessage="No students found in this section."
           onRowClick={(student) => navigate(`/students/${student.studentId}`)}
           actions={(student) => (
-            <RowActionsMenu
-              label={`Actions for ${student.studentFirstName} ${student.studentLastName}`}
-              items={[
-                {
-                  label: 'View',
-                  onSelect: () => navigate(`/students/${student.studentId}`),
-                },
-              ]}
-            />
+            <div className="flex w-full justify-end">
+              <RowActionsMenu
+                label={`Actions for ${student.studentFirstName} ${student.studentLastName}`}
+                items={[
+                  {
+                    label: 'View',
+                    onSelect: () => navigate(`/students/${student.studentId}`),
+                  },
+                ]}
+              />
+            </div>
           )}
         />
       </section>
