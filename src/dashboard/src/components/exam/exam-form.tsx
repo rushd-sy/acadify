@@ -28,8 +28,8 @@ import {
 type ExamFormProps = {
   onCancel: () => void;
   exam?: ExamDto;
-  onUpdateSuccess: (updatedExam: ExamDto) => void;
-  onCreateSuccess: (createdExam: ExamDto) => void;
+  onUpdateSuccess?: (updatedExam: ExamDto) => void;
+  onCreateSuccess?: (createdExam: ExamDto) => void;
 };
 
 type ExamFormData = {
@@ -179,14 +179,14 @@ export function ExamForm({
 
       if (exam) {
         const updatedExam = await examService.updateExamById(exam.id, payload);
-        onUpdateSuccess(updatedExam);
+        onUpdateSuccess?.(updatedExam);
       } else {
         const createdExam = await examService.createExam({
           ...payload,
           documentUrl: payload.documentUrl ?? undefined,
           curriculumId: payload.curriculumId ?? undefined,
         });
-        onCreateSuccess(createdExam);
+        onCreateSuccess?.(createdExam);
       }
 
       onCancel();

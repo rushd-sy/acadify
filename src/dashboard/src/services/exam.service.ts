@@ -1,5 +1,10 @@
 import { api } from '../lib/api-client';
-import type { ExamDto, CreateExamDto, UpdateExamDto } from 'dtos';
+import type {
+  ExamDto,
+  CreateExamDto,
+  UpdateExamDto,
+  ExamSectionDto,
+} from 'dtos';
 
 class ExamService {
   private readonly baseUrl = '/api/exams';
@@ -26,6 +31,13 @@ class ExamService {
 
   async deleteExamById(id: number): Promise<void> {
     const response = await api.delete(`${this.baseUrl}/${id}`);
+    return response.data;
+  }
+
+  async getAssignedSections(examId: number): Promise<ExamSectionDto[]> {
+    const response = await api.get<ExamSectionDto[]>(
+      `${this.baseUrl}/${examId}/sections`,
+    );
     return response.data;
   }
 }
