@@ -152,7 +152,7 @@ function DataTable<T>({
               ))}
 
               {hasActions && (
-                <TableHead className="h-14 whitespace-nowrap px-4 text-center font-semibold">
+                <TableHead className="h-14 whitespace-nowrap px-4 text-right font-semibold">
                   {actionsHeader}
                 </TableHead>
               )}
@@ -202,10 +202,12 @@ function DataTable<T>({
                         ))}
 
                         {hasActions && (
-                          <TableCell className="px-4 text-center">
-                            {typeof actions === 'function'
-                              ? actions(row)
-                              : actions}
+                          <TableCell className="px-4 text-right">
+                            <div className="flex items-center justify-end">
+                              {typeof actions === 'function'
+                                ? actions(row)
+                                : actions}
+                            </div>
                           </TableCell>
                         )}
                       </TableRow>
