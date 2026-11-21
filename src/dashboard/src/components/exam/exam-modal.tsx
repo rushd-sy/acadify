@@ -5,8 +5,8 @@ import { FormDialog } from '../ui/form-dialog';
 type ExamModalProps = {
   open: boolean;
   exam?: ExamDto;
-  onUpdateSuccess: (updatedExam: ExamDto) => void;
-  onCreateSuccess: (createdExam: ExamDto) => void;
+  onUpdateSuccess?: (updatedExam: ExamDto) => void;
+  onCreateSuccess?: (createdExam: ExamDto) => void;
   onClose: () => void;
 };
 

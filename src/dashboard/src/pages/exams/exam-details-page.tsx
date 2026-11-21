@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ExternalLink } from 'lucide-react';
+import { Search, ExternalLink, Pencil } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -14,49 +14,11 @@ import {
 } from '@/components/ui/card';
 import DeleteModal from '@/components/ui/delete-modal';
 import ExamModal from '@/components/exam/exam-modal';
+import { ExamSectionCard } from '@/components/exam/exam-section-card';
 import { useNumericParam } from '@/hooks/use-numeric-param';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
 import { examService } from '@/services/exam.service';
 import type { ExamDto, ExamSectionDto } from 'dtos';
-
-const getSectionStatus = (
-  startAt: Date | string,
-  durationMinutes: number = 0,
-) => {
-  const startTime = new Date(startAt).getTime();
-  if (isNaN(startTime)) {
-    return {
-      label: 'Scheduled',
-      className: 'bg-gray-100 text-gray-600 border border-gray-200',
-      dotClassName: 'bg-gray-400',
-    };
-  }
-
-  const now = Date.now();
-  const endTime = startTime + durationMinutes * 60 * 1000;
-
-  if (now < startTime) {
-    return {
-      label: 'Upcoming',
-      className: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
-      dotClassName: 'bg-emerald-500',
-    };
-  }
-
-  if (now >= startTime && now <= endTime) {
-    return {
-      label: 'In Progress',
-      className: 'bg-amber-50 text-amber-700 border border-amber-200',
-      dotClassName: 'bg-amber-500',
-    };
-  }
-
-  return {
-    label: 'Completed',
-    className: 'bg-gray-100 text-gray-600 border border-gray-200',
-    dotClassName: 'bg-gray-400',
-  };
-};
 
 export default function ExamDetailsPage() {
   const navigate = useNavigate();
@@ -65,6 +27,7 @@ export default function ExamDetailsPage() {
   const [assignedSections, setAssignedSections] = useState<ExamSectionDto[]>(
     [],
   );
+  const [sectionsError, setSectionsError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -93,42 +56,36 @@ export default function ExamDetailsPage() {
         return;
       }
 
-      try {
-        setIsLoading(true);
-        setFetchError(null);
+      setFetchError(null);
+      setSectionsError(null);
 
-        const [examResult, sectionsResult] = await Promise.allSettled([
-          examService.getExamById(examId),
-          examService.getAssignedSections(examId),
-        ]);
+      const [examResult, sectionsResult] = await Promise.allSettled([
+        examService.getExamById(examId),
+        examService.getAssignedSections(examId),
+      ]);
 
-        if (!isMounted) return;
+      if (!isMounted) return;
 
-        if (examResult.status === 'fulfilled') {
-          setExam(examResult.value);
-        } else {
-          console.error('Failed to load exam details:', examResult.reason);
-          setFetchError('Failed to load exam details. Please try again later.');
-        }
-
-        if (sectionsResult.status === 'fulfilled') {
-          setAssignedSections(sectionsResult.value);
-        } else {
-          console.error(
-            'Failed to load assigned sections:',
-            sectionsResult.reason,
-          );
-        }
-      } catch (error) {
-        console.error('Unexpected error loading exam details:', error);
-        if (isMounted) {
-          setFetchError('Failed to load exam details. Please try again later.');
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+      if (examResult.status === 'fulfilled') {
+        setExam(examResult.value);
+      } else {
+        console.error('Failed to load exam details:', examResult.reason);
+        setFetchError('Failed to load exam details. Please try again later.');
       }
+
+      if (sectionsResult.status === 'fulfilled') {
+        setAssignedSections(sectionsResult.value);
+      } else {
+        console.error(
+          'Failed to load assigned sections:',
+          sectionsResult.reason,
+        );
+        setSectionsError(
+          'Failed to load assigned sections. Please try again later.',
+        );
+      }
+
+      setIsLoading(false);
     };
 
     loadExamData();
@@ -268,19 +225,7 @@ export default function ExamDetailsPage() {
 
         <CardFooter className="flex justify-end gap-3 border-t bg-gray-50/50 pt-6">
           <Button variant="secondary" onClick={() => setIsEditModalOpen(true)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-            </svg>
+            <Pencil className="size-4" />
             Edit Exam
           </Button>
 
@@ -327,7 +272,11 @@ export default function ExamDetailsPage() {
         </CardHeader>
 
         <CardContent className="p-6 sm:p-8">
-          {displayedSections.length === 0 ? (
+          {sectionsError ? (
+            <div className="py-12 text-center text-red-600">
+              <p className="text-base font-medium">{sectionsError}</p>
+            </div>
+          ) : displayedSections.length === 0 ? (
             <div className="py-12 text-center text-gray-500">
               <p className="text-base font-medium">
                 {searchQuery
@@ -352,80 +301,7 @@ export default function ExamDetailsPage() {
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {displayedSections.map((sec) => (
-                <div
-                  key={sec.id}
-                  className="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-4 sm:p-5 hover:border-gray-300 transition-all hover:shadow-xs"
-                >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <h3
-                        onClick={() => navigate(`/sections/${sec.sectionId}`)}
-                        className="font-bold text-gray-900 hover:text-primary cursor-pointer text-base"
-                      >
-                        {sec.sectionName ?? `Section #${sec.sectionId}`}
-                      </h3>
-                      <span className="text-xs text-gray-500 font-medium">
-                        {sec.gradeId ? `Grade ${sec.gradeId}` : '—'}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-gray-500">
-                      Academic Year: {sec.academicYear ?? '—'}
-                    </p>
-
-                    <div className="mt-4 space-y-2 border-t border-gray-100 pt-3 text-xs text-gray-600">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Start Time:</span>
-                        <span className="font-semibold text-gray-900">
-                          {new Date(sec.startAt).toLocaleDateString([], {
-                            month: 'short',
-                            day: 'numeric',
-                          })}{' '}
-                          •{' '}
-                          {new Date(sec.startAt).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Duration:</span>
-                        <span className="font-semibold text-gray-900">
-                          {sec.duration} mins
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Status:</span>
-                        {(() => {
-                          const status = getSectionStatus(
-                            sec.startAt,
-                            sec.duration,
-                          );
-                          return (
-                            <span
-                              className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${status.className}`}
-                            >
-                              <span
-                                className={`size-1.5 rounded-full ${status.dotClassName}`}
-                              />
-                              {status.label}
-                            </span>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 border-t border-gray-100 pt-3 text-right">
-                    <button
-                      type="button"
-                      onClick={() => navigate(`/sections/${sec.sectionId}`)}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline cursor-pointer"
-                    >
-                      Details
-                      <ExternalLink className="size-3" />
-                    </button>
-                  </div>
-                </div>
+                <ExamSectionCard key={sec.id} section={sec} />
               ))}
             </div>
           )}
@@ -451,7 +327,6 @@ export default function ExamDetailsPage() {
         open={isEditModalOpen}
         exam={exam ?? undefined}
         onUpdateSuccess={handleUpdateSuccess}
-        onCreateSuccess={() => {}}
         onClose={() => setIsEditModalOpen(false)}
       />
     </div>
