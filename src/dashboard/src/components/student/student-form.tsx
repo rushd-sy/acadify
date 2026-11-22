@@ -1,7 +1,13 @@
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '../ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '../ui/field';
 import type { StudentDetailsDto } from 'dtos';
 import { studentService } from '@/services/student.service';
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState, useRef } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import {
@@ -13,6 +19,7 @@ import { emailRegex, phoneRegex } from '@/forms/validation.util';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '@/components/ui/dialog';
+import { useFocusFirstError } from '@/hooks/use-focus-first-error';
 
 type StudentFormProps = {
   onCancel: () => void;
@@ -145,76 +152,59 @@ export function StudentForm({
   );
 
   const formRef = useRef<HTMLFormElement>(null);
-
-  useEffect(() => {
-    if (state.fieldErrors && Object.keys(state.fieldErrors).length > 0) {
-      const firstFieldName = Object.keys(state.fieldErrors)[0];
-      const element = formRef.current?.querySelector<
-        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-      >(`[name="${firstFieldName}"]`);
-      element?.focus();
-    }
-  }, [state.fieldErrors]);
+  useFocusFirstError(formRef, state.fieldErrors);
 
   return (
     <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
         <div className="grid grid-cols-2 gap-3">
           <Field>
-            <FieldLabel>First Name</FieldLabel>
+            <FieldLabel htmlFor="firstName">First Name</FieldLabel>
             <Input
+              id="firstName"
               name="firstName"
               placeholder="Enter student first name"
               defaultValue={state.values?.firstName ?? student?.firstName ?? ''}
               aria-invalid={!!state.fieldErrors.firstName}
             />
-            {state.fieldErrors.firstName && (
-              <p className="text-xs text-red-600 leading-tight">
-                {state.fieldErrors.firstName}
-              </p>
-            )}
+            <FieldError>{state.fieldErrors.firstName}</FieldError>
           </Field>
 
           <Field>
-            <FieldLabel>Last Name</FieldLabel>
+            <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
             <Input
+              id="lastName"
               name="lastName"
               placeholder="Enter student last name"
               defaultValue={state.values?.lastName ?? student?.lastName ?? ''}
               aria-invalid={!!state.fieldErrors.lastName}
             />
-            {state.fieldErrors.lastName && (
-              <p className="text-xs text-red-600 leading-tight">
-                {state.fieldErrors.lastName}
-              </p>
-            )}
+            <FieldError>{state.fieldErrors.lastName}</FieldError>
           </Field>
         </div>
 
         <Field>
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
           <FieldDescription>
             The primary email used for academic notifications.
           </FieldDescription>
           <Input
+            id="email"
             name="email"
             placeholder="test@gmail.com"
             defaultValue={state.values?.email ?? student?.email ?? ''}
             aria-invalid={!!state.fieldErrors.email}
           />
-          {state.fieldErrors.email && (
-            <p className="text-xs text-red-600 leading-tight">
-              {state.fieldErrors.email}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.email}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Phone Number</FieldLabel>
+          <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
           <FieldDescription>
             Include country code if applicable.
           </FieldDescription>
           <Input
+            id="phoneNumber"
             type="tel"
             name="phoneNumber"
             placeholder="+963-xxx-xxx-xxx"
@@ -223,36 +213,25 @@ export function StudentForm({
             }
             aria-invalid={!!state.fieldErrors.phoneNumber}
           />
-          {state.fieldErrors.phoneNumber && (
-            <p className="text-xs text-red-600 leading-tight">
-              {state.fieldErrors.phoneNumber}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.phoneNumber}</FieldError>
         </Field>
 
         {!student && (
           <Field>
-            <FieldLabel>Password</FieldLabel>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
             <Input
+              id="password"
               type="password"
               name="password"
               placeholder="Enter password"
               defaultValue={state.values?.password ?? ''}
               aria-invalid={!!state.fieldErrors.password}
             />
-            {state.fieldErrors.password && (
-              <p className="text-xs text-red-600 leading-tight">
-                {state.fieldErrors.password}
-              </p>
-            )}
+            <FieldError>{state.fieldErrors.password}</FieldError>
           </Field>
         )}
 
-        {state.formError && (
-          <p className="text-xs text-red-600 leading-tight">
-            {state.formError}
-          </p>
-        )}
+        {state.formError && <FieldError>{state.formError}</FieldError>}
       </FieldGroup>
 
       <DialogFooter className="pt-2">

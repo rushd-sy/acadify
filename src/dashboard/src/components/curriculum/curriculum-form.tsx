@@ -1,8 +1,8 @@
-import { Field, FieldGroup, FieldLabel } from '../ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
-import { useActionState } from 'react';
+import { useActionState, useRef } from 'react';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
 import {
@@ -13,6 +13,7 @@ import { Spinner } from '../ui/spinner';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '../ui/dialog';
+import { useFocusFirstError } from '@/hooks/use-focus-first-error';
 
 type CurriculumFormProps = {
   onCancel: () => void;
@@ -112,8 +113,11 @@ export function CurriculumForm({
     initialFormState,
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFocusFirstError(formRef, state.fieldErrors);
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="name">Curriculum Name</FieldLabel>
@@ -122,12 +126,9 @@ export function CurriculumForm({
             placeholder="e.g. Computer Science"
             name="name"
             defaultValue={state.values?.name ?? curriculum?.name}
+            aria-invalid={!!state.fieldErrors.name}
           />
-          {state.fieldErrors.name && (
-            <p className="text-xs text-red-600 leading-tight">
-              {state.fieldErrors.name}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.name}</FieldError>
         </Field>
 
         <Field>
@@ -138,19 +139,12 @@ export function CurriculumForm({
             name="description"
             rows={3}
             defaultValue={state.values?.description ?? curriculum?.description}
+            aria-invalid={!!state.fieldErrors.description}
           />
-          {state.fieldErrors.description && (
-            <p className="text-xs text-red-600 leading-tight">
-              {state.fieldErrors.description}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.description}</FieldError>
         </Field>
 
-        {state.formError && (
-          <p className="text-xs text-red-600 leading-tight">
-            {state.formError}
-          </p>
-        )}
+        {state.formError && <FieldError>{state.formError}</FieldError>}
       </FieldGroup>
       <DialogFooter className="pt-2">
         <Button type="button" variant="ghost" onClick={onCancel}>
