@@ -1,14 +1,14 @@
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '../ui/field';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { teacherService } from '@/services/teacher.service';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
-import { emailRegex } from '@/forms/validation.util';
+import { emailRegex, phoneRegex } from '@/forms/validation.util';
 import { Spinner } from '../ui/spinner';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
@@ -58,8 +58,11 @@ export function TeacherForm({
     } else if (!emailRegex.test(data.email)) {
       errors.email = 'Invalid email format.';
     }
-    if (!data.phoneNumber.trim())
+    if (!data.phoneNumber.trim()) {
       errors.phoneNumber = 'Phone number is required.';
+    } else if (!phoneRegex.test(data.phoneNumber.trim())) {
+      errors.phoneNumber = 'Please enter a valid phone number.';
+    }
     if (!data.degree.trim()) errors.degree = 'Degree is required.';
     if (!teacher && !data.password.trim())
       errors.password = 'Password is required.';
@@ -140,34 +143,53 @@ export function TeacherForm({
     teacherAction,
     initialFormState,
   );
-  return (
-    <form action={formAction} className="flex flex-col gap-4">
-      <FieldGroup>
-        <Field>
-          <FieldLabel>First Name</FieldLabel>
-          <Input
-            name="firstName"
-            placeholder="Enter teacher first name"
-            defaultValue={state.values?.firstName ?? teacher?.firstName}
-          />
-          {state.fieldErrors.firstName && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.firstName}
-            </p>
-          )}
-        </Field>
 
-        <Field>
-          <FieldLabel>Last Name</FieldLabel>
-          <Input
-            name="lastName"
-            placeholder="Enter teacher last name"
-            defaultValue={state.values?.lastName ?? teacher?.lastName}
-          />
-          {state.fieldErrors.lastName && (
-            <p className="text-sm text-red-600">{state.fieldErrors.lastName}</p>
-          )}
-        </Field>
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state.fieldErrors && Object.keys(state.fieldErrors).length > 0) {
+      const firstFieldName = Object.keys(state.fieldErrors)[0];
+      const element = formRef.current?.querySelector<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >(`[name="${firstFieldName}"]`);
+      element?.focus();
+    }
+  }, [state.fieldErrors]);
+
+  return (
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
+      <FieldGroup>
+        <div className="grid grid-cols-2 gap-3">
+          <Field>
+            <FieldLabel>First Name</FieldLabel>
+            <Input
+              name="firstName"
+              placeholder="Enter teacher first name"
+              defaultValue={state.values?.firstName ?? teacher?.firstName}
+              aria-invalid={!!state.fieldErrors.firstName}
+            />
+            {state.fieldErrors.firstName && (
+              <p className="text-xs text-red-600 leading-tight">
+                {state.fieldErrors.firstName}
+              </p>
+            )}
+          </Field>
+
+          <Field>
+            <FieldLabel>Last Name</FieldLabel>
+            <Input
+              name="lastName"
+              placeholder="Enter teacher last name"
+              defaultValue={state.values?.lastName ?? teacher?.lastName}
+              aria-invalid={!!state.fieldErrors.lastName}
+            />
+            {state.fieldErrors.lastName && (
+              <p className="text-xs text-red-600 leading-tight">
+                {state.fieldErrors.lastName}
+              </p>
+            )}
+          </Field>
+        </div>
 
         <Field>
           <FieldLabel>Email</FieldLabel>
@@ -178,9 +200,12 @@ export function TeacherForm({
             name="email"
             placeholder="test@gmail.com"
             defaultValue={state.values?.email ?? teacher?.email}
+            aria-invalid={!!state.fieldErrors.email}
           />
           {state.fieldErrors.email && (
-            <p className="text-sm text-red-600">{state.fieldErrors.email}</p>
+            <p className="text-xs text-red-600 leading-tight">
+              {state.fieldErrors.email}
+            </p>
           )}
         </Field>
 
@@ -194,9 +219,10 @@ export function TeacherForm({
             name="phoneNumber"
             placeholder="+963-xxx-xxx-xxx"
             defaultValue={state.values?.phoneNumber ?? teacher?.phoneNumber}
+            aria-invalid={!!state.fieldErrors.phoneNumber}
           />
           {state.fieldErrors.phoneNumber && (
-            <p className="text-sm text-red-600">
+            <p className="text-xs text-red-600 leading-tight">
               {state.fieldErrors.phoneNumber}
             </p>
           )}
@@ -211,9 +237,12 @@ export function TeacherForm({
             name="degree"
             placeholder="Bachelor's in Computer Science"
             defaultValue={state.values?.degree ?? teacher?.degree}
+            aria-invalid={!!state.fieldErrors.degree}
           />
           {state.fieldErrors.degree && (
-            <p className="text-sm text-red-600">{state.fieldErrors.degree}</p>
+            <p className="text-xs text-red-600 leading-tight">
+              {state.fieldErrors.degree}
+            </p>
           )}
         </Field>
 
@@ -225,16 +254,19 @@ export function TeacherForm({
               name="password"
               placeholder="Enter password"
               defaultValue={state.values?.password ?? ''}
+              aria-invalid={!!state.fieldErrors.password}
             />
             {state.fieldErrors.password && (
-              <p className="text-sm text-red-600">
+              <p className="text-xs text-red-600 leading-tight">
                 {state.fieldErrors.password}
               </p>
             )}
           </Field>
         )}
         {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
+          <p className="text-xs text-red-600 leading-tight">
+            {state.formError}
+          </p>
         )}
       </FieldGroup>
 

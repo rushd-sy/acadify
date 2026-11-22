@@ -230,7 +230,9 @@ export function ExamForm({
             defaultValue={state.values?.title ?? exam?.title}
           />
           {state.fieldErrors.title && (
-            <p className="text-sm text-red-600">{state.fieldErrors.title}</p>
+            <p className="text-xs leading-tight text-red-600">
+              {state.fieldErrors.title}
+            </p>
           )}
         </Field>
 
@@ -242,7 +244,9 @@ export function ExamForm({
             defaultValue={formatDateForInput(state.values?.date ?? exam?.date)}
           />
           {state.fieldErrors.date && (
-            <p className="text-sm text-red-600">{state.fieldErrors.date}</p>
+            <p className="text-xs leading-tight text-red-600">
+              {state.fieldErrors.date}
+            </p>
           )}
         </Field>
 
@@ -271,7 +275,9 @@ export function ExamForm({
             </SelectContent>
           </Select>
           {curriculumError && (
-            <p className="text-sm text-destructive">{curriculumError}</p>
+            <p className="text-xs leading-tight text-destructive">
+              {curriculumError}
+            </p>
           )}
         </Field>
 
@@ -283,7 +289,7 @@ export function ExamForm({
             defaultValue={state.values?.documentUrl ?? exam?.documentUrl}
           />
           {state.fieldErrors.documentUrl && (
-            <p className="text-sm text-red-600">
+            <p className="text-xs leading-tight text-red-600">
               {state.fieldErrors.documentUrl}
             </p>
           )}
@@ -298,7 +304,9 @@ export function ExamForm({
             defaultValue={state.values?.minScore ?? exam?.minScore}
           />
           {state.fieldErrors.minScore && (
-            <p className="text-sm text-red-600">{state.fieldErrors.minScore}</p>
+            <p className="text-xs leading-tight text-red-600">
+              {state.fieldErrors.minScore}
+            </p>
           )}
         </Field>
 
@@ -311,12 +319,16 @@ export function ExamForm({
             defaultValue={state.values?.maxScore ?? exam?.maxScore}
           />
           {state.fieldErrors.maxScore && (
-            <p className="text-sm text-red-600">{state.fieldErrors.maxScore}</p>
+            <p className="text-xs leading-tight text-red-600">
+              {state.fieldErrors.maxScore}
+            </p>
           )}
         </Field>
 
         {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
+          <p className="text-xs leading-tight text-red-600">
+            {state.formError}
+          </p>
         )}
       </FieldGroup>
 

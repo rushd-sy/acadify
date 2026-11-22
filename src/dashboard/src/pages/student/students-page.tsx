@@ -88,8 +88,8 @@ export default function StudentsPage() {
       ),
     },
     {
-      id: 'number',
-      header: 'Number',
+      id: 'phoneNumber',
+      header: 'Phone Number',
       cell: () => '-',
     },
     {

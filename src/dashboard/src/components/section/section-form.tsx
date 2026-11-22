@@ -1,4 +1,4 @@
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,10 +9,18 @@ import {
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { sectionService } from '@/services/section.service';
-import type { SectionDto } from 'dtos';
+import { gradeService } from '@/services/grade.service';
+import type { GradeDto, SectionDto } from 'dtos';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '../ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 type SectionFormProps = {
   onCancel: () => void;
@@ -55,6 +63,24 @@ export function SectionForm({
   onCreateSuccess,
   section,
 }: SectionFormProps) {
+  const [grades, setGrades] = useState<GradeDto[]>([]);
+  const [gradesLoading, setGradesLoading] = useState(true);
+  const [gradeFetchError, setGradeFetchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    gradeService
+      .getAllGrades()
+      .then((data) => {
+        setGrades(data);
+        setGradesLoading(false);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch grades:', error);
+        setGradeFetchError('Failed to load grades. Please try again.');
+        setGradesLoading(false);
+      });
+  }, []);
+
   const validateSectionForm = (data: SectionFormData) => {
     const errors: Record<string, string> = {};
     if (!data.name.trim()) {
@@ -64,10 +90,8 @@ export function SectionForm({
     if (academicYearError) {
       errors.academicYear = academicYearError;
     }
-    if (!data.gradeId) {
-      errors.gradeId = 'Grade ID is required.';
-    } else if (!Number.isInteger(data.gradeId) || data.gradeId <= 0) {
-      errors.gradeId = 'Please select a valid Grade ID.';
+    if (!data.gradeId || !Number.isInteger(data.gradeId) || data.gradeId <= 0) {
+      errors.gradeId = 'Grade is required.';
     }
     return errors;
   };
@@ -149,7 +173,9 @@ export function SectionForm({
             defaultValue={state.values?.name ?? section?.name}
           />
           {state.fieldErrors.name && (
-            <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
+            <p className="text-xs text-red-600 leading-tight">
+              {state.fieldErrors.name}
+            </p>
           )}
         </Field>
 
@@ -162,28 +188,56 @@ export function SectionForm({
             defaultValue={state.values?.academicYear ?? section?.academicYear}
           />
           {state.fieldErrors.academicYear && (
-            <p className="text-sm text-red-600">
+            <p className="text-xs text-red-600 leading-tight">
               {state.fieldErrors.academicYear}
             </p>
           )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="gradeId">Grade ID</FieldLabel>
-          <Input
-            id="gradeId"
-            type="number"
+          <FieldLabel htmlFor="gradeId">Grade</FieldLabel>
+          <Select
             name="gradeId"
-            placeholder="Enter Grade ID"
-            defaultValue={state.values?.gradeId ?? section?.gradeId}
-          />
+            defaultValue={
+              state.values?.gradeId != null &&
+              !Number.isNaN(state.values.gradeId)
+                ? String(state.values.gradeId)
+                : section?.gradeId != null
+                  ? String(section.gradeId)
+                  : ''
+            }
+          >
+            <SelectTrigger id="gradeId" className="w-full">
+              <SelectValue
+                placeholder={
+                  gradesLoading ? 'Loading grades...' : 'Select grade'
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {grades.map((grade) => (
+                <SelectItem key={grade.id} value={String(grade.id)}>
+                  {grade.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {state.fieldErrors.gradeId && (
-            <p className="text-sm text-red-600">{state.fieldErrors.gradeId}</p>
+            <p className="text-xs text-red-600 leading-tight">
+              {state.fieldErrors.gradeId}
+            </p>
+          )}
+          {gradeFetchError && (
+            <p className="text-xs text-destructive leading-tight">
+              {gradeFetchError}
+            </p>
           )}
         </Field>
 
         {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
+          <p className="text-xs text-red-600 leading-tight">
+            {state.formError}
+          </p>
         )}
       </FieldGroup>
 

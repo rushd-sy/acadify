@@ -1,7 +1,7 @@
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '../ui/field';
 import type { StudentDetailsDto } from 'dtos';
 import { studentService } from '@/services/student.service';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import {
@@ -9,7 +9,7 @@ import {
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { Spinner } from '../ui/spinner';
-import { emailRegex } from '@/forms/validation.util';
+import { emailRegex, phoneRegex } from '@/forms/validation.util';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '@/components/ui/dialog';
@@ -62,6 +62,8 @@ export function StudentForm({
     }
     if (!data.phoneNumber.trim()) {
       errors.phoneNumber = 'Phone number is required.';
+    } else if (!phoneRegex.test(data.phoneNumber.trim())) {
+      errors.phoneNumber = 'Please enter a valid phone number.';
     }
     if (!student && !data.password.trim()) {
       errors.password = 'Password is required.';
@@ -142,34 +144,52 @@ export function StudentForm({
     initialFormState,
   );
 
-  return (
-    <form action={formAction} className="flex flex-col gap-4">
-      <FieldGroup>
-        <Field>
-          <FieldLabel>First Name</FieldLabel>
-          <Input
-            name="firstName"
-            placeholder="Enter student first name"
-            defaultValue={state.values?.firstName ?? student?.firstName ?? ''}
-          />
-          {state.fieldErrors.firstName && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.firstName}
-            </p>
-          )}
-        </Field>
+  const formRef = useRef<HTMLFormElement>(null);
 
-        <Field>
-          <FieldLabel>Last Name</FieldLabel>
-          <Input
-            name="lastName"
-            placeholder="Enter student last name"
-            defaultValue={state.values?.lastName ?? student?.lastName ?? ''}
-          />
-          {state.fieldErrors.lastName && (
-            <p className="text-sm text-red-600">{state.fieldErrors.lastName}</p>
-          )}
-        </Field>
+  useEffect(() => {
+    if (state.fieldErrors && Object.keys(state.fieldErrors).length > 0) {
+      const firstFieldName = Object.keys(state.fieldErrors)[0];
+      const element = formRef.current?.querySelector<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >(`[name="${firstFieldName}"]`);
+      element?.focus();
+    }
+  }, [state.fieldErrors]);
+
+  return (
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
+      <FieldGroup>
+        <div className="grid grid-cols-2 gap-3">
+          <Field>
+            <FieldLabel>First Name</FieldLabel>
+            <Input
+              name="firstName"
+              placeholder="Enter student first name"
+              defaultValue={state.values?.firstName ?? student?.firstName ?? ''}
+              aria-invalid={!!state.fieldErrors.firstName}
+            />
+            {state.fieldErrors.firstName && (
+              <p className="text-xs text-red-600 leading-tight">
+                {state.fieldErrors.firstName}
+              </p>
+            )}
+          </Field>
+
+          <Field>
+            <FieldLabel>Last Name</FieldLabel>
+            <Input
+              name="lastName"
+              placeholder="Enter student last name"
+              defaultValue={state.values?.lastName ?? student?.lastName ?? ''}
+              aria-invalid={!!state.fieldErrors.lastName}
+            />
+            {state.fieldErrors.lastName && (
+              <p className="text-xs text-red-600 leading-tight">
+                {state.fieldErrors.lastName}
+              </p>
+            )}
+          </Field>
+        </div>
 
         <Field>
           <FieldLabel>Email</FieldLabel>
@@ -180,9 +200,12 @@ export function StudentForm({
             name="email"
             placeholder="test@gmail.com"
             defaultValue={state.values?.email ?? student?.email ?? ''}
+            aria-invalid={!!state.fieldErrors.email}
           />
           {state.fieldErrors.email && (
-            <p className="text-sm text-red-600">{state.fieldErrors.email}</p>
+            <p className="text-xs text-red-600 leading-tight">
+              {state.fieldErrors.email}
+            </p>
           )}
         </Field>
 
@@ -198,9 +221,10 @@ export function StudentForm({
             defaultValue={
               state.values?.phoneNumber ?? student?.phoneNumber ?? ''
             }
+            aria-invalid={!!state.fieldErrors.phoneNumber}
           />
           {state.fieldErrors.phoneNumber && (
-            <p className="text-sm text-red-600">
+            <p className="text-xs text-red-600 leading-tight">
               {state.fieldErrors.phoneNumber}
             </p>
           )}
@@ -214,9 +238,10 @@ export function StudentForm({
               name="password"
               placeholder="Enter password"
               defaultValue={state.values?.password ?? ''}
+              aria-invalid={!!state.fieldErrors.password}
             />
             {state.fieldErrors.password && (
-              <p className="text-sm text-red-600">
+              <p className="text-xs text-red-600 leading-tight">
                 {state.fieldErrors.password}
               </p>
             )}
@@ -224,7 +249,9 @@ export function StudentForm({
         )}
 
         {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
+          <p className="text-xs text-red-600 leading-tight">
+            {state.formError}
+          </p>
         )}
       </FieldGroup>
 
@@ -232,7 +259,7 @@ export function StudentForm({
         <Button type="button" variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button type="submit" variant="secondary" disabled={isPending}>
+        <Button type="submit" disabled={isPending}>
           {isPending ? <Spinner className="text-black" /> : 'Submit'}
         </Button>
       </DialogFooter>

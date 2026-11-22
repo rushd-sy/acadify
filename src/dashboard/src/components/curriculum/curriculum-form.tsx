@@ -1,5 +1,6 @@
 import { Field, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { useActionState } from 'react';
 import { curriculumService } from '@/services/curriculum.service';
@@ -115,33 +116,40 @@ export function CurriculumForm({
     <form action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
         <Field>
-          <FieldLabel>Curriculum Name</FieldLabel>
+          <FieldLabel htmlFor="name">Curriculum Name</FieldLabel>
           <Input
+            id="name"
             placeholder="e.g. Computer Science"
             name="name"
             defaultValue={state.values?.name ?? curriculum?.name}
           />
           {state.fieldErrors.name && (
-            <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
+            <p className="text-xs text-red-600 leading-tight">
+              {state.fieldErrors.name}
+            </p>
           )}
         </Field>
 
         <Field>
-          <FieldLabel>Description</FieldLabel>
-          <Input
+          <FieldLabel htmlFor="description">Description</FieldLabel>
+          <Textarea
+            id="description"
             placeholder="Brief description of the curriculum"
             name="description"
+            rows={3}
             defaultValue={state.values?.description ?? curriculum?.description}
           />
           {state.fieldErrors.description && (
-            <p className="text-sm text-red-600">
+            <p className="text-xs text-red-600 leading-tight">
               {state.fieldErrors.description}
             </p>
           )}
         </Field>
 
         {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
+          <p className="text-xs text-red-600 leading-tight">
+            {state.formError}
+          </p>
         )}
       </FieldGroup>
       <DialogFooter className="pt-2">

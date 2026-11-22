@@ -113,12 +113,16 @@ export function GradeForm({
             defaultValue={state.values?.name ?? grade?.name}
           />
           {state.fieldErrors.name && (
-            <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
+            <p className="text-xs leading-tight text-red-600">
+              {state.fieldErrors.name}
+            </p>
           )}
         </Field>
 
         {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
+          <p className="text-xs leading-tight text-red-600">
+            {state.formError}
+          </p>
         )}
       </FieldGroup>
 
