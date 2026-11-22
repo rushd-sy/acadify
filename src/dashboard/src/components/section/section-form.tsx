@@ -2,7 +2,7 @@ import { useActionState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Field, FieldGroup, FieldLabel } from '../ui/field';
 import { Spinner } from '@/components/ui/spinner';
 import {
   getApiErrorMessage,
@@ -139,51 +139,53 @@ export function SectionForm({
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Section Name</Label>
-        <Input
-          id="name"
-          name="name"
-          placeholder="e.g. Section A"
-          defaultValue={state.values?.name ?? section?.name}
-        />
-        {state.fieldErrors.name && (
-          <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
-        )}
-      </div>
+      <FieldGroup>
+        <Field>
+          <FieldLabel htmlFor="name">Section Name</FieldLabel>
+          <Input
+            id="name"
+            name="name"
+            placeholder="e.g. Section A"
+            defaultValue={state.values?.name ?? section?.name}
+          />
+          {state.fieldErrors.name && (
+            <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
+          )}
+        </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="academicYear">Academic Year</Label>
-        <Input
-          id="academicYear"
-          name="academicYear"
-          placeholder="e.g. 2026/2027"
-          defaultValue={state.values?.academicYear ?? section?.academicYear}
-        />
-        {state.fieldErrors.academicYear && (
-          <p className="text-sm text-red-600">
-            {state.fieldErrors.academicYear}
-          </p>
-        )}
-      </div>
+        <Field>
+          <FieldLabel htmlFor="academicYear">Academic Year</FieldLabel>
+          <Input
+            id="academicYear"
+            name="academicYear"
+            placeholder="e.g. 2026/2027"
+            defaultValue={state.values?.academicYear ?? section?.academicYear}
+          />
+          {state.fieldErrors.academicYear && (
+            <p className="text-sm text-red-600">
+              {state.fieldErrors.academicYear}
+            </p>
+          )}
+        </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="gradeId">Grade ID</Label>
-        <Input
-          id="gradeId"
-          type="number"
-          name="gradeId"
-          placeholder="Enter Grade ID"
-          defaultValue={state.values?.gradeId ?? section?.gradeId}
-        />
-        {state.fieldErrors.gradeId && (
-          <p className="text-sm text-red-600">{state.fieldErrors.gradeId}</p>
-        )}
-      </div>
+        <Field>
+          <FieldLabel htmlFor="gradeId">Grade ID</FieldLabel>
+          <Input
+            id="gradeId"
+            type="number"
+            name="gradeId"
+            placeholder="Enter Grade ID"
+            defaultValue={state.values?.gradeId ?? section?.gradeId}
+          />
+          {state.fieldErrors.gradeId && (
+            <p className="text-sm text-red-600">{state.fieldErrors.gradeId}</p>
+          )}
+        </Field>
 
-      {state.formError && (
-        <div className="text-sm text-red-600">{state.formError}</div>
-      )}
+        {state.formError && (
+          <p className="text-sm text-red-600">{state.formError}</p>
+        )}
+      </FieldGroup>
 
       <DialogFooter className="pt-2">
         <Button

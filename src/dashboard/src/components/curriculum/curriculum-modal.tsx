@@ -1,4 +1,4 @@
-import { CurriculumForm } from './curriculum- form';
+import { CurriculumForm } from './curriculum-form';
 import type { CurriculumDto } from 'dtos';
 import { FormDialog } from '../ui/form-dialog';
 
