@@ -7,3 +7,21 @@ export class InvalidExamScoreRangeError extends ExamDomainError {
     );
   }
 }
+
+export class InvalidExamSectionDurationError extends ExamDomainError {
+  constructor(duration: number) {
+    super(
+      `Invalid exam section duration: duration (${duration}) must be a positive number.`,
+    );
+  }
+}
+
+export class DuplicateExamSectionError extends ExamDomainError {
+  constructor(sectionId?: number) {
+    super(
+      sectionId !== undefined
+        ? `Section with ID ${sectionId} is already assigned to this exam.`
+        : 'One or more sections are already assigned to this exam.',
+    );
+  }
+}

@@ -5,6 +5,14 @@ import { ExamMapper } from '../mappers/exam.mapper';
 import { UpdateExamDto } from 'dtos';
 import { ExamSectionMapper } from '../mappers/exam-section.mapper';
 import { ExamSection } from '../domain/exam-section.entity';
+import { Prisma } from '@prisma/client';
+import { DuplicateExamSectionError } from '../domain/exam.errors';
+
+type ExamSectionWithSection = Prisma.ExamSectionGetPayload<{
+  include: {
+    section: true;
+  };
+}>;
 
 @Injectable()
 export class ExamRepository {
@@ -106,6 +114,38 @@ export class ExamRepository {
     return exam ? this.mapper.toDomain(exam) : null;
   }
 
+  async addSectionsToExam(sections: ExamSection[]): Promise<ExamSection[]> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const createdSections: ExamSectionWithSection[] = [];
+
+        for (const section of sections) {
+          const createdSection = await tx.examSection.create({
+            data: this.examSectionMapper.toPersistence(section),
+            include: {
+              section: true,
+            },
+          });
+
+          createdSections.push(createdSection);
+        }
+
+        return createdSections.map((section) =>
+          this.examSectionMapper.toDomain(section),
+        );
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new DuplicateExamSectionError();
+      }
+
+      throw error;
+    }
+  }
+
   async findAssignedSectionsByExamId(examId: number): Promise<ExamSection[]> {
     const examSections = await this.prisma.examSection.findMany({
       where: {
@@ -130,7 +170,32 @@ export class ExamRepository {
     );
   }
 
-  assignSections(_sections: ExamSection[]): void {
-    throw new Error('Not implemented');
+  async findByIdWithSections(id: number): Promise<ExamDomain | null> {
+    const exam = await this.prisma.exam.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
+      include: {
+        examSections: {
+          where: {
+            archivedAt: null,
+          },
+          include: {
+            section: true,
+          },
+        },
+      },
+    });
+
+    if (!exam) {
+      return null;
+    }
+
+    const examSections = exam.examSections.map((examSection) =>
+      this.examSectionMapper.toDomain(examSection),
+    );
+
+    return this.mapper.toDomain(exam, examSections);
   }
 }

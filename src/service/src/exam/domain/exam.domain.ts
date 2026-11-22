@@ -1,4 +1,7 @@
-import { InvalidExamScoreRangeError } from './exam.errors';
+import {
+  DuplicateExamSectionError,
+  InvalidExamScoreRangeError,
+} from './exam.errors';
 import { TraceableDomain } from 'src/utils/traceable.domain';
 import { ExamSection } from './exam-section.entity';
 
@@ -88,7 +91,19 @@ export class ExamDomain extends TraceableDomain {
     return new ExamDomain(input);
   }
 
-  assignSections(_sections: ExamSection[]): void {
-    throw new Error('Not implemented');
+  assignSections(sections: ExamSection[]): void {
+    const sectionIds = new Set(
+      this.examSections.map((section) => section.sectionId),
+    );
+
+    for (const section of sections) {
+      if (sectionIds.has(section.sectionId)) {
+        throw new DuplicateExamSectionError(section.sectionId);
+      }
+
+      sectionIds.add(section.sectionId);
+    }
+
+    this.examSections.push(...sections);
   }
 }
