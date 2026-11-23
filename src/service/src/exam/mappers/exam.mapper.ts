@@ -1,12 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { Exam } from '@prisma/client';
+import { Exam, Prisma } from '@prisma/client';
 import { AssignSectionsDto, CreateExamDto, ExamDto } from 'dtos';
 import { ExamDomain } from '../domain/exam.domain';
 import { ExamSection } from '../domain/exam-section.entity';
+import { ExamSectionMapper } from './exam-section.mapper';
+
+type ExamWithSections = Prisma.ExamGetPayload<{
+  include: {
+    examSections: {
+      include: {
+        section: true;
+      };
+    };
+  };
+}>;
 
 @Injectable()
 export class ExamMapper {
-  toDomain(exam: Exam, examSections: ExamSection[] = []): ExamDomain {
+  constructor(private readonly examSectionMapper: ExamSectionMapper) {}
+  toDomain(exam: Exam | ExamWithSections): ExamDomain {
+    const examSections =
+      'examSections' in exam
+        ? exam.examSections.map((section) =>
+            this.examSectionMapper.toDomain(section),
+          )
+        : [];
+
     return ExamDomain.fromPersistence({
       id: exam.id,
       examTemplateId: exam.examTemplateId ?? undefined,
