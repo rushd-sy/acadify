@@ -223,7 +223,7 @@ export function AssignSectionsForm({
         <p className="text-sm text-destructive">{error}</p>
       )}
 
-      <DialogFooter className="pt-2">
+      <DialogFooter className="bg-white">
         <Button
           type="button"
           variant="ghost"
