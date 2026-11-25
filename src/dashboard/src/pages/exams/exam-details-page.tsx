@@ -139,7 +139,7 @@ export default function ExamDetailsPage() {
       setAssignedSections(sections);
       setSectionsError(null);
     } catch {
-      setSectionsError('Failed to refresh assigned sections.');
+      setSectionsError('Sections assigned, but the list failed to refresh.');
     }
   };
 

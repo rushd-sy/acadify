@@ -41,8 +41,10 @@ export function AssignSectionsForm({
       try {
         setIsLoading(true);
 
-        const allSections = await sectionService.getAllSections();
-        const assignedSections = await examService.getAssignedSections(examId);
+        const [allSections, assignedSections] = await Promise.all([
+          sectionService.getAllSections(),
+          examService.getAssignedSections(examId),
+        ]);
 
         const assignedIds = new Set(
           assignedSections.map((section) => section.sectionId),
@@ -93,6 +95,7 @@ export function AssignSectionsForm({
     const isInvalid = selectedSections.some(
       (section) =>
         !section.startAt ||
+        isNaN(new Date(section.startAt).getTime()) ||
         typeof section.duration !== 'number' ||
         !Number.isInteger(section.duration) ||
         section.duration <= 0,
@@ -127,7 +130,7 @@ export function AssignSectionsForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       {isLoading ? (
-        <p>Loading sections...</p>
+        <p role="status">Loading sections...</p>
       ) : error && sections.length === 0 ? (
         <p className="text-sm text-destructive">{error}</p>
       ) : sections.length === 0 ? (
@@ -141,79 +144,87 @@ export function AssignSectionsForm({
               Select Sections ({selectedSections.length} selected)
             </FieldLabel>
 
-            <div className="flex flex-col gap-3">
-              {sections.map((section) => {
-                const selected = selectedSections.find(
-                  (item) => item.sectionId === section.id,
-                );
+            <div className="max-h-[350px] overflow-y-auto pr-2">
+              <div className="flex flex-col gap-3">
+                {sections.map((section) => {
+                  const selected = selectedSections.find(
+                    (item) => item.sectionId === section.id,
+                  );
 
-                return (
-                  <div key={section.id} className="rounded-md border p-3">
-                    <label className="flex cursor-pointer items-center gap-3">
-                      <Checkbox
-                        checked={!!selected}
-                        onCheckedChange={(checked) =>
-                          handleSectionChange(section.id, checked === true)
-                        }
-                      />
+                  return (
+                    <div key={section.id} className="rounded-md border p-3">
+                      <label className="flex cursor-pointer items-center gap-3">
+                        <Checkbox
+                          checked={!!selected}
+                          onCheckedChange={(checked) =>
+                            handleSectionChange(section.id, checked === true)
+                          }
+                        />
 
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium">
-                          {section.name} - Grade {section.gradeId}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          {section.academicYear}
-                        </span>
-                      </div>
-                    </label>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">
+                            {section.name} - Grade {section.gradeId}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            {section.academicYear}
+                          </span>
+                        </div>
+                      </label>
 
-                    {selected && (
-                      <div className="mt-3 grid grid-cols-2 gap-3">
-                        <Field>
-                          <FieldLabel>Start At</FieldLabel>
-                          <Input
-                            type="datetime-local"
-                            value={selected.startAt}
-                            onChange={(event) =>
-                              setSelectedSections((previous) =>
-                                previous.map((item) =>
-                                  item.sectionId === section.id
-                                    ? { ...item, startAt: event.target.value }
-                                    : item,
-                                ),
-                              )
-                            }
-                          />
-                        </Field>
+                      {selected && (
+                        <div className="mt-3 grid grid-cols-2 gap-3">
+                          <Field>
+                            <FieldLabel htmlFor={`startAt-${section.id}`}>
+                              Start At
+                            </FieldLabel>
+                            <Input
+                              id={`startAt-${section.id}`}
+                              type="datetime-local"
+                              value={selected.startAt}
+                              onChange={(event) =>
+                                setSelectedSections((previous) =>
+                                  previous.map((item) =>
+                                    item.sectionId === section.id
+                                      ? { ...item, startAt: event.target.value }
+                                      : item,
+                                  ),
+                                )
+                              }
+                            />
+                          </Field>
 
-                        <Field>
-                          <FieldLabel>Duration (minutes)</FieldLabel>
-                          <Input
-                            type="number"
-                            min={1}
-                            value={selected.duration}
-                            onChange={(event) =>
-                              setSelectedSections((previous) =>
-                                previous.map((item) =>
-                                  item.sectionId === section.id
-                                    ? {
-                                        ...item,
-                                        duration:
-                                          event.target.value === ''
-                                            ? ''
-                                            : Number(event.target.value),
-                                      }
-                                    : item,
-                                ),
-                              )
-                            }
-                          />
-                        </Field>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                          <Field>
+                            <FieldLabel htmlFor={`duration-${section.id}`}>
+                              Duration (minutes)
+                            </FieldLabel>
+                            <Input
+                              id={`duration-${section.id}`}
+                              type="number"
+                              min={1}
+                              value={selected.duration}
+                              onChange={(event) =>
+                                setSelectedSections((previous) =>
+                                  previous.map((item) =>
+                                    item.sectionId === section.id
+                                      ? {
+                                          ...item,
+                                          duration:
+                                            event.target.value === ''
+                                              ? ''
+                                              : Number(event.target.value),
+                                        }
+                                      : item,
+                                  ),
+                                )
+                              }
+                            />
+                          </Field>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </Field>
         </FieldGroup>
@@ -223,7 +234,7 @@ export function AssignSectionsForm({
         <p className="text-sm text-destructive">{error}</p>
       )}
 
-      <DialogFooter className="bg-white">
+      <DialogFooter className="pt-2">
         <Button
           type="button"
           variant="ghost"
