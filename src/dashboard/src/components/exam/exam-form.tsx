@@ -1,7 +1,7 @@
-import { Field, FieldGroup, FieldLabel } from '../ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { examService } from '@/services/exam.service';
 import type { ExamDto } from 'dtos';
 import {
@@ -14,9 +14,9 @@ import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '../ui/dialog';
 import { formatDateForInput } from '@/utils/date.util';
 import { isValidUrl } from '@/utils/url.util';
-import { useEffect, useState } from 'react';
 import { curriculumService } from '@/services/curriculum.service';
 import type { CurriculumDto } from 'dtos';
+import { useFocusFirstError } from '@/hooks/use-focus-first-error';
 import {
   Select,
   SelectContent,
@@ -218,36 +218,39 @@ export function ExamForm({
     initialFormState,
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFocusFirstError(formRef, state.fieldErrors);
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
         <Field>
-          <FieldLabel>Title</FieldLabel>
+          <FieldLabel htmlFor="title">Title</FieldLabel>
           <Input
+            id="title"
             name="title"
             type="text"
             placeholder="e.g. Mathematics - Midterm Exam"
             defaultValue={state.values?.title ?? exam?.title}
+            aria-invalid={!!state.fieldErrors.title}
           />
-          {state.fieldErrors.title && (
-            <p className="text-sm text-red-600">{state.fieldErrors.title}</p>
-          )}
+          <FieldError>{state.fieldErrors.title}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Date</FieldLabel>
+          <FieldLabel htmlFor="date">Date</FieldLabel>
           <Input
+            id="date"
             name="date"
             type="date"
             defaultValue={formatDateForInput(state.values?.date ?? exam?.date)}
+            aria-invalid={!!state.fieldErrors.date}
           />
-          {state.fieldErrors.date && (
-            <p className="text-sm text-red-600">{state.fieldErrors.date}</p>
-          )}
+          <FieldError>{state.fieldErrors.date}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Curriculum</FieldLabel>
+          <FieldLabel htmlFor="curriculumId">Curriculum</FieldLabel>
           <Select
             name="curriculumId"
             defaultValue={
@@ -258,7 +261,11 @@ export function ExamForm({
                   : ''
             }
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger
+              id="curriculumId"
+              className="w-full"
+              aria-invalid={!!state.fieldErrors.curriculumId}
+            >
               <SelectValue placeholder="Select curriculum" />
             </SelectTrigger>
 
@@ -270,54 +277,49 @@ export function ExamForm({
               ))}
             </SelectContent>
           </Select>
-          {curriculumError && (
-            <p className="text-sm text-destructive">{curriculumError}</p>
-          )}
+          <FieldError>{state.fieldErrors.curriculumId}</FieldError>
+          {curriculumError && <FieldError>{curriculumError}</FieldError>}
         </Field>
 
         <Field>
-          <FieldLabel>Document URL</FieldLabel>
+          <FieldLabel htmlFor="documentUrl">Document URL</FieldLabel>
           <Input
+            id="documentUrl"
             name="documentUrl"
             placeholder="https://example.com/exam.pdf"
             defaultValue={state.values?.documentUrl ?? exam?.documentUrl}
+            aria-invalid={!!state.fieldErrors.documentUrl}
           />
-          {state.fieldErrors.documentUrl && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.documentUrl}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.documentUrl}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Min Score</FieldLabel>
+          <FieldLabel htmlFor="minScore">Min Score</FieldLabel>
           <Input
+            id="minScore"
             name="minScore"
             type="number"
             placeholder="e.g. 20"
             defaultValue={state.values?.minScore ?? exam?.minScore}
+            aria-invalid={!!state.fieldErrors.minScore}
           />
-          {state.fieldErrors.minScore && (
-            <p className="text-sm text-red-600">{state.fieldErrors.minScore}</p>
-          )}
+          <FieldError>{state.fieldErrors.minScore}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Max Score</FieldLabel>
+          <FieldLabel htmlFor="maxScore">Max Score</FieldLabel>
           <Input
+            id="maxScore"
             name="maxScore"
             type="number"
             placeholder="e.g. 100"
             defaultValue={state.values?.maxScore ?? exam?.maxScore}
+            aria-invalid={!!state.fieldErrors.maxScore}
           />
-          {state.fieldErrors.maxScore && (
-            <p className="text-sm text-red-600">{state.fieldErrors.maxScore}</p>
-          )}
+          <FieldError>{state.fieldErrors.maxScore}</FieldError>
         </Field>
 
-        {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
-        )}
+        {state.formError && <FieldError>{state.formError}</FieldError>}
       </FieldGroup>
 
       <DialogFooter className="pt-2">

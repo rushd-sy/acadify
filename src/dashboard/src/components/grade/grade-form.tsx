@@ -1,7 +1,7 @@
-import { Field, FieldGroup, FieldLabel } from '../ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { useActionState } from 'react';
+import { useActionState, useRef } from 'react';
 import { gradeService } from '@/services/grade.service';
 import type { GradeDto } from 'dtos';
 import { DialogFooter } from '@/components/ui/dialog';
@@ -12,6 +12,7 @@ import {
 import { Spinner } from '../ui/spinner';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
+import { useFocusFirstError } from '@/hooks/use-focus-first-error';
 
 type GradeFormProps = {
   onCancel: () => void;
@@ -102,24 +103,25 @@ export function GradeForm({
     initialFormState,
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFocusFirstError(formRef, state.fieldErrors);
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
         <Field>
-          <FieldLabel>Grade Name</FieldLabel>
+          <FieldLabel htmlFor="name">Grade Name</FieldLabel>
           <Input
+            id="name"
             placeholder="e.g. 1st Grade"
             name="name"
             defaultValue={state.values?.name ?? grade?.name}
+            aria-invalid={!!state.fieldErrors.name}
           />
-          {state.fieldErrors.name && (
-            <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
-          )}
+          <FieldError>{state.fieldErrors.name}</FieldError>
         </Field>
 
-        {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
-        )}
+        {state.formError && <FieldError>{state.formError}</FieldError>}
       </FieldGroup>
 
       <DialogFooter className="pt-2">

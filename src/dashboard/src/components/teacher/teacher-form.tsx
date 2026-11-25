@@ -1,18 +1,25 @@
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '../ui/field';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '../ui/field';
 import type { TeacherDetailsDto, TeacherDto } from 'dtos';
 import { teacherService } from '@/services/teacher.service';
-import { useActionState } from 'react';
+import { useActionState, useRef } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
-import { emailRegex } from '@/forms/validation.util';
+import { emailRegex, phoneRegex } from '@/forms/validation.util';
 import { Spinner } from '../ui/spinner';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '../ui/dialog';
+import { useFocusFirstError } from '@/hooks/use-focus-first-error';
 
 type TeacherFormProps = {
   onCancel: () => void;
@@ -58,8 +65,11 @@ export function TeacherForm({
     } else if (!emailRegex.test(data.email)) {
       errors.email = 'Invalid email format.';
     }
-    if (!data.phoneNumber.trim())
+    if (!data.phoneNumber.trim()) {
       errors.phoneNumber = 'Phone number is required.';
+    } else if (!phoneRegex.test(data.phoneNumber.trim())) {
+      errors.phoneNumber = 'Please enter a valid phone number.';
+    }
     if (!data.degree.trim()) errors.degree = 'Degree is required.';
     if (!teacher && !data.password.trim())
       errors.password = 'Password is required.';
@@ -140,102 +150,100 @@ export function TeacherForm({
     teacherAction,
     initialFormState,
   );
+
+  const formRef = useRef<HTMLFormElement>(null);
+  useFocusFirstError(formRef, state.fieldErrors);
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
-        <Field>
-          <FieldLabel>First Name</FieldLabel>
-          <Input
-            name="firstName"
-            placeholder="Enter teacher first name"
-            defaultValue={state.values?.firstName ?? teacher?.firstName}
-          />
-          {state.fieldErrors.firstName && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.firstName}
-            </p>
-          )}
-        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field>
+            <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+            <Input
+              id="firstName"
+              name="firstName"
+              placeholder="Enter teacher first name"
+              defaultValue={state.values?.firstName ?? teacher?.firstName}
+              aria-invalid={!!state.fieldErrors.firstName}
+            />
+            <FieldError>{state.fieldErrors.firstName}</FieldError>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+            <Input
+              id="lastName"
+              name="lastName"
+              placeholder="Enter teacher last name"
+              defaultValue={state.values?.lastName ?? teacher?.lastName}
+              aria-invalid={!!state.fieldErrors.lastName}
+            />
+            <FieldError>{state.fieldErrors.lastName}</FieldError>
+          </Field>
+        </div>
 
         <Field>
-          <FieldLabel>Last Name</FieldLabel>
-          <Input
-            name="lastName"
-            placeholder="Enter teacher last name"
-            defaultValue={state.values?.lastName ?? teacher?.lastName}
-          />
-          {state.fieldErrors.lastName && (
-            <p className="text-sm text-red-600">{state.fieldErrors.lastName}</p>
-          )}
-        </Field>
-
-        <Field>
-          <FieldLabel>Email</FieldLabel>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
           <FieldDescription>
             The primary email used for academic notifications.
           </FieldDescription>
           <Input
+            id="email"
             name="email"
             placeholder="test@gmail.com"
             defaultValue={state.values?.email ?? teacher?.email}
+            aria-invalid={!!state.fieldErrors.email}
           />
-          {state.fieldErrors.email && (
-            <p className="text-sm text-red-600">{state.fieldErrors.email}</p>
-          )}
+          <FieldError>{state.fieldErrors.email}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Phone Number</FieldLabel>
+          <FieldLabel htmlFor="phoneNumber">Phone Number</FieldLabel>
           <FieldDescription>
             Include country code if applicable.
           </FieldDescription>
           <Input
+            id="phoneNumber"
             type="tel"
             name="phoneNumber"
             placeholder="+963-xxx-xxx-xxx"
             defaultValue={state.values?.phoneNumber ?? teacher?.phoneNumber}
+            aria-invalid={!!state.fieldErrors.phoneNumber}
           />
-          {state.fieldErrors.phoneNumber && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.phoneNumber}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.phoneNumber}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel>Degree</FieldLabel>
+          <FieldLabel htmlFor="degree">Degree</FieldLabel>
           <FieldDescription>
             The degree or qualification of the teacher.
           </FieldDescription>
           <Input
+            id="degree"
             name="degree"
             placeholder="Bachelor's in Computer Science"
             defaultValue={state.values?.degree ?? teacher?.degree}
+            aria-invalid={!!state.fieldErrors.degree}
           />
-          {state.fieldErrors.degree && (
-            <p className="text-sm text-red-600">{state.fieldErrors.degree}</p>
-          )}
+          <FieldError>{state.fieldErrors.degree}</FieldError>
         </Field>
 
         {!teacher && (
           <Field>
-            <FieldLabel>Password</FieldLabel>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
             <Input
+              id="password"
               type="password"
               name="password"
               placeholder="Enter password"
               defaultValue={state.values?.password ?? ''}
+              aria-invalid={!!state.fieldErrors.password}
             />
-            {state.fieldErrors.password && (
-              <p className="text-sm text-red-600">
-                {state.fieldErrors.password}
-              </p>
-            )}
+            <FieldError>{state.fieldErrors.password}</FieldError>
           </Field>
         )}
-        {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
-        )}
+        {state.formError && <FieldError>{state.formError}</FieldError>}
       </FieldGroup>
 
       <DialogFooter className="pt-2">

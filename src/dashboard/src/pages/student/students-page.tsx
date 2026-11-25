@@ -88,11 +88,6 @@ export default function StudentsPage() {
       ),
     },
     {
-      id: 'number',
-      header: 'Number',
-      cell: () => '-',
-    },
-    {
       id: 'email',
       header: 'Email',
       accessorKey: 'email',

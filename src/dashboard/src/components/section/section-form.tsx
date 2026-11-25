@@ -1,18 +1,27 @@
-import { useActionState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Field, FieldGroup, FieldLabel } from '../ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '../ui/field';
 import { Spinner } from '@/components/ui/spinner';
 import {
   getApiErrorMessage,
   getApiValidationErrors,
 } from '@/lib/api-error.util';
 import { sectionService } from '@/services/section.service';
-import type { SectionDto } from 'dtos';
+import { gradeService } from '@/services/grade.service';
+import type { GradeDto, SectionDto } from 'dtos';
 import { getFormString } from '@/forms/form-data.util';
 import { createInitialFormState, type FormState } from '@/forms/state';
 import { DialogFooter } from '../ui/dialog';
+import { useFocusFirstError } from '@/hooks/use-focus-first-error';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 type SectionFormProps = {
   onCancel: () => void;
@@ -55,6 +64,34 @@ export function SectionForm({
   onCreateSuccess,
   section,
 }: SectionFormProps) {
+  const [grades, setGrades] = useState<GradeDto[]>([]);
+  const [gradesLoading, setGradesLoading] = useState(true);
+  const [gradeFetchError, setGradeFetchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    gradeService
+      .getAllGrades()
+      .then((data) => {
+        if (!ignore) {
+          setGrades(data);
+          setGradesLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to fetch grades:', error);
+        if (!ignore) {
+          setGradeFetchError('Failed to load grades. Please try again.');
+          setGradesLoading(false);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   const validateSectionForm = (data: SectionFormData) => {
     const errors: Record<string, string> = {};
     if (!data.name.trim()) {
@@ -64,10 +101,8 @@ export function SectionForm({
     if (academicYearError) {
       errors.academicYear = academicYearError;
     }
-    if (!data.gradeId) {
-      errors.gradeId = 'Grade ID is required.';
-    } else if (!Number.isInteger(data.gradeId) || data.gradeId <= 0) {
-      errors.gradeId = 'Please select a valid Grade ID.';
+    if (!Number.isInteger(data.gradeId) || data.gradeId <= 0) {
+      errors.gradeId = 'Grade is required.';
     }
     return errors;
   };
@@ -137,8 +172,11 @@ export function SectionForm({
     initialFormState,
   );
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useFocusFirstError(formRef, state.fieldErrors);
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="name">Section Name</FieldLabel>
@@ -147,10 +185,9 @@ export function SectionForm({
             name="name"
             placeholder="e.g. Section A"
             defaultValue={state.values?.name ?? section?.name}
+            aria-invalid={!!state.fieldErrors.name}
           />
-          {state.fieldErrors.name && (
-            <p className="text-sm text-red-600">{state.fieldErrors.name}</p>
-          )}
+          <FieldError>{state.fieldErrors.name}</FieldError>
         </Field>
 
         <Field>
@@ -160,31 +197,52 @@ export function SectionForm({
             name="academicYear"
             placeholder="e.g. 2026/2027"
             defaultValue={state.values?.academicYear ?? section?.academicYear}
+            aria-invalid={!!state.fieldErrors.academicYear}
           />
-          {state.fieldErrors.academicYear && (
-            <p className="text-sm text-red-600">
-              {state.fieldErrors.academicYear}
-            </p>
-          )}
+          <FieldError>{state.fieldErrors.academicYear}</FieldError>
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="gradeId">Grade ID</FieldLabel>
-          <Input
-            id="gradeId"
-            type="number"
-            name="gradeId"
-            placeholder="Enter Grade ID"
-            defaultValue={state.values?.gradeId ?? section?.gradeId}
-          />
-          {state.fieldErrors.gradeId && (
-            <p className="text-sm text-red-600">{state.fieldErrors.gradeId}</p>
+          <FieldLabel htmlFor="gradeId">Grade</FieldLabel>
+          {gradesLoading && section?.gradeId != null && (
+            <input type="hidden" name="gradeId" value={section.gradeId} />
           )}
+          <Select
+            name="gradeId"
+            defaultValue={
+              state.values?.gradeId != null &&
+              !Number.isNaN(state.values.gradeId)
+                ? String(state.values.gradeId)
+                : section?.gradeId != null
+                  ? String(section.gradeId)
+                  : ''
+            }
+          >
+            <SelectTrigger
+              id="gradeId"
+              className="w-full"
+              aria-invalid={!!state.fieldErrors.gradeId}
+              disabled={gradesLoading}
+            >
+              <SelectValue
+                placeholder={
+                  gradesLoading ? 'Loading grades...' : 'Select grade'
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {grades.map((grade) => (
+                <SelectItem key={grade.id} value={String(grade.id)}>
+                  {grade.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FieldError>{state.fieldErrors.gradeId}</FieldError>
+          {gradeFetchError && <FieldError>{gradeFetchError}</FieldError>}
         </Field>
 
-        {state.formError && (
-          <p className="text-sm text-red-600">{state.formError}</p>
-        )}
+        {state.formError && <FieldError>{state.formError}</FieldError>}
       </FieldGroup>
 
       <DialogFooter className="pt-2">
@@ -197,7 +255,7 @@ export function SectionForm({
           Cancel
         </Button>
 
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending || gradesLoading}>
           {isPending ? <Spinner className="text-black" /> : 'Submit'}
         </Button>
       </DialogFooter>
