@@ -46,6 +46,35 @@ export class ExamRepository {
     return exam ? this.mapper.toDomain(exam) : null;
   }
 
+  async findByIdWithSections(id: number): Promise<ExamDomain | null> {
+    const exam = await this.prisma.exam.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
+      include: {
+        examSections: {
+          where: {
+            archivedAt: null,
+            section: {
+              archivedAt: null,
+            },
+          },
+          include: {
+            section: true,
+          },
+          orderBy: [
+            { section: { name: 'asc' } },
+            { section: { academicYear: 'asc' } },
+            { id: 'asc' },
+          ],
+        },
+      },
+    });
+
+    return exam ? this.mapper.toDomain(exam) : null;
+  }
+
   async deleteById(id: number, actionById: number): Promise<boolean> {
     const result = await this.prisma.exam.updateMany({
       where: {
@@ -168,34 +197,5 @@ export class ExamRepository {
     return examSections.map((examSection) =>
       this.examSectionMapper.toDomain(examSection),
     );
-  }
-
-  async findByIdWithSections(id: number): Promise<ExamDomain | null> {
-    const exam = await this.prisma.exam.findFirst({
-      where: {
-        id,
-        archivedAt: null,
-      },
-      include: {
-        examSections: {
-          where: {
-            archivedAt: null,
-          },
-          include: {
-            section: true,
-          },
-        },
-      },
-    });
-
-    if (!exam) {
-      return null;
-    }
-
-    const examSections = exam.examSections.map((examSection) =>
-      this.examSectionMapper.toDomain(examSection),
-    );
-
-    return this.mapper.toDomain(exam, examSections);
   }
 }
