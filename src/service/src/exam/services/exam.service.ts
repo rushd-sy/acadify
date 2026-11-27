@@ -124,7 +124,7 @@ export class ExamService {
     assignSectionsDto: AssignSectionsDto,
     actionById: number,
   ): Promise<ExamSectionDto[]> {
-    const exam = await this.repository.findById(examId);
+    const exam = await this.repository.findByIdWithSections(examId);
 
     if (!exam) {
       throw new NotFoundException(`Exam with ID: ${examId} not found`);

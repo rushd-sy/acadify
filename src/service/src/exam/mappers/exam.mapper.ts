@@ -5,7 +5,7 @@ import { ExamDomain } from '../domain/exam.domain';
 import { ExamSection } from '../domain/exam-section.entity';
 import { ExamSectionMapper } from './exam-section.mapper';
 
-type ExamWithSections = Prisma.ExamGetPayload<{
+type ExamWithOptionalSections = Prisma.ExamGetPayload<{
   include: {
     examSections: {
       include: {
@@ -15,10 +15,13 @@ type ExamWithSections = Prisma.ExamGetPayload<{
   };
 }>;
 
+type ExamInput = Exam | ExamWithOptionalSections;
+
 @Injectable()
 export class ExamMapper {
   constructor(private readonly examSectionMapper: ExamSectionMapper) {}
-  toDomain(exam: Exam | ExamWithSections): ExamDomain {
+
+  toDomain(exam: ExamInput): ExamDomain {
     const examSections =
       'examSections' in exam
         ? exam.examSections.map((section) =>
@@ -27,6 +30,13 @@ export class ExamMapper {
         : [];
 
     return ExamDomain.fromPersistence({
+      ...this.mapExamProperties(exam),
+      examSections,
+    });
+  }
+
+  private mapExamProperties(exam: ExamInput) {
+    return {
       id: exam.id,
       examTemplateId: exam.examTemplateId ?? undefined,
       title: exam.title,
@@ -35,13 +45,12 @@ export class ExamMapper {
       curriculumId: exam.curriculumId ?? undefined,
       minScore: exam.minScore,
       maxScore: exam.maxScore,
-      examSections,
       createdBy: exam.createdBy,
       createdAt: exam.createdAt,
       updatedBy: exam.updatedBy ?? undefined,
       updatedAt: exam.updatedAt ?? undefined,
       archivedAt: exam.archivedAt ?? undefined,
-    });
+    };
   }
 
   toDto(examDomain: ExamDomain): ExamDto {

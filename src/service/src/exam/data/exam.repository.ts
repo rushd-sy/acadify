@@ -30,16 +30,6 @@ export class ExamRepository {
       orderBy: {
         title: 'asc',
       },
-      include: {
-        examSections: {
-          where: {
-            archivedAt: null,
-          },
-          include: {
-            section: true,
-          },
-        },
-      },
     });
 
     return exams.map((exam) => this.mapper.toDomain(exam));
@@ -51,14 +41,33 @@ export class ExamRepository {
         id,
         archivedAt: null,
       },
+    });
+
+    return exam ? this.mapper.toDomain(exam) : null;
+  }
+
+  async findByIdWithSections(id: number): Promise<ExamDomain | null> {
+    const exam = await this.prisma.exam.findFirst({
+      where: {
+        id,
+        archivedAt: null,
+      },
       include: {
         examSections: {
           where: {
             archivedAt: null,
+            section: {
+              archivedAt: null,
+            },
           },
           include: {
             section: true,
           },
+          orderBy: [
+            { section: { name: 'asc' } },
+            { section: { academicYear: 'asc' } },
+            { id: 'asc' },
+          ],
         },
       },
     });
