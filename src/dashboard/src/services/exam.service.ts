@@ -4,6 +4,7 @@ import type {
   CreateExamDto,
   UpdateExamDto,
   ExamSectionDto,
+  AssignSectionsDto,
 } from 'dtos';
 
 class ExamService {
@@ -38,6 +39,18 @@ class ExamService {
     const response = await api.get<ExamSectionDto[]>(
       `${this.baseUrl}/${examId}/sections`,
     );
+    return response.data;
+  }
+
+  async assignSections(
+    examId: number,
+    data: AssignSectionsDto,
+  ): Promise<ExamSectionDto[]> {
+    const response = await api.post<ExamSectionDto[]>(
+      `${this.baseUrl}/${examId}/sections`,
+      data,
+    );
+
     return response.data;
   }
 }

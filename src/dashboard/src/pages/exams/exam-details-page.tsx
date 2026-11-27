@@ -19,6 +19,7 @@ import { useNumericParam } from '@/hooks/use-numeric-param';
 import { useDeleteModal } from '@/hooks/use-delete-modal';
 import { examService } from '@/services/exam.service';
 import type { ExamDto, ExamSectionDto } from 'dtos';
+import AssignSectionsModal from '@/components/exam/assign-sections.modal';
 
 export default function ExamDetailsPage() {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export default function ExamDetailsPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
 
   const {
     itemToDelete: examToDelete,
@@ -128,6 +130,18 @@ export default function ExamDetailsPage() {
       );
     });
   }, [assignedSections, searchQuery]);
+
+  const handleAssignSuccess = async (): Promise<void> => {
+    if (!examId) return;
+
+    try {
+      const sections = await examService.getAssignedSections(examId);
+      setAssignedSections(sections);
+      setSectionsError(null);
+    } catch {
+      setSectionsError('Sections assigned, but the list failed to refresh.');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -248,25 +262,33 @@ export default function ExamDetailsPage() {
               </CardDescription>
             </div>
 
-            <div className="relative w-full sm:w-64">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Filter sections..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-gray-200 bg-white py-1.5 pl-9 pr-8 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 cursor-pointer"
-                  aria-label="Clear search"
-                >
-                  ✕
-                </button>
-              )}
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+              <Button onClick={() => setIsAssignModalOpen(true)}>
+                Assign Sections
+              </Button>
+
+              <div className="relative w-full sm:w-64">
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+
+                <input
+                  type="text"
+                  placeholder="Filter sections..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-md border border-gray-200 bg-white py-1.5 pl-9 pr-8 text-sm text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+                />
+
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-xs text-gray-400 hover:text-gray-600"
+                    aria-label="Clear search"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -328,6 +350,13 @@ export default function ExamDetailsPage() {
         exam={exam ?? undefined}
         onUpdateSuccess={handleUpdateSuccess}
         onClose={() => setIsEditModalOpen(false)}
+      />
+
+      <AssignSectionsModal
+        open={isAssignModalOpen}
+        examId={exam.id}
+        onClose={() => setIsAssignModalOpen(false)}
+        onAssignSuccess={handleAssignSuccess}
       />
     </div>
   );
